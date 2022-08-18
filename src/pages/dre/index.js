@@ -23,6 +23,9 @@ const DRE = () => {
   const [dre, setDre] = useState([])
   const [dov, setDov] = useState([])
 
+  const mes = moment(selRef).add(3, 'hours').month() + 1
+  const ano = moment(selRef).add(3, 'hours').month() === 0 ? moment(selRef).year() + 1 : moment(selRef).year()
+
   const handleUpdateSelectedRef = (selref) => {
     setSelRef(selref)
   }
@@ -87,8 +90,8 @@ const DRE = () => {
 
   const syncChangesDre = async (lineID, lineValue, linePercentage) => {
     api.put('/dre', {
-      ano: moment(selRef).get('year'),
-      mes: moment(selRef).add(3, 'hours').get('month') + 1,
+      ano: ano,
+      mes: mes,
       cod: lineID,
       vlr: Number(lineValue),
       porc: linePercentage
@@ -103,8 +106,8 @@ const DRE = () => {
 
   const syncChangesDov = async (lineID, lineValue, lineDesc) => {
     api.put('/dov', {
-      ano: moment(selRef).get('year'),
-      mes: moment(selRef).add(3, 'hours').get('month') + 1,
+      ano: ano,
+      mes: mes,
       cod: lineID,
       vlr: Number(lineValue),
       desc: lineDesc
@@ -148,9 +151,6 @@ const DRE = () => {
   }
 
   const handleDownloadExcel = async (type) => {
-    const ano = moment(selRef).get('year')
-    const mes = moment(selRef).add(3, 'hours').get('month') + 1
-
     let toastId = null
     toastId = Toast('Gerando excel...', 'wait')
 
@@ -181,7 +181,7 @@ const DRE = () => {
         saveAs(blob, `Base Royalties_${ano}_${mes}.xlsx`);
 
         Toast('Excel recebido!', 'update', toastId, 'success')
-      }else{
+      } else {
         throw new Error()
       }
     } catch (err) {
@@ -195,22 +195,22 @@ const DRE = () => {
 
   useEffect(() => {
     if (selRef !== '') {
-      loadData(moment(selRef).get('year'), moment(selRef).add(3, 'hours').get('month') + 1)
+      loadData(ano, mes)
     }
-  }, [selRef])
+  }, [selRef, ano, mes])
 
   return !loaded
     ? <Loading />
     : (
       <Panel>
         <div className='YAlign' style={{ height: '100%', width: '100%', flexWrap: 'nowrap' }}>
-          <div className='XAlign'>
-            <section className={classes.metadinha}>
+          <section className='XAlign' style={{ height: 'calc(100% - 71px)'}}>
+            <div className={classes.metadinha}>
               <Resumo
                 Res={dre.filter(d => d.DreCod < 23 || d.DreCod === 35)}
               />
-            </section>
-            <section className={classes.metadinha}>
+            </div>
+            <div className={classes.metadinha}>
               <Despesas
                 Des={dre.filter(d => d.DreCod > 22 && d.DreCod !== 35)}
                 onChangeValue={handleUpdateLineDre}
@@ -224,8 +224,8 @@ const DRE = () => {
                 onChangeValue={handleUpdateLineDov}
                 onUpdateLine={syncChangesDov}
               />
-            </section>
-          </div>
+            </div>
+          </section>
           <section className={classes.barraDeBotoes}>
             <Options
               onChange={handleUpdateSelectedRef}

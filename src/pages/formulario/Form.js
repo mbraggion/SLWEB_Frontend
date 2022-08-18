@@ -37,6 +37,7 @@ import { Icon } from "react-materialize";
 import { QuestionBox } from './components/questionBox'
 import { CircularStatic } from './components/progressCircle'
 import { Toast } from "../../components/toasty";
+import { ModalCOF } from './modals/modalCOF'
 
 export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
   const classes = useStyles();
@@ -46,9 +47,10 @@ export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
   const [section, setSection] = useState(0)
   const [question, setQuestion] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [modalCOFOpen, setModalCOFOpen] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [fileNames, setFileNames] = useState([])
-  const stepsName = [ 'Dados Pessoais', 'Estado civil', 'Dependentes', 'Bens', 'Renda', 'Experiência', 'Sócio', 'Franquia', 'Prioridades', 'Finalização' ]
+  const stepsName = ['Dados Pessoais', 'Estado civil', 'Dependentes', 'Bens', 'Renda', 'Experiência', 'Sócio', 'Franquia', 'Prioridades', 'Finalização']
 
   useEffect(() => {
     setSection(lastFormSection)
@@ -1100,7 +1102,7 @@ export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
     ...Exp,
     {
       question: 'Qual a sua formação escolar/acadêmica?(especificar grau e área se houver)',
-      answerComponent: <TextField className={classes.TextInput} variant='outlined' label='Formação escolar/acadêmica' value={Form.Form_Escolar} multiline/>,
+      answerComponent: <TextField className={classes.TextInput} variant='outlined' label='Formação escolar/acadêmica' value={Form.Form_Escolar} multiline />,
       validationTest: () => Form.Form_Escolar !== '' && Form.Form_Escolar !== null && typeof Form.Form_Escolar !== 'undefined',
       validationErrorFunction: () => {
         Toast('Nos conte sobre sua formação escolar/acadêmica', 'warn')
@@ -1521,18 +1523,21 @@ export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
       )),
       validationTest: () => {
         let test = true
-        for (let i = 0; i < Form.Prioridade.length; i++) {
-          if (typeof Form.Prioridade[i] == "undefined" || String(Form.Prioridade[i]).trim() === '' || String(Form.Prioridade[i]).trim() === '0' || Form.Prioridade[i] === null) {
-            test = false;
-          }
-        }
+        // for (let i = 0; i < Form.Prioridade.length; i++) {
+        //   if (typeof Form.Prioridade[i] == "undefined" || String(Form.Prioridade[i]).trim() === '' || String(Form.Prioridade[i]).trim() === '0' || Form.Prioridade[i] === null) {
+        //     test = false;
+        //   }
+        // }
         return test
       },
       validationErrorFunction: () => {
         Toast("Avalie as afirmações com base no seu entendimento do nivel de importancia de cada uma delas(1 a 11)", 'warn');
       },
       changeAnswerFunction: null,
-      onRequestAdvanceStep: handleRequestAdvance,
+      onRequestAdvanceStep: () => {
+        setModalCOFOpen(true)
+        handleRequestAdvance()
+      },
       onRequestRetreatStep: handleRequestRetreat,
       alignArrow: 'flex-end',
       answerOnly: true
@@ -1779,6 +1784,10 @@ export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
 
   return (
     <>
+      <ModalCOF
+        open={modalCOFOpen}
+        onClose={() => setModalCOFOpen(false)}
+      />
       <div
         className='YAlign'
         style={{
@@ -1837,6 +1846,7 @@ export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
           height: '100%',
           maxHeight: '500px',
           width: fullScreen ? '100%' : 'unset',
+          overflowY: 'auto'
         }}
       >
         <div

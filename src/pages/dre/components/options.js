@@ -3,12 +3,14 @@ import moment from 'moment'
 
 import { InputLabel, Typography, MenuItem, Tooltip, IconButton, Select, FormControl, } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
-import { Refresh as RefreshIcon, Save as SaveIcon } from '@material-ui/icons'
+import { Refresh as RefreshIcon } from '@material-ui/icons'
 
 import ExcelLogo from '../../../assets/svg/EXCEL.svg';
 
 export const Options = ({ onChange, selectedRef, refList, onReload, onSave, onDownloadExcel }) => {
   const classes = useStyles();
+  const mes = moment(selectedRef).add(3, 'hours').month() + 1
+  const ano = moment(selectedRef).add(3, 'hours').month() === 0 ? moment(selectedRef).year() + 1 : moment(selectedRef).year()
 
   return (
     <>
@@ -86,7 +88,7 @@ export const Options = ({ onChange, selectedRef, refList, onReload, onSave, onDo
         placement="top"
         arrow={true}
       >
-        <IconButton disabled={selectedRef === ''} onClick={() => onReload(moment(selectedRef).get('year'), moment(selectedRef).add(3, 'hours').get('month') + 1)} aria-label="refresh">
+        <IconButton disabled={selectedRef === ''} onClick={() => onReload(ano, mes)} aria-label="refresh">
           <RefreshIcon />
         </IconButton>
       </Tooltip>

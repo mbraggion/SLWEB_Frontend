@@ -40,6 +40,8 @@ const useStyles = makeStyles((theme) => ({
     padding: '8px 0px 8px 0px',
     borderRadius: '6px',
     border: '1px solid #ccc',
-    margin: '8px'
+    // margin: '8px',
+    marginLeft: '8px',
+    height: 'auto'
   },
 }))

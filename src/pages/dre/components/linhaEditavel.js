@@ -51,7 +51,13 @@ export const LinhaEditavel = ({ linha, pRef, onChangeValue, onUpdateLine, editav
 }
 
 const calculatePercentage = (amount, refAmount) => {
-  return String(Number((amount / refAmount) * 100).toFixed(2)) + '%'
+  let s = Number((amount / refAmount) * 100)
+
+  return String(
+    Number.isNaN(s)
+      ? Number(0).toFixed(2)
+      : s.toFixed(2)
+  ) + '%'
 }
 
 const useStyles = makeStyles((theme) => ({

@@ -33,6 +33,7 @@ const Contas = (props) => {
   const [pedidoDet, setPedidoDet] = useState({});
   const [tipoDuplicata, setTipoDuplicata] = useState(null);
   const [confiavel, setConfiavel] = useState(false);
+  const [naoCompensavel, setNaoCompensavel] = useState([]);
 
   const { ChangeTab, SetMin, SetPodeRetirar } = props;
 
@@ -52,6 +53,7 @@ const Contas = (props) => {
         setConfiavel(response.data.Confiavel)
         SetMin(response.data.Geral.VlrMinCompra);
         SetPodeRetirar(response.data.Geral.Retira);
+        setNaoCompensavel(response.data.NaoCompensavel)
 
         setLoaded(true);
       } catch (err) {
@@ -179,6 +181,8 @@ const Contas = (props) => {
         open={pagamentoModalOpen}
         onClose={handleClosePagamentoDialog}
         duplicatas={Duplicatas}
+        confiavel={confiavel}
+        naoCompensavel={naoCompensavel}
       />
       <Typography variant="h5" gutterBottom>
         Total Mensal
@@ -327,7 +331,7 @@ const Contas = (props) => {
               </TableBody>
             </Table>
           </TableContainer>
-          {Duplicatas.length > 0 && confiavel ? (
+          {Duplicatas.length ? (
             <Button
               variant="outlined"
               color="primary"

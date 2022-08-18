@@ -20,6 +20,7 @@ export const DespesasVariaveis = ({ DesV, onAddNewLine, AllowAddNewLine, onChang
         />
       )}
       <Button
+        className={classes.button}
         variant="contained"
         color="primary"
         startIcon={<AddIcon />}
@@ -41,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
     padding: '8px 0px 0px 0px',
     borderRadius: '6px',
     border: '1px solid #ccc',
-    margin: '8px'
+    margin: '8px 0px 0px 8px',
   },
+  button: {
+    margin: '0px'
+  }
 }))
