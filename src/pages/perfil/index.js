@@ -22,6 +22,7 @@ import {
 } from "@material-ui/core/";
 
 import { RED_SECONDARY, GREY_LIGHT } from "../../misc/colors";
+import { toValidString } from '../../misc/commom_functions'
 
 function Perfil() {
   const classes = useStyles();
@@ -36,11 +37,7 @@ function Perfil() {
   useEffect(() => {
     async function loadData() {
       try {
-        const response = await api.get("/profile", {
-          params: {
-            token: sessionStorage.getItem("token"),
-          },
-        });
+        const response = await api.get("/profile");
 
         setInfo(response.data.Franqueado);
         setVencCert(response.data.VencCert)
@@ -133,7 +130,7 @@ function Perfil() {
               src={AnnonProfileIcon}
               alt="logo"
             />
-            <p disabled>{String(info.M0_FILIAL[0]).trim()}</p>
+            <p disabled>{toValidString(info.M0_FILIAL[0])}</p>
           </div>
 
           {/*DADOS FRANQUIA */}
@@ -147,7 +144,7 @@ function Perfil() {
               <div className={classes.infoContainer}>
                 <h5 className={classes.titleBox}>FILIAL</h5>
                 <p className={classes.Relevant}>
-                  {String(info.M0_CODFIL[0]).trim()}
+                  {toValidString(info.M0_CODFIL[0])}
                 </p>
               </div>
 
@@ -188,7 +185,7 @@ function Perfil() {
                 {info.M0_INSC}
               </p>
               <p>
-                <b>Email: </b> {info.Email.trim()}
+                <b>Email: </b> {toValidString(info.Email)}
               </p>
 
               <p>
@@ -264,7 +261,7 @@ function Perfil() {
                   value={newEmail}
                   disabled={wait}
                   type="text"
-                  label={`Atual: ${info.Email.trim()}`.split(';')[0].concat('...')}
+                  label={`Atual: ${toValidString(info.Email)}`.split(';')[0].concat('...')}
                   onChange={(e) => setNewEmail(e)}
                 />
               </Dialog>

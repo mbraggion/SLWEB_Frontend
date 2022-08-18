@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   makeStyles,
@@ -10,14 +10,19 @@ import {
   Divider,
   Tooltip
 } from '@material-ui/core';
-import {
-  Search as SearchIcon,
-  Close as CloseIcon
-} from '@material-ui/icons'
 
-export const PdvListOptions = ({ onChangeFiltro, mostrarInativos, switchInativos }) => {
+import { Search as SearchIcon, Close as CloseIcon } from '@material-ui/icons'
+
+export const PdvListOptions = ({ onChangeFiltro, mostrarInativos, switchInativos, defaultTarget }) => {
   const classes = useStyles()
   const [filterWord, setFilterWord] = useState('')
+
+  useEffect(() => {
+    if (defaultTarget !== null && typeof defaultTarget !== 'undefined') {
+      setFilterWord(String(defaultTarget))
+    }
+    // eslint-disable-next-line
+  }, [])
 
   return (
     <div>

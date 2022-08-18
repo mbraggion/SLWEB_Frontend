@@ -10,6 +10,7 @@ export const PdvList = ({ PDVs, onOpenModal }) => {
     <div className={classes.container}>
       {PDVs.map((pdv, index) =>
         <PdvItem
+          // key={`${pdv.PdvId}${pdv.AnxId}`}
           PDV={pdv}
           i={index}
           onOpenModal={onOpenModal}

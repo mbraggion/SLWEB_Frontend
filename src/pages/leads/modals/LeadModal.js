@@ -1,296 +1,109 @@
-import React, { useState, useEffect } from 'react';
-import moment from "moment";
+import React, { useState } from 'react';
+import moment from 'moment'
+import { api } from "../../../services/api";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import Draggable from 'react-draggable';
-import { api } from "../../../services/api";
 
-import { ContactPhone } from "@material-ui/icons";
 import {
-  Typography,
-  Divider,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  Paper,
-  Button as DefaultButton
-} from "@material-ui/core/";
-
-import { Toast } from "../../../components/toasty";
-import Button from "../../../components/materialComponents/Button";
-import { RED_SECONDARY, GREY_SECONDARY } from "../../../misc/colors";
+  DialogTitle as MuiDialogTitle,
+  useMediaQuery,
+  IconButton,
+  Typography,
+  Divider,
+  Button,
+  ButtonGroup
+} from '@material-ui/core/';
+import {
+  useTheme,
+  withStyles
+} from '@material-ui/core/styles';
+import {
+  Close as CloseIcon,
+  BusinessCenter as BusinessCenterIcon,
+  ThumbDown as ThumbDownIcon,
+  Announcement as AnnouncementIcon
+} from '@material-ui/icons';
 import Input from "../../../components/materialComponents/InputMultline";
-import { AddLimite, MoveLinha } from "../../../global/actions/LeadAction";
+import { Toast } from '../../../components/toasty'
+import { AddLimite, MoveLinha, UpdateLinha } from '../../../global/actions/LeadAction'
 
-const LeadModal = (props) => {
-  const [open, setOpen] = React.useState(false);
-  const [fetching, setFetching] = React.useState(false);
-  const [history, setHistory] = useState(null);
-  const [motivo, setMotivo] = useState("");
+const LeadModal = ({ open, onClose, Lead, History, MotivoDaDesistencia, onChangeMotivoDaDesistencia, ...props }) => {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { AddLimite, MoveLinha } = props;
+  const [wait, setWait] = useState(false);
+  const { AddLimite, MoveLinha, UpdateLinha } = props;
 
-  const handleClickOpenModal = () => {
-    RequestHistory(props.lead.Id)
-    setOpen(true);
-  };
+  const handleClose = () => {
+    onClose()
+  }
 
-  const handleCloseModal = () => {
-    setHistory(null)
-    setOpen(false);
-  };
-
-  useEffect(() => {
-    if (typeof props.lead.update !== "undefined" && props.lead.update === 'holded') {
-      handleClickOpenModal()
-    }
-
-    if (typeof props.lead.update !== "undefined" && props.lead.update === 'released') {
-      handleCloseModal()
-    }
-    // eslint-disable-next-line
-  }, [])
-
-  const RequestHistory = async (leadid) => {
-    try {
-      const response = await api.get(`/leads/${leadid}`);
-
-      setHistory(response.data);
-    } catch (err) {
-
-    }
-  };
-
-  const handleManageLead = async (id, index, type) => {
-    if (type === "release" && motivo.trim() === "") {
+  const handleManageLead = async (id, type) => {
+    if (type === "release" && MotivoDaDesistencia.trim() === "") {
       Toast("Informe o motivo da desistência", 'warn');
       return;
     }
 
     let toastId = null
+    toastId = Toast("Aguarde...", 'wait');
 
     try {
-      toastId = Toast("Aguarde...", 'wait');
-      setFetching(true);
-      const response = await api
-        .put("/leads", {
-          ID: id,
-          type: type,
-          motivo: motivo,
-        })
+      setWait(true);
+      const response = await api.put("/leads", {
+        ID: id,
+        type: type,
+        motivo: MotivoDaDesistencia,
+      })
 
-      let aux = props.lead;
+      let aux = Lead;
 
       if (type === "release") {
-        aux = Object.assign(aux, { update: 'released' });
-        Toast('Voce desistiu do Lead com sucesso!', 'update', toastId, 'success');
-      } else {
-        //junto os dados do endereço que recebo após vincular o lead e incluo uma variavel "update" para controle
-        aux = Object.assign(aux, response.data[0], { update: 'holded' });
+        aux = { ...aux, status: 'Desistido' };
 
-        //disparo actions pra mover o lead de Geral para Franqueado e ajustar o total de leads que o cara já assumiu
+        UpdateLinha(aux)
+        Toast('Voce desistiu do Lead com sucesso!', 'update', toastId, 'success');
+      } else if (type === "confirm") {
+        aux = { ...aux, status: 'Negociando' };
+
+        UpdateLinha(aux)
+        Toast('Voce confirmou que está negocindo com o Lead!', 'update', toastId, 'success');
+      } else {
+        aux = { ...aux, ...response.data[0], status: 'Resgatado' };
+
         MoveLinha(aux);
         AddLimite();
         Toast('Voce reinvidicou o Lead com sucesso!', 'update', toastId, 'success');
       }
 
-      setFetching(false);
-      handleCloseModal();
+      setWait(false);
+      handleClose();
     } catch (err) {
       Toast('Falha ao remanejar o Lead', 'update', toastId, 'error');
     }
   };
 
-  // const handleConfirmDeal = async (err, leadId) => {
-  //   try {
-  //     const response = await api
-  //       .put("/leads", {
-  //         ID: leadId,
-  //         type: "confirm",
-  //         motivo: motivo,
-  //       })
-  //       .catch ((err) => {
-  //         throw new Error(err.response.status);
-  //       });
-  //   } catch (err) {
-  //     Toast("Falha ao confirmar negociação", "error");
-  //   }
-  // };
-
   return (
-    <>
-      <DefaultButton
-        style={{ 
-          whiteSpace: "nowrap", 
-          minWidth: '170px',
-          overflow: 'hidden',
-         }}
-        variant="outlined"
-        color="primary"
-        onClick={handleClickOpenModal}
-        disabled={
-          desistiu(props.lead)
-        }
-        startIcon={<ContactPhone />}
-      >
-        {
-          desistiu(props.lead)
-            ? "Desistiu"
-            : shouldShowAdress(props.lead)
-              ? "Contato Lead"
-              : "Quero esse Lead"
-        }
-      </DefaultButton>
-      <Dialog
-        open={open}
-        onClose={handleCloseModal}
-        PaperComponent={PaperComponent}
-        aria-labelledby="draggable-dialog-title"
-      >
-        <DialogTitle
-          style={{ cursor: 'move' }}
-          id="draggable-dialog-title"
-        >
-          Contato Lead
-        </DialogTitle>
+    <Dialog
+      fullScreen={fullScreen}
+      open={open}
+      onClose={handleClose}
+    >
+      <DialogTitle onClose={handleClose}>
+        Contato Lead
+      </DialogTitle>
 
-        <DialogContent>
-          {shouldShowAdress(props.lead) ? (
-            <>
-              <Typography variant="subtitle1" gutterBottom>
-                <strong>Nome Fantasia: </strong>
-                {props.lead.Nome_Fantasia}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                <strong>Razão Social: </strong>
-                {props.lead.Razao_Social}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                <strong>Contato: </strong>
-                {props.lead.Contato}
-              </Typography>
-              <Typography variant="subtitle1" gutterBottom>
-                <strong>
-                  {props.lead.Municipio} - {props.lead.Estado}
-                </strong>
-              </Typography>
+      <DialogContent dividers>
+        {whichContentShow(Lead, History, MotivoDaDesistencia, onChangeMotivoDaDesistencia)}
+      </DialogContent>
 
-              <Typography variant="subtitle1" gutterBottom>
-                <strong>Fone 1: </strong>
-                {props.lead.Fone_1}
-              </Typography>
-
-              <Typography variant="subtitle1" gutterBottom>
-                <strong>Fone 2: </strong>
-                {props.lead.Fone_2}
-              </Typography>
-
-              <Typography variant="subtitle1" gutterBottom>
-                <strong>Email: </strong>
-                {props.lead.Email}
-              </Typography>
-
-              <Typography variant="subtitle1" gutterBottom>
-                <strong>Atividade / Descrição: </strong>
-                {props.lead.AtividadeDesc}
-              </Typography>
-
-              <Typography variant="subtitle1" gutterBottom>
-                <strong>Mensagem do cliente: </strong>
-                {props.lead.Mensagem}
-              </Typography>
-
-              <br />
-
-              {/* <Typography variant="subtitle1" gutterBottom>
-                Lead assumido{" "}
-                <strong>
-                  {returnTime(props.lead, false, Limites[0].MaxHoras)}
-                </strong>
-              </Typography>
-
-              <Typography variant="subtitle1" gutterBottom>
-                Você tem até{" "}
-                <strong>{returnTime(props.lead, true, Limites[0].MaxHoras)}</strong>{" "}
-                para fechar com o cliente ou desistir do Lead
-              </Typography> */}
-
-              {showHistory(history)}
-
-              <Input
-                style={{ width: "100%" }}
-                label="Motivo da desistência"
-                onChange={(e) => setMotivo(e.target.value)}
-                value={motivo}
-              />
-            </>
-          ) : (
-            <>
-              <Typography variant="body1" gutterBottom>
-                Você ainda não tem acesso ao contato desse lead.
-              </Typography>
-              <div style={{ marginTop: "8px" }}>
-                {props.lead.Mensagem !== null && String(props.lead.Mensagem).trim() !== '' ? (
-                  <Typography variant="subtitle1" gutterBottom>
-                    Mensagem do cliente: <strong>{props.lead.Mensagem}</strong>{" "}
-                  </Typography>
-                ) : (
-                  null
-                )}
-                {showHistory(history)}
-              </div>
-            </>
-          )}
-        </DialogContent>
-
-        <DialogActions style={{ padding: '8px 24px' }}>
-          <>
-            {/* {shouldShowAdress(props.lead) ? (
-              <Button
-                style={{
-                  backgroundColor: RED_SECONDARY,
-                  color: "#FFFFFF",
-                }}
-                onClick={(e) => {
-                  handleConfirmDeal(e, props.lead.Id);
-                }}
-              >
-                Negociando
-              </Button>
-            ) : (
-              ""
-            )} */}
-            <Button
-              style={{
-                backgroundColor: shouldShowAdress(props.lead)
-                  ? GREY_SECONDARY
-                  : RED_SECONDARY,
-                color: "#FFFFFF",
-              }}
-              onClick={(e) => {
-                e.target.disabled = true;
-                handleManageLead(
-                  props.lead.Id,
-                  props.index,
-                  shouldShowAdress(props.lead) ? "release" : "hold"
-                );
-              }}
-              disabled={fetching}
-            >
-              {shouldShowAdress(props.lead) ? "Desistir" : "Solicitar"}
-            </Button>
-            <DefaultButton
-              onClick={handleCloseModal}
-              color="primary"
-            >
-              Fechar
-            </DefaultButton>
-          </>
-        </DialogActions>
-      </Dialog>
-    </>
-  )
+      <DialogActions>
+        {whichButtonsShow(Lead, wait, handleManageLead)}
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 const mapDispatchToProps = (dispatch) =>
@@ -298,6 +111,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       AddLimite,
       MoveLinha,
+      UpdateLinha
     },
     dispatch
   );
@@ -307,27 +121,232 @@ export default connect(
   mapDispatchToProps
 )(LeadModal);
 
+const styles = (theme) => ({
+  root: {
+    margin: 0,
+    padding: theme.spacing(2),
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+});
 
-const desistiu = (dados) => {
-  if ((typeof dados.update !== "undefined" && dados.update === 'released') || (dados.Ativo === false && dados.DataFechamento !== null)) {
-    return true;
-  } else {
-    return false
-  }
-};
+const DialogTitle = withStyles(styles)((props) => {
+  const { children, classes, onClose, ...other } = props;
+  return (
+    <MuiDialogTitle disableTypography className={classes.root} {...other}>
+      <Typography variant="h6">{children}</Typography>
+      {onClose ? (
+        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </MuiDialogTitle>
+  );
+});
 
-const shouldShowAdress = (lead) => {
-  if (
-    typeof lead.Contato != "undefined" &&
-    typeof lead.Fone_1 != "undefined" &&
-    typeof lead.Fone_2 != "undefined" &&
-    typeof lead.Email != "undefined"
-  ) {
-    return true;
+const whichContentShow = (lead, history, motivo, updateMotivo) => {
+  if (lead !== null && lead.status === 'Disponivel') {
+    return (
+      <>
+        <Typography variant="body1" gutterBottom>
+          Você ainda não tem acesso ao contato desse lead.
+        </Typography>
+        <div style={{ marginTop: "8px" }}>
+          {lead.Mensagem !== null && String(lead.Mensagem).trim() !== '' ? (
+            <Typography variant="subtitle1" gutterBottom>
+              Mensagem do cliente: <strong>{lead.Mensagem}</strong>{" "}
+            </Typography>
+          ) : (
+            null
+          )}
+          {showHistory(history)}
+        </div>
+      </>
+    )
+  } else if (lead !== null && lead.status === 'Resgatado') {
+    return (
+      <>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Nome Fantasia: </strong>
+          {lead.Nome_Fantasia}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Razão Social: </strong>
+          {lead.Razao_Social}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Contato: </strong>
+          {lead.Contato}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>
+            {lead.Municipio} - {lead.Estado}
+          </strong>
+        </Typography>
+
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Fone 1: </strong>
+          {lead.Fone_1}
+        </Typography>
+
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Fone 2: </strong>
+          {lead.Fone_2}
+        </Typography>
+
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Email: </strong>
+          {lead.Email}
+        </Typography>
+
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Atividade / Descrição: </strong>
+          {lead.AtividadeDesc}
+        </Typography>
+
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Mensagem do cliente: </strong>
+          {lead.Mensagem}
+        </Typography>
+
+        <br />
+
+        {/* <Typography variant="subtitle1" gutterBottom>
+        Lead assumido{" "}
+        <strong>
+          {returnTime(lead, false, Limites[0].MaxHoras)}
+        </strong>
+      </Typography>
+
+      <Typography variant="subtitle1" gutterBottom>
+        Você tem até{" "}
+        <strong>{returnTime(lead, true, Limites[0].MaxHoras)}</strong>{" "}
+        para fechar com o cliente ou desistir do Lead
+      </Typography> */}
+
+        {showHistory(history)}
+
+        <Input
+          style={{ width: "100%" }}
+          label="Motivo da desistência"
+          onChange={(e) => updateMotivo(e.target.value)}
+          value={motivo}
+        />
+      </>
+    )
+  } else if (lead !== null && lead.status === 'Desistido') {
+    return (
+      <Typography variant="body1" gutterBottom>
+        Você desistiu desse Lead.
+      </Typography>
+    )
+  } else if (lead !== null && lead.status === 'Negociando') {
+    return (
+      <>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Nome Fantasia: </strong>
+          {lead.Nome_Fantasia}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Razão Social: </strong>
+          {lead.Razao_Social}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Contato: </strong>
+          {lead.Contato}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>
+            {lead.Municipio} - {lead.Estado}
+          </strong>
+        </Typography>
+
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Fone 1: </strong>
+          {lead.Fone_1}
+        </Typography>
+
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Fone 2: </strong>
+          {lead.Fone_2}
+        </Typography>
+
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Email: </strong>
+          {lead.Email}
+        </Typography>
+
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Atividade / Descrição: </strong>
+          {lead.AtividadeDesc}
+        </Typography>
+
+        <Typography variant="subtitle1" gutterBottom>
+          <strong>Mensagem do cliente: </strong>
+          {lead.Mensagem}
+        </Typography>
+
+        <br />
+        {showHistory(history)}
+      </>
+    )
   } else {
-    return false;
+    return null
   }
-};
+}
+
+const whichButtonsShow = (lead, wait, onManageLead) => {
+  if (lead !== null && lead.status === 'Disponivel') {
+    return (
+      <Button
+        onClick={() => onManageLead(lead.Id, 'hold')}
+        disabled={wait}
+        color='primary'
+        variant='contained'
+        startIcon={<AnnouncementIcon />}
+      >
+        Solicitar
+      </Button>
+    )
+  } else if (lead !== null && (lead.status === 'Resgatado')) {
+    return (
+      <ButtonGroup disableElevation variant="contained" color="primary">
+        <Button
+          onClick={() => onManageLead(lead.Id, 'confirm')}
+          disabled={wait}
+          color='primary'
+          variant='contained'
+          startIcon={<BusinessCenterIcon />}
+        >
+          Negócio Fechado
+        </Button>
+        <Button
+          onClick={(e) => onManageLead(lead.Id, 'release')}
+          disabled={wait}
+          color='secondary'
+          variant='outlined'
+          startIcon={<ThumbDownIcon />}
+        >
+          Desistir
+        </Button>
+      </ButtonGroup>
+    )
+  } else if (lead !== null && lead.status === 'Desistido') {
+    return null
+  } else if (lead !== null && lead.status === 'Negociando') {
+    return (
+      <Typography variant='body1'>
+        Fechando negócio com o Lead...
+      </Typography>
+    )
+  } else {
+    return null
+  }
+}
 
 const showHistory = (history) => {
   return history === null ? (
@@ -371,47 +390,3 @@ const showHistory = (history) => {
     </div>
   );
 };
-
-function PaperComponent(props) {
-  return (
-    <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
-      <Paper {...props} />
-    </Draggable>
-  );
-}
-
-/*Essa previsao ta pulando dias caso caia em um sabado ou domingo
-mas se "passar por cima" de um ele não considera,
-como o Alberto pediu pra desativar os vencimentos,
-vou parar de mecher nisso por agora(03/09)*/
-// const returnTime = (dados, addtime, max) => {
-//   moment.locale("pt-br");
-//   let inicial = null;
-//   let final = null;
-
-//   //Esse trecho vai ativar quando a o lead tiver sido assumido pelo site e eu for mostrar uma data pro cara sem precisar do retorno da API
-//   if (typeof dados.DataHora == "undefined" && !addtime) {
-//     inicial = moment();
-//   } else if (typeof dados.DataHora == "undefined" && addtime) {
-//     final = moment().add(max, "hours");
-//     if (final.isoWeekday() === 6) {
-//       final.add(2, 'days')
-//     } else if (final.isoWeekday() === 7) {
-//       final.add(1, 'days')
-//     }
-//   }
-
-//   //Esse trecho vai executar quando o lead assumido veio do backend, junto com uma data de inclusão
-//   if (typeof dados.DataHora != "undefined" && !addtime) {
-//     inicial = moment(dados.DataHora).utc();
-//   } else if (typeof dados.DataHora != "undefined" && addtime) {
-//     final = moment(dados.DataHora).add(max, "hours").utc();
-//     if (final.isoWeekday() === 6) {
-//       final.add(2, 'days')
-//     } else if (final.isoWeekday() === 7) {
-//       final.add(1, 'days')
-//     }
-//   }
-
-//   return addtime ? final.format("LLLL") : inicial.format("LLLL")
-// };

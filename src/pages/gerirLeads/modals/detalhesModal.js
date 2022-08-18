@@ -58,6 +58,7 @@ export const DetailsModal = ({ open, onClose, targetID }) => {
     } else {
       onClose();
       setWait(false)
+      setReport(INITIAL_STATE)
     }
   }
 
@@ -168,7 +169,7 @@ export const DetailsModal = ({ open, onClose, targetID }) => {
           startIcon={report.Info.Disponivel === true ? <DeleteIcon /> : <TrendingUpIcon />}
           variant={report.Info.Disponivel === true ? 'outlined' : 'contained'}
           color={report.Info.Disponivel === true ? 'secondary' : 'primary'}
-          disabled={wait}
+          disabled={wait || typeof report.Info.Disponivel === 'undefined'}
         >
           {report.Info.Disponivel === true ? 'Desabilitar Lead' : 'Habilitar Lead'}
         </Button>

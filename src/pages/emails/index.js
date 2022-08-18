@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../services/api";
 
-import {
-  Button,
-  Paper,
-  InputBase,
-  Tooltip,
-  IconButton,
-  makeStyles
-} from '@material-ui/core'
-import {
-  MarkunreadMailbox as MarkunreadMailboxIcon,
-  Close as CloseIcon
-} from '@material-ui/icons'
+import { Button, Paper, InputBase, Tooltip, IconButton, makeStyles } from '@material-ui/core'
+import { MarkunreadMailbox as MarkunreadMailboxIcon, Close as CloseIcon } from '@material-ui/icons'
 
 //import de elementos visuais
 import { convertData } from "../../misc/commom_functions";

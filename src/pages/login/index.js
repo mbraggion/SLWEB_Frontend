@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { api } from "../../services/api";
 import { Link } from "react-router-dom";
 
-import Image from "../../assets/logo_sl.PNG";
+import Image from "../../assets/logo_sl.png";
 import {
   Container,
   Box,
@@ -13,6 +13,7 @@ import { Toast } from "../../components/toasty";
 import Button from "../../components/materialComponents/Button";
 import InputUnderline from "../../components/materialComponents/InputUnderline";
 import { RED_PRIMARY } from '../../misc/colors'
+import { navigateTo } from '../../misc/commom_functions'
 
 function Login() {
   const [user_code, setUser] = useState("");
@@ -52,9 +53,9 @@ function Login() {
       sessionStorage.setItem("role", response.data.role);
       sessionStorage.setItem("filial_logada", response.data.nome !== '');
       sessionStorage.setItem("usuário", response.data.nome);
+      sessionStorage.setItem("links", JSON.stringify(response.data.Links));
 
-
-      window.location.assign("/");
+      navigateTo('move', '/')
     } catch (err) {
       Toast('Filial ou senha incorretos', 'update', toastId, 'error')
       setFetching(false)

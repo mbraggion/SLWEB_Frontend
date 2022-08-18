@@ -1,5 +1,3 @@
-import React from "react";
-import { Redirect } from "react-router-dom";
 import {
   REACT_APP_FRANQUEADO_ROLE_LEVEL,
   REACT_APP_EXPEDICAO_ROLE_LEVEL,
@@ -7,37 +5,39 @@ import {
   REACT_APP_JURIDICO_ROLE_LEVEL,
   REACT_APP_BACKOFFICE_ROLE_LEVEL,
   REACT_APP_TECNICA_ROLE_LEVEL,
+  REACT_APP_MARKETING_ROLE_LEVEL
 } from "./role_levels";
+import { api } from '../services/api'
 
 //Retorna CNPJ/CPF formatado
 export const maskCNPJ = (cnpj) => {
-  if (cnpj.length === 11) {
-    const CPF_COM_ZEROS = `000${cnpj}`;
-    const CPF_COMPLETO = CPF_COM_ZEROS.slice(-11);
+  if (cnpj === null) {
+    return cnpj;
+  } else if (cnpj.length === 11) {
+    const CPF = String(cnpj);
 
-    var CPF = [];
+    var CPFsplit = [];
 
-    CPF[0] = CPF_COMPLETO.substring(0, 3);
-    CPF[1] = CPF_COMPLETO.substring(3, 6);
-    CPF[2] = CPF_COMPLETO.substring(6, 9);
-    CPF[3] = CPF_COMPLETO.substring(9, 11);
+    CPFsplit.push(CPF.substring(0, 3))
+    CPFsplit.push(CPF.substring(3, 6))
+    CPFsplit.push(CPF.substring(6, 9))
+    CPFsplit.push(CPF.substring(9, 11))
 
-    const CNPJss = `${CPF[0]}.${CPF[1]}.${CPF[2]}-${CPF[3]}`;
+    const CPFss = `${CPFsplit[0]}.${CPFsplit[1]}.${CPFsplit[2]}-${CPFsplit[3]}`;
 
-    return CNPJss;
+    return CPFss;
   } else if (cnpj.length === 14) {
-    const CNPJ_COM_ZEROS = `000${cnpj}`;
-    const CNPJ_COMPLETO = CNPJ_COM_ZEROS.slice(-14);
+    const CNPJ = String(cnpj);
 
-    var CNPJ = [];
+    var CNPJsplit = [];
 
-    CNPJ[0] = CNPJ_COMPLETO.substring(0, 2);
-    CNPJ[1] = CNPJ_COMPLETO.substring(2, 5);
-    CNPJ[2] = CNPJ_COMPLETO.substring(5, 8);
-    CNPJ[3] = CNPJ_COMPLETO.substring(8, 12);
-    CNPJ[4] = CNPJ_COMPLETO.substring(12, 14);
+    CNPJsplit.push(CNPJ.substring(0, 2));
+    CNPJsplit.push(CNPJ.substring(2, 5));
+    CNPJsplit.push(CNPJ.substring(5, 8));
+    CNPJsplit.push(CNPJ.substring(8, 12));
+    CNPJsplit.push(CNPJ.substring(12, 14));
 
-    const CNPJss = `${CNPJ[0]}.${CNPJ[1]}.${CNPJ[2]}/${CNPJ[3]}-${CNPJ[4]}`;
+    const CNPJss = `${CNPJsplit[0]}.${CNPJsplit[1]}.${CNPJsplit[2]}/${CNPJsplit[3]}-${CNPJsplit[4]}`;
 
     return CNPJss;
   } else {
@@ -54,27 +54,6 @@ export const maskCEP = (cep) => {
   cep_aux[2] = cep ? cep.substring(5, 8) : '?';
 
   return `${cep_aux[0]}.${cep_aux[1]}-${cep_aux[2]}`;
-};
-
-//Valida o valor de um input
-export const valueCheck = (value) => {
-  if (!isNaN(parseFloat(value))) {
-    if (
-      value.charAt(value.length - 1) === "." ||
-      value.charAt(value.length - 1) === ","
-    ) {
-      return value;
-    }
-    return parseFloat(value);
-  } else {
-    if (value.length > 1) {
-      value = value.slice(-1);
-      return value.slice(-1);
-    } else {
-      value = 0;
-      return 0;
-    }
-  }
 };
 
 //Retorna a data atual em formato DD/MM/AAAA com fuso horário correto
@@ -97,19 +76,6 @@ export const convertData = (data) => {
   return dataB.split("/").reverse().join("/");
 };
 
-//Destaca um elemento clicado
-export const Bright = (event) => {
-  event.target.parentElement.className = "Selected";
-  event.persist();
-  setTimeout(() => (event.target.parentElement.className = "Item"), 1000);
-};
-
-export const Go = (to) => {
-  if (typeof to === "string") {
-    return <Redirect to={to} />;
-  }
-};
-
 export const roleLevel = () => {
   const role = sessionStorage.getItem("role");
 
@@ -125,6 +91,10 @@ export const roleLevel = () => {
     //permissão para interagir com solicitações de máquinas e configurações
     case "Técnica Pilão" || "Técnica Bianchi":
       return REACT_APP_TECNICA_ROLE_LEVEL;
+
+    //permissão para subir conteudos para plataforma
+    case "Marketing":
+      return REACT_APP_MARKETING_ROLE_LEVEL;
 
     //permissão para ver dados sensiveis de franqueados e gerar relatórios
     case "Jurídico":
@@ -144,9 +114,39 @@ export const roleLevel = () => {
 };
 
 export const toValidString = (string, sub = '') => {
-  return string === null || string === 'null' || typeof string == 'undefined'? sub : string;
+  return string === null || string === 'null' || typeof string == 'undefined' ? sub : string;
 }
 
 export const capitalizeMonthFirstLetter = (month) => {
   return month.charAt(0).toUpperCase() + month.slice(1)
+}
+
+export const navigateTo = (type, url = null) => {
+  switch (type) {
+    case 'move':
+      saveNavigationToDB(url)
+      window.location.assign(url)
+      break
+    case 'return':
+      window.history.back()
+      // saveNavigationToDB(window.location.href.split(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}`)[1])
+      break
+    case 'reload':
+      window.location.reload()
+      // saveNavigationToDB(window.location.href.split(`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}`)[1])
+      break
+    case 'link':
+      saveNavigationToDB(url)
+      break
+    default:
+      console.log('navigate type not acceptable')
+      break
+  }
+}
+
+const saveNavigationToDB = (url) => {
+  api.post('/navegacao/', {
+    url: url
+  })
+  return
 }

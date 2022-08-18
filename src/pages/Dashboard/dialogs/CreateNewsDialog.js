@@ -18,7 +18,9 @@ import {
   MenuItem,
   Select,
   FormControl,
-  InputLabel
+  InputLabel,
+  FormControlLabel,
+  Checkbox,
 } from '@material-ui/core'
 import { Toast } from '../../../components/toasty'
 
@@ -154,6 +156,34 @@ export const CreateNews = ({ open, onClose }) => {
                 rows={4}
                 multiline
               />
+              <div className='XAlign'>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      className={classes.checkbox}
+                      checked={novaNoticia.Comfirm}
+                      onChange={e => setNovaNoticia({
+                        ...novaNoticia,
+                        Comfirm: e.target.checked
+                      })}
+                    />
+                  }
+                  label="Confirmar leitura"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      className={classes.checkbox}
+                      checked={novaNoticia.Prompt}
+                      onChange={e => setNovaNoticia({
+                        ...novaNoticia,
+                        Prompt: e.target.checked
+                      })}
+                    />
+                  }
+                  label="Auto exibir"
+                />
+              </div>
             </div>
           </form>
         </DialogContent>
@@ -176,7 +206,9 @@ const INITIAL_NEWS_STATE = {
   BannerDescription: '',
   BannerAlign: 'right',
   ModalHeaderTitle: '',
-  ModalContent: ''
+  ModalContent: '',
+  Prompt: false,
+  Comfirm: false
 }
 
 const styles = (theme) => ({
@@ -218,7 +250,10 @@ const useStyles = makeStyles((theme) => ({
   },
   paddingRight: props => ({
     paddingRight: props.fullScreen ? '16px' : '0px',
-  })
+  }),
+  checkbox: {
+    transform: "scale(0.3)",
+  },
 }));
 
 const DialogTitle = withStyles(styles)((props) => {

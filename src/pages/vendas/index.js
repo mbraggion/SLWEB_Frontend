@@ -26,22 +26,7 @@ import { Panel } from "../../components/commom_in";
 import { Toast } from '../../components/toasty'
 import { RED_PRIMARY } from '../../misc/colors'
 
-import {
-  LoadInsumos,
-  UpdateCarrinho,
-  UpdateProdutos,
-  SetBuyQtt,
-  SetCheckedProd,
-  ClearCarrinho,
-  ResetarDetalhes,
-  DestroyStore,
-  LoadClientes,
-  LoadPagamentos,
-  LoadDepositos,
-  ChangeCliente,
-  SetColetaCarga,
-  ChangeTipoVenda
-} from "../../global/actions/VendasAction";
+import { LoadInsumos, UpdateCarrinho, UpdateProdutos, SetBuyQtt, SetCheckedProd, ClearCarrinho, ResetarDetalhes, DestroyStore, LoadClientes, LoadPagamentos, LoadDepositos, ChangeCliente, SetColetaCarga, ChangeTipoVenda } from "../../global/actions/VendasAction";
 import Vender from "./Vender";
 import Pedidos from "./Pedidos";
 
@@ -52,37 +37,9 @@ function Vendas(props) {
 
   const classes = useStyles();
 
-  const {
-    LoadInsumos,
-    UpdateCarrinho,
-    SetBuyQtt,
-    SetCheckedProd,
-    UpdateProdutos,
-    ClearCarrinho,
-    ResetarDetalhes,
-    DestroyStore,
-    LoadClientes,
-    LoadPagamentos,
-    LoadDepositos,
-    ChangeCliente,
-    SetColetaCarga,
-    ChangeTipoVenda
-  } = props;
+  const { LoadInsumos, UpdateCarrinho, SetBuyQtt, SetCheckedProd, UpdateProdutos, ClearCarrinho, ResetarDetalhes, DestroyStore, LoadClientes, LoadPagamentos, LoadDepositos, ChangeCliente, SetColetaCarga, ChangeTipoVenda } = props;
 
-  const {
-    TabIndex,
-    Produtos,
-    Checked,
-    Carrinho,
-    Cliente,
-    OBS,
-    TipoVenda,
-    CondPag,
-    RemOrigem,
-    RemDestino,
-    FixPedido,
-    cargaColetas
-  } = props.State;
+  const { TabIndex, Produtos, Checked, Carrinho, Cliente, OBS, TipoVenda, CondPag, RemOrigem, RemDestino, FixPedido, cargaColetas } = props.State;
 
   const CarrinhoFormatado = fromStore2Datagrid(Carrinho);
 

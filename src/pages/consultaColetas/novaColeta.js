@@ -4,12 +4,7 @@ import { api } from '../../services/api'
 
 import { Add as AddIcon } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/core/styles'
-import {
-  Paper,
-  useMediaQuery,
-  Typography,
-  Fab
-} from '@material-ui/core';
+import { Paper, useMediaQuery, Typography, Fab } from '@material-ui/core';
 
 import { Toast } from '../../components/toasty'
 
@@ -25,28 +20,8 @@ export const NovaColeta = (props) => {
   const [leituraDoses, setLeituraDoses] = useState([]);
   const [zerou, setZerou] = useState('N');
   const [referencia, setReferencia] = useState(moment().startOf('month').format());
-  const [margemLeitura, setMargemLeitura] = useState({
-    de: null,
-    deID: null,
-    deCont: null,
-    ate: null,
-    ateID: null,
-    ateCont: null,
-    excluir: null
-  });
-  const [detalhes, setDetalhes] = useState({
-    EquiCod: '',
-    Cliente: null,
-    CNPJ: null,
-    AnxId: null,
-    PdvId: null,
-    ConId: null,
-    UltimaColeta: null,
-    ProximaColeta: null,
-    ContadorAnterior: null,
-    ProximaColetaMes: null,
-    Zerou: null,
-  })
+  const [margemLeitura, setMargemLeitura] = useState(MARGEM_INITIAL_STATE);
+  const [detalhes, setDetalhes] = useState(DETAILS_INITIAL_STATE)
 
   const handleRequestDetails = async (eqdata) => {
     if (typeof eqdata == 'undefined') {
@@ -62,13 +37,14 @@ export const NovaColeta = (props) => {
 
       setMargemLeitura({
         de: response.data.UltColeta[0] ? response.data.UltColeta[0].UltimaColeta : null,
-        deID: response.data.UltColeta[0] ? response.data.LeiturasDisponiveis.filter(leit => leit.DataLeitura === response.data.UltColeta[0].UltimaColeta)[0].LeituraId : null,
-        deCont: response.data.UltColeta[0] ? response.data.LeiturasDisponiveis.filter(leit => leit.DataLeitura === response.data.UltColeta[0].UltimaColeta)[0].Contador : null,
+        deID: response.data.UltColeta[0] ? response.data.LeiturasDisponiveis.filter(leit => leit.LeituraId === response.data.UltColeta[0].LeituraId)[0].LeituraId : null,
+        deCont: response.data.UltColeta[0] ? response.data.LeiturasDisponiveis.filter(leit => leit.LeituraId === response.data.UltColeta[0].LeituraId)[0].Contador : null,
         ate: null,
         ateID: null,
         ateCont: null,
         excluir: response.data.UltColeta[0] ? response.data.UltColeta[0].UltimaColeta : null
       })
+
 
       setDetalhes({
         EquiCod: eqdata.EquiCod,
@@ -91,36 +67,17 @@ export const NovaColeta = (props) => {
   const handleClearNovaLeituraStates = () => {
     setLeiturasDisponiveis([])
     setLeituraDoses([])
-    setMargemLeitura({
-      de: null,
-      deID: null,
-      deCont: null,
-      ate: null,
-      ateID: null,
-      ateCont: null,
-      excluir: null
-    })
-    setDetalhes({
-      EquiCod: '',
-      Cliente: null,
-      CNPJ: null,
-      AnxId: null,
-      PdvId: null,
-      ConId: null,
-      UltimaColeta: null,
-      ProximaColeta: null,
-      ContadorAnterior: null,
-      ProximaColetaMes: null,
-      Zerou: null,
-    })
+    setMargemLeitura(MARGEM_INITIAL_STATE)
+    setDetalhes(DETAILS_INITIAL_STATE)
     setZerou('N')
     setReferencia(moment().startOf('month').format())
   }
 
   const handleGravaColeta = async () => {
     let toastId = null;
+    toastId = Toast("Aguarde...", "wait");
+
     try {
-      toastId = Toast("Aguarde...", "wait");
       await api.post('/coletas/novacoleta/', {
         Detalhes: detalhes,
         Doses: leituraDoses,
@@ -178,21 +135,23 @@ export const NovaColeta = (props) => {
           Nova Coleta
         </Typography>
         <NovaColetaContent
+          classes={classes}
+
           equipamentos={props.Equipamentos}
           detalhes={detalhes}
-          classes={classes}
-          handleLookForPastData={handleRequestDetails}
           leituras={leiturasDisponiveis}
           margem={margemLeitura}
-          setMargem={setMargemLeitura}
           leituraDoses={leituraDoses}
+          zerou={zerou}
+          referencia={referencia}
+          defaultSelected={props.selectedEquip}
+
+          handleLookForPastData={handleRequestDetails}
+          setMargem={setMargemLeitura}
           setLeituraDoses={setLeituraDoses}
           handleGravaColeta={handleGravaColeta}
-          zerou={zerou}
           handleChangeZerou={handleChangeZerou}
-          referencia={referencia}
           handleChangeReferencia={handleChangeReferencia}
-          defaultSelected={props.selectedEquip}
         />
       </div>
     </Paper>
@@ -221,21 +180,23 @@ export const NovaColeta = (props) => {
         title='Nova Coleta'
       >
         <NovaColetaContent
+          classes={classes}
+
           equipamentos={props.Equipamentos}
           detalhes={detalhes}
-          classes={classes}
-          handleLookForPastData={handleRequestDetails}
           leituras={leiturasDisponiveis}
           margem={margemLeitura}
-          setMargem={setMargemLeitura}
           leituraDoses={leituraDoses}
+          zerou={zerou}
+          referencia={referencia}
+          defaultSelected={props.selectedEquip}
+
+          handleLookForPastData={handleRequestDetails}
+          setMargem={setMargemLeitura}
           setLeituraDoses={setLeituraDoses}
           handleGravaColeta={handleGravaColeta}
-          zerou={zerou}
           handleChangeZerou={handleChangeZerou}
-          referencia={referencia}
           handleChangeReferencia={handleChangeReferencia}
-          defaultSelected={props.selectedEquip}
         />
       </NovaColetaModal>
     </>
@@ -284,3 +245,27 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
   },
 }));
+
+const MARGEM_INITIAL_STATE = {
+  de: null,
+  deID: null,
+  deCont: null,
+  ate: null,
+  ateID: null,
+  ateCont: null,
+  excluir: null
+}
+
+const DETAILS_INITIAL_STATE = {
+  EquiCod: '',
+  Cliente: null,
+  CNPJ: null,
+  AnxId: null,
+  PdvId: null,
+  ConId: null,
+  UltimaColeta: null,
+  ProximaColeta: null,
+  ContadorAnterior: null,
+  ProximaColetaMes: null,
+  Zerou: null,
+}

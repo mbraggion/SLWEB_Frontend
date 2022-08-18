@@ -1,21 +1,8 @@
 import React, { useState } from 'react';
 
-import {
-  makeStyles,
-  Button,
-  FormControlLabel,
-  Checkbox,
-  Paper,
-  InputBase,
-  IconButton,
-  Divider,
-  Tooltip
-} from '@material-ui/core';
-import {
-  Add as AddIcon,
-  Search as SearchIcon,
-  Close as CloseIcon
-} from '@material-ui/icons'
+import { makeStyles, Button, FormControlLabel, Checkbox, Paper, InputBase, IconButton, Divider, Tooltip } from '@material-ui/core';
+
+import { Add as AddIcon, Search as SearchIcon, Close as CloseIcon } from '@material-ui/icons'
 
 export const ClienteListOptions = ({ onChangeFiltro, onOpenNewClientesModal, mostrarInativos, switchInativos }) => {
   const classes = useStyles()

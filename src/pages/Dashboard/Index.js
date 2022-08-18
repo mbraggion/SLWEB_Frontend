@@ -35,6 +35,15 @@ const Dashboard = () => {
     LoadNews();
   }, [])
 
+  useEffect(() => {
+    for (let i = 0; i < news.length; i++) {
+      if (news[i].ModalPrompt === true && news[i].DtConfirmacao === null) {
+        handleOpenNewsModal(news[i])
+        break
+      }
+    }
+  }, [news])
+
   const handleOpenCreateNewsModal = () => {
     setCreateNewsModalOpen(true)
   }
@@ -60,9 +69,32 @@ const Dashboard = () => {
     setDisplayedNews(news)
   }
 
-  const handleCloseNewsModal = () => {
+  const handleCloseNewsModal = async () => {
+    //da um check que a noticia foi vizualizada
+    if (displayedNews.ReadConfirm === true && displayedNews.DtConfirmacao === null) {
+      try {
+        await api.post('/dashboard/news/check', {
+          newsId: displayedNews.NewsId
+        })
+
+        setNews(oldState => {
+          let aux = [...oldState]
+
+          aux.forEach((nw, i) => {
+            if (nw.NewsId === displayedNews.NewsId) {
+              aux[i].DtConfirmacao = new Date()
+            }
+          })
+
+          return aux
+        })
+      } catch (err) {
+
+      }
+    }
+
     setNewsModalOpen(false)
-    setDisplayedNews(null)
+    // setDisplayedNews(null)
   }
 
   return (

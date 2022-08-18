@@ -6,23 +6,9 @@ import { saveAs } from "file-saver";
 import { api } from "../../services/api";
 
 import { Receipt } from '@material-ui/icons'
-import {
-  withStyles,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  Button,
-} from "@material-ui/core/";
+import { withStyles, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button, } from "@material-ui/core/";
 
-import {
-  ChangeTab,
-  SetMin,
-  SetPodeRetirar,
-} from "../../global/actions/ComprasAction";
+import { ChangeTab, SetMin, SetPodeRetirar, } from "../../global/actions/ComprasAction";
 
 import Loading from "../../components/loading_screen";
 import { Toast } from "../../components/toasty";
@@ -418,12 +404,7 @@ const Contas = (props) => {
                       <StyledTableRowWithoutHighlight>
                         <StyledTableCell>{total.Desc}</StyledTableCell>
                         <StyledTableCell
-                          style={{
-                            background:
-                              currencyFormat(total.Vencido) > 0
-                                ? "#ff4747"
-                                : null,
-                          }}
+                          style={{ background: total.Vencido > 0 ? "#ff4747" : null, }}
                         >
                           {currencyFormat(total.Vencido)}
                         </StyledTableCell>
@@ -450,6 +431,30 @@ const Contas = (props) => {
                         </StyledTableCell>
                       </StyledTableRowWithoutHighlight>
                     ) : null}
+                    <StyledTableRowWithoutHighlight style={{ background: '#CCC' }}>
+                      <StyledTableCell>Total</StyledTableCell>
+                      <StyledTableCell>
+                        {currencyFormat(TotalDuplicatas.reduce((accumulator, dup) => {
+                          return accumulator + dup.Vencido
+                        }, 0))}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {currencyFormat(TotalDuplicatas.reduce((accumulator, dup) => {
+                          return accumulator + dup.Avencer
+                        }, 0) + aFaturar)}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {currencyFormat(
+                          TotalDuplicatas.reduce((accumulator, dup) => {
+                            return accumulator + dup.Vencido
+                          }, 0) +
+                          TotalDuplicatas.reduce((accumulator, dup) => {
+                            return accumulator + dup.Avencer
+                          }, 0) +
+                          aFaturar
+                        )}
+                      </StyledTableCell>
+                    </StyledTableRowWithoutHighlight>
                   </TableBody>
                 </Table>
               </TableContainer>

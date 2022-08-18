@@ -5,6 +5,7 @@ import {
   ADD_LIMITE,
   SUB_LIMITE,
   MOVE_LEAD,
+  UPD_LEAD
 } from "../actions/LeadActionTypes";
 
 const initialState = {
@@ -56,6 +57,20 @@ export const LeadsReducer = (state = initialState, action) => {
         ...state,
         LeadsFranqueado: [...state.LeadsFranqueado, action.Lead],
         LeadsGeral: state.LeadsGeral.filter((lead) => String(lead.Id) !== String(action.Lead.Id)),
+      };
+
+    case UPD_LEAD:
+      let oldLeadsFranqueado = [...state.LeadsFranqueado]
+
+      oldLeadsFranqueado.forEach((lead, index) => {
+        if(lead.Id === action.Lead.Id){
+          oldLeadsFranqueado[index] = action.Lead
+        }
+      })
+      
+      return {
+        ...state,
+        LeadsFranqueado: oldLeadsFranqueado,
       };
 
     default:

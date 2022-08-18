@@ -64,16 +64,17 @@ export const InstrucoesCartaoModal = ({ open, onClose, title }) => {
       </DialogTitle>
 
       <DialogContent dividers>
-        <Typography 
-        variant='body1'
+        <div
         style={{
-          padding: '0px 8px'
+          padding: '8px 10px 0px 30px',
+          fontSize: '14px'
         }}
-        dangerouslySetInnerHTML={{
-          __html: content
-        }}>
+          dangerouslySetInnerHTML={{
+            __html: content
+          }}
+        >
 
-        </Typography>
+        </div>
       </DialogContent>
     </Dialog>
 }

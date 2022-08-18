@@ -16,7 +16,7 @@ import Paper from "@material-ui/core/Paper";
 import { Table } from "../../components/table";
 import Loading from "../../components/loading_screen";
 
-import { PedidoDetailsModal } from './PedidosDetailsModal'
+import { PedidoDetailsModal } from './modals/PedidosDetailsModal'
 import { SwitchTab } from '../../global/actions/VendasAction'
 
 function Pedidos(props) {

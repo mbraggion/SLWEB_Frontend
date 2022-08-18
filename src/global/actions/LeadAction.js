@@ -4,7 +4,8 @@ import {
   LOAD_LEADS_LIMITE,
   ADD_LIMITE,
   SUB_LIMITE,
-  MOVE_LEAD
+  MOVE_LEAD,
+  UPD_LEAD
 } from "./LeadActionTypes";
 
 export const LoadLeadsGeral = (value) => ({
@@ -32,5 +33,10 @@ export const SubLimite = () => ({
 
 export const MoveLinha = (lead) => ({
   type: MOVE_LEAD,
+  Lead: lead,
+});
+
+export const UpdateLinha = (lead) => ({
+  type: UPD_LEAD,
   Lead: lead,
 });

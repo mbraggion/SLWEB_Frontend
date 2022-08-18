@@ -31,6 +31,7 @@ export const NewsDialog = ({ open, onClose, title, content }) => {
         >
           {title}
         </DialogTitle>
+
         <DialogContent
           dividers
           style={{
@@ -42,10 +43,12 @@ export const NewsDialog = ({ open, onClose, title, content }) => {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'flex-start'
+              justifyContent: 'flex-start',
+              fontSize: '14px'
             }}
+          dangerouslySetInnerHTML={{ __html: content }}
           >
-            {content}
+            
           </div>
         </DialogContent>
         <DialogActions>

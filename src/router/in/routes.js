@@ -12,7 +12,6 @@ import Ajuda from "../../pages/ajuda/index";
 import Equipamentos from '../../pages/equipamentos/index';
 import AddEquipamentos from "../../pages/equipamentosSolicitacao/index";
 import GerenciarEquip from "../../pages/gerenciarSolicitacoes/index";
-import AdmFranquia from "../../pages/administracao/index";
 import Home from "../../pages/dashboard/index";
 import Monitor from "../../pages/monitor/index";
 import FormsAcompanhamento from "../../pages/formulários_cadastrados";
@@ -23,6 +22,12 @@ import Coletas from '../../pages/consultaColetas/index'
 import PDV from '../../pages/pontosDeVenda/index'
 import Clientes from '../../pages/clientes'
 import GerirLeads from '../../pages/gerirLeads/index'
+import PedidosCompra from '../../pages/pedidosDeCompra/index'
+import Arquivos from '../../pages/arquivos/index'
+import Franqueados from '../../pages/franqueados'
+import DRE from '../../pages/dre'
+
+import { FilesProvider } from '../../hooks/useFiles'
 
 function Dashboard(props) {
   return (
@@ -41,23 +46,30 @@ function Dashboard(props) {
         <div id="App">
           <Switch>
             <Route exact path="/" component={Home} />
-            <Route exact path="/leads" component={Leads} />
-            <Route exact path="/perfil" component={Perfil} />
             <Route exact path="/ajuda" component={Ajuda} />
-            <Route exact path="/compras" component={Compras} />
-            <Route exact path="/vendas" component={Vendas} />
-            <Route exact path="/equipamentos" component={Equipamentos} />
-            <Route exact path="/equipamentos/solicitacao" component={AddEquipamentos} />
-            <Route exact path="/equipamentos/solicitacao/management" component={GerenciarEquip} />
-            <Route exact path="/administracao/franquia" component={AdmFranquia} />
-            <Route exact path="/administracao/formularios" component={FormsAcompanhamento} />
-            <Route exact path="/administracao/leads" component={GerirLeads} />
-            <Route exact path="/administracao/emails" component={CentralEmails} />
-            <Route exact path="/leituras/:ativo" component={Coletas} />
-            <Route exact path="/leituras" component={Coletas} />
-            <Route exact path="/pontodevenda" component={PDV} />
-            <Route exact path="/clientes" component={Clientes} />
-            <Route exact path="/monitor" component={Monitor} />
+
+            <Route exact path={validateRouteAccess("/leads")} component={Leads} />
+            <Route exact path={validateRouteAccess("/perfil")} component={Perfil} />
+            <Route exact path={validateRouteAccess("/compras")} component={Compras} />
+            <Route exact path={validateRouteAccess("/vendas")} component={Vendas} />
+            <Route exact path={validateRouteAccess("/equipamentos")} component={Equipamentos} />
+            <Route exact path={validateRouteAccess("/solicitacao")} component={AddEquipamentos} />
+            <Route exact path={validateRouteAccess("/leituras/:ativo")} component={Coletas} />
+            <Route exact path={validateRouteAccess("/leituras")} component={Coletas} />
+            <Route exact path={validateRouteAccess("/pontodevenda")} component={PDV} />
+            <Route exact path={validateRouteAccess("/pontodevenda/:ativo")} component={PDV} />
+            <Route exact path={validateRouteAccess("/clientes")} component={Clientes} />
+            <Route exact path={validateRouteAccess("/monitor")} component={Monitor} />
+            <Route exact path={validateRouteAccess("/dre")} component={DRE} />
+            <Route exact path={validateRouteAccess("/arquivos")} component={ () => <FilesProvider> <Arquivos /> </FilesProvider> } />
+
+            <Route exact path={validateRouteAccess("/administracao/solicitacao/management")} component={GerenciarEquip} />
+            <Route exact path={validateRouteAccess("/administracao/formularios")} component={FormsAcompanhamento} />
+            <Route exact path={validateRouteAccess("/administracao/leads")} component={GerirLeads} />
+            <Route exact path={validateRouteAccess("/administracao/emails")} component={CentralEmails} />
+            <Route exact path={validateRouteAccess("/administracao/pedidos/compra")} component={PedidosCompra} />
+            <Route exact path={validateRouteAccess("/administracao/franqueados")} component={Franqueados} />
+
             <Route path="*" component={notFound} />
           </Switch>
         </div>
@@ -71,3 +83,18 @@ const mapStateToProps = (store) => ({
 });
 
 export default connect(mapStateToProps)(Dashboard);
+
+const validateRouteAccess = (correctPath) => {
+  const links = JSON.parse(window.sessionStorage.getItem('links'))
+  let linkEstaDisponivel = false
+
+  links.forEach(LS => {
+    LS.forEach(L => {
+      if (String(correctPath).includes(L.Link)) {
+        linkEstaDisponivel = true
+      }
+    })
+  })
+
+  return linkEstaDisponivel === true ? correctPath : '/'
+}

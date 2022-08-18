@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import moment from 'moment'
-import Draggable from "react-draggable";
-import { api } from "../../services/api";
 import { saveAs } from "file-saver";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import Draggable from "react-draggable";
+import { api } from "../../../services/api";
 
 import {
   Close,
-  GetApp,
   HourglassEmpty,
   FileCopy,
   ListAlt,
@@ -18,20 +17,21 @@ import {
   FeaturedPlayList
 } from "@material-ui/icons";
 import { DataGrid } from "@material-ui/data-grid";
-import Dialog from "@material-ui/core/Dialog";
-import Tooltip from "@material-ui/core/Tooltip";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import MenuItem from "@material-ui/core/MenuItem";
-import Paper from "@material-ui/core/Paper";
-import Grow from "@material-ui/core/Grow";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import IconButton from "@material-ui/core/IconButton";
+import {
+  Dialog,
+  Tooltip,
+  DialogActions,
+  DialogContent,
+  Paper,
+  Grow,
+  Button,
+  Typography,
+  DialogTitle,
+  IconButton,
+  ButtonGroup
+} from "@material-ui/core/";
 
-import { Toast } from "../../components/toasty";
-import Select from "../../components/materialComponents/Select";
+import { Toast } from "../../../components/toasty";
 import {
   ChangeCliente,
   ChangeTipoVenda,
@@ -46,13 +46,13 @@ import {
   ClearCarrinho,
   EditPedido,
   SwitchTab
-} from "../../global/actions/VendasAction";
+} from "../../../global/actions/VendasAction";
 
-import nfeLogo from '../../assets/svg/NFe.svg';
+import nfeLogo from '../../../assets/svg/NFe.svg';
+import xmlLogo from '../../../assets/svg/XML.svg';
 
 const DetailsModal = ({ pedidoDet, open, actualPedidoInfo, setActualPedidoInfo, setPedidos, setPedidoDet, setOpen, ...props }) => {
   const [wait, setWait] = useState(false);
-  const [doctype, setDoctype] = useState("DANFE");
 
   const {
     Clientes,
@@ -78,14 +78,13 @@ const DetailsModal = ({ pedidoDet, open, actualPedidoInfo, setActualPedidoInfo, 
     setActualPedidoInfo({});
     setPedidoDet([]);
     setOpen(false);
-    setDoctype('DANFE')
   };
 
   const extraControls = (status) => {
     switch (status) {
       case 'F':
         return (
-          <>
+          <ButtonGroup variant="contained" color="primary">
             <Tooltip
               title={
                 <label style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }} >
@@ -117,41 +116,49 @@ const DetailsModal = ({ pedidoDet, open, actualPedidoInfo, setActualPedidoInfo, 
                 <FileCopy />
               </IconButton>
             </Tooltip>
-            <Select
-              onChange={(e) => setDoctype(e.target.value)}
-              value={doctype}
-              disabled={false}
-              label="Documento"
-              variant='outlined'
-            >
-              <MenuItem value="DANFE">DANFE</MenuItem>
-              <MenuItem value="XML">XML</MenuItem>
-              <MenuItem value="CANCELAMENTO">Cancelamento</MenuItem>
-              <MenuItem value="CC">Carta de Correção</MenuItem>
-            </Select>
             <Tooltip
               title={
                 <label style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }} >
-                  Baixar
+                  Baixar DANFE
                 </label>
               }
               placement="top"
               arrow
 
             >
-              <IconButton
-                disabled={wait}
-                onClick={() => handleRecoverDOC(actualPedidoInfo, doctype)}
-                color="primary"
-              >
-                <GetApp />
+              <IconButton disabled={wait} onClick={() => handleRecoverDOC(actualPedidoInfo, 'DANFE')} color="primary">
+                <img
+                  src={nfeLogo}
+                  width='23px'
+                  height='23px'
+                  alt='NFe Icon'
+                />
               </IconButton>
             </Tooltip>
-          </>
+            <Tooltip
+              title={
+                <label style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }} >
+                  Baixar XML
+                </label>
+              }
+              placement="top"
+              arrow
+
+            >
+              <IconButton disabled={wait} onClick={() => handleRecoverDOC(actualPedidoInfo, 'XML')} color="primary">
+                <img
+                  src={xmlLogo}
+                  width='23px'
+                  height='23px'
+                  alt='NFe Icon'
+                />
+              </IconButton>
+            </Tooltip>
+          </ButtonGroup>
         )
       case 'P':
         return (
-          <>
+          <ButtonGroup variant="contained" color="primary">
             <Tooltip
               title={
                 <label style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }} >
@@ -216,11 +223,11 @@ const DetailsModal = ({ pedidoDet, open, actualPedidoInfo, setActualPedidoInfo, 
                 />
               </IconButton>
             </Tooltip>
-          </>
+          </ButtonGroup>
         )
       case 'S':
         return (
-          <>
+          <ButtonGroup variant="contained" color="primary">
             <Tooltip
               title={
                 <label style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }} >
@@ -252,15 +259,15 @@ const DetailsModal = ({ pedidoDet, open, actualPedidoInfo, setActualPedidoInfo, 
                 <FileCopy />
               </IconButton>
             </Tooltip>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0px 8px 0px 0px' }}>
               <HourglassEmpty />
               <Typography variant='subtitle2'>Gerando NFe...</Typography>
             </div>
-          </>
+          </ButtonGroup>
         )
       case 'C':
         return (
-          <>
+          <ButtonGroup variant="contained" color="primary">
             <Tooltip
               title={
                 <label style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }} >
@@ -292,11 +299,11 @@ const DetailsModal = ({ pedidoDet, open, actualPedidoInfo, setActualPedidoInfo, 
                 <FileCopy />
               </IconButton>
             </Tooltip>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0px 8px 0px 0px' }}>
               <CancelScheduleSend />
               <Typography variant='subtitle2'>Venda cancelada</Typography>
             </div>
-          </>
+          </ButtonGroup>
         )
       default:
         return
@@ -371,22 +378,22 @@ const DetailsModal = ({ pedidoDet, open, actualPedidoInfo, setActualPedidoInfo, 
   }
 
   const handleEditVenda = () => {
-    if (Math.abs(moment(actualPedidoInfo.Emissao).get('month') - moment().get('month')) > 0) {
-      Toast('Não é possivel editar pedidos emitidos no mês anterior', 'error')
-      return
-    }
+    if (actualPedidoInfo.ST === 'P') {
+      if (Math.abs(moment(actualPedidoInfo.Emissao).get('month') - moment().get('month')) > 0) {
+        Toast('Não é possivel editar pedidos emitidos no mês anterior', 'error')
+        return
+      }
 
-    if (moment().diff(moment(actualPedidoInfo.Emissao), 'days') > 10) {
-      Toast('Não é possível editar pedidos com mais de 10 dias', 'error')
-      return
+      if (moment().diff(moment(actualPedidoInfo.Emissao), 'days') > 10) {
+        Toast('Não é possível editar pedidos com mais de 10 dias', 'error')
+        return
+      }
+
+      EditPedido(actualPedidoInfo.Pvc_ID)
     }
 
     ResetarDetalhes()
     ClearCarrinho()
-
-    if (actualPedidoInfo.ST === 'P') {
-      EditPedido(actualPedidoInfo.Pvc_ID)
-    }
 
     //escolhe o cliente correto
     Clientes.forEach((cliente) =>

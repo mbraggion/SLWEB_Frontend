@@ -14,14 +14,11 @@ import { PdvList } from './pdvList'
 import { PdvListOptions } from './options'
 import { DetailsModal } from './modals/detailsModal'
 
-function Exemplo() {
+const PontosDeVenda = ({ match }) => {
   const [loaded, setLoaded] = useState(false);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [PDVs, setPDVs] = useState([]);
-  const [depositos, setDepositos] = useState([]);
-  const [configuracoes, setConfiguracoes] = useState([]);
-  const [eqps, setEqps] = useState([]);
-  const [targetPDV, setTargetPDV] = useState({});
+  const [targetPDV, setTargetPDV] = useState({ pdv: null, anx: null });
   const [filtro, setFiltro] = useState('');
   const [mostrarInativos, setMostrarInativos] = useState(false);
 
@@ -33,56 +30,63 @@ function Exemplo() {
         const response = await api.get("/pontosdevenda");
 
         setPDVs(response.data.PDVs);
-        setDepositos(response.data.Depositos);
-        setConfiguracoes(response.data.Configuracoes);
-        setEqps(response.data.EqsDisp);
 
         setLoaded(true);
+
+        if (match.params.ativo !== null && typeof match.params.ativo !== 'undefined') {
+          setFiltro(String(match.params.ativo))
+          // setMostrarInativos(true)
+        }
       } catch (err) { }
     }
 
     LoadData();
+    // eslint-disable-next-line
   }, []);
 
   const handleOpenDetailsModal = (index) => {
-    setTargetPDV(returnPDVsFilter(PDVs, mostrarInativos, filtro)[index])
+    setTargetPDV({
+      pdv: returnPDVsFilter(PDVs, mostrarInativos, filtro)[index].PdvId,
+      anx: returnPDVsFilter(PDVs, mostrarInativos, filtro)[index].AnxId
+    })
     setDetailsModalOpen(true)
   }
 
   const handleCloseDetailsModal = () => {
     setDetailsModalOpen(false)
-    setTargetPDV({})
+    setTargetPDV({ pdv: null, anx: null })
   }
 
-  return !loaded ? (
-    <Loading />
-  ) : (
+  return !loaded
+    ? <Loading />
+    :
     <Panel style={{ justifyContent: 'flex-start' }}>
       <DetailsModal
         open={detailsModalOpen}
         onClose={handleCloseDetailsModal}
-        Details={targetPDV}
-        Depositos={depositos}
-        Configuracoes={configuracoes}
-        Equipamentos={eqps}
-        DetailsChangeHandler={setTargetPDV}
+        PdvId={targetPDV.pdv}
+        AnxId={targetPDV.anx}
         updatePDVsArray={setPDVs}
-        updateEqsArray={setEqps}
+        PdvStatus={
+          returnPDVsFilter(PDVs, mostrarInativos, filtro).filter(pdv => pdv.PdvId === targetPDV.pdv && pdv.AnxId === targetPDV.anx).length > 0
+            ? returnPDVsFilter(PDVs, mostrarInativos, filtro).filter(pdv => pdv.PdvId === targetPDV.pdv && pdv.AnxId === targetPDV.anx)[0].PdvStatus
+            : 'I'
+        }
       />
       <PdvListOptions
         onChangeFiltro={setFiltro}
         mostrarInativos={mostrarInativos}
         switchInativos={setMostrarInativos}
+        defaultTarget={match.params.ativo}
       />
       <PdvList
         PDVs={returnPDVsFilter(PDVs, mostrarInativos, filtro)}
         onOpenModal={handleOpenDetailsModal}
       />
     </Panel>
-  );
 }
 
-export default Exemplo;
+export default PontosDeVenda;
 
 const returnPDVsFilter = (pdvs, shouldShowInactive, filterString) => {
   var re = new RegExp(filterString.trim().toLowerCase())

@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { api } from "../../services/api";
 
+import { navigateTo } from "../../misc/commom_functions";
+
 export default class autoLogin extends Component {
   async componentDidMount() {
     sessionStorage.clear();
@@ -22,45 +24,50 @@ export default class autoLogin extends Component {
         sessionStorage.setItem('role', response.data.role);
         sessionStorage.setItem("filial_logada", response.data.nome !== '');
         sessionStorage.setItem("usuário", response.data.nome);
+        sessionStorage.setItem("links", JSON.stringify(response.data.Links));
 
         this.redirectWindow(targetWindow);
       } else {
         sessionStorage.clear();
-        window.location.assign("/");
+        navigateTo('move', "/")
       }
     } catch (err) {
-      window.location.assign("/");
+      navigateTo('move', "/")
     }
   }
 
   async redirectWindow(target) {
     switch (target) {
       case 'solicitacao':
-        window.location.assign("/equipamentos/solicitacao");
+        navigateTo('move', "/solicitacao")
         break;
 
       case 'compras':
-        window.location.assign("/compras");
+        navigateTo('move', "/compras")
         break;
 
       case 'vendas':
-        window.location.assign("/vendas");
+        navigateTo('move', "/vendas")
         break;
 
       case 'equipamentos':
-        window.location.assign("/equipamentos");
+        navigateTo('move', "/equipamentos")
         break;
 
       case 'perfil':
-        window.location.assign("/perfil");
+        navigateTo('move', "/perfil")
         break;
 
       case 'clientes':
-        window.location.assign("/clientes");
+        navigateTo('move', "/clientes")
         break;
-        
+
+      case 'coletas':
+        navigateTo('move', "/leituras")
+        break;
+
       default:
-        window.location.assign("/");
+        navigateTo('move', "/")
     }
 
   }

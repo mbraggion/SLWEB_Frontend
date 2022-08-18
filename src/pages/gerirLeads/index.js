@@ -7,7 +7,6 @@ import Loading from "../../components/loading_screen";
 
 //import de elementos visuais
 import { Panel } from "../../components/commom_in";
-import { Toast } from "../../components/toasty";
 
 import { LeadsList } from './LeadsList'
 import { LeadsListOptions } from './options'
@@ -75,6 +74,7 @@ const GestaoDeLeads = () => {
         mostrarInativos={mostrarInativos}
         switchInativos={setMostrarInativos}
         onOpenNewLeadsModal={handleOpenNewLeadModal}
+        totalLeads={returnLeadsFilter(Leads, mostrarInativos, filtro).length}
       />
       <LeadsList
         Leads={returnLeadsFilter(Leads, mostrarInativos, filtro)}

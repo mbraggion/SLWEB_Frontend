@@ -43,8 +43,8 @@ export const PdvItem = ({ PDV, i, onOpenModal }) => {
 const useStyles = makeStyles((theme) => ({
   box: props => ({
     display: 'flex',
-    width: '300px',
-    height: '300px',
+    width: '250px',
+    height: '250px',
     background: props.background,
     color: props.color,
     border: props.border,

@@ -2,16 +2,14 @@ import React, { useState } from "react";
 import { api } from "../../services/api";
 import { Link } from "react-router-dom";
 
-import Image from "../../assets/logo_sl.PNG";
+import Image from "../../assets/logo_sl.png";
 import { Toast } from "../../components/toasty";
 import { Container, Box, Logo } from "../../components/commom_out";
 import Button from "../../components/materialComponents/Button";
 import Input from "../../components/materialComponents/InputUnderline";
 import { TagFaces, Input as InputIcon } from "@material-ui/icons";
-import {
-  GREY_PRIMARY,
-  RED_PRIMARY,
-} from "../../misc/colors";
+import { GREY_PRIMARY, RED_PRIMARY } from "../../misc/colors";
+import { navigateTo } from "../../misc/commom_functions";
 
 export default function LoginADM() {
   const [adm_code, setAdmCode] = useState(null);
@@ -49,8 +47,9 @@ export default function LoginADM() {
       sessionStorage.setItem("role", response.data.role);
       sessionStorage.setItem("filial_logada", response.data.nome !== '');
       sessionStorage.setItem("usuário", response.data.nome);
+      sessionStorage.setItem("links", JSON.stringify(response.data.Links));
 
-      window.location.assign("/");
+      navigateTo('move', "/")
     } catch (err) {
       setFetching(false)
       Toast('Código ou senha incorretos', 'update', toastId, 'error')

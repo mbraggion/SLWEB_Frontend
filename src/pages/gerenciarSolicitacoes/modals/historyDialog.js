@@ -95,6 +95,13 @@ function DraggableDialog(props) {
                 </Typography>
               ) : null}
 
+              {Req.OSCComMotivo !== null ? (
+                <Typography variant="subtitle1" gutterBottom>
+                  <strong>Mensagem(Comercial): </strong>
+                  {Req.OSCComMotivo}
+                </Typography>
+              ) : null}
+              
               {Req.OSCTecDtValidação !== null ? (
                 <Typography variant="subtitle1" gutterBottom>
                   <strong>{convertData(Req.OSCTecDtValidação)}: </strong>
@@ -102,12 +109,6 @@ function DraggableDialog(props) {
                 </Typography>
               ) : null}
 
-              {Req.OSCComMotivo !== null ? (
-                <Typography variant="subtitle1" gutterBottom>
-                  <strong>Mensagem(Comercial): </strong>
-                  {Req.OSCComMotivo}
-                </Typography>
-              ) : null}
 
               {Req.OSCTecAceite === true ? (
                 <Typography variant="subtitle1" gutterBottom>
@@ -157,7 +158,7 @@ function DraggableDialog(props) {
             </Campo>
           </>
         </DialogContent>
-        <DialogActions style={{ padding: '8px 24px'}}>
+        <DialogActions style={{ padding: '8px 24px' }}>
           <ButtonPure onClick={handleClose} color="primary">
             Fechar
           </ButtonPure>

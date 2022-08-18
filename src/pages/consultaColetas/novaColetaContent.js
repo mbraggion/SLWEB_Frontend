@@ -2,12 +2,7 @@ import React, { useEffect } from 'react'
 import moment from 'moment'
 
 import { FilterList } from '@material-ui/icons'
-import {
-  Button,
-  MenuItem,
-  Typography,
-  Divider,
-} from '@material-ui/core';
+import { Button, MenuItem, Typography, Divider, } from '@material-ui/core';
 
 import Select from '../../components/materialComponents/Select'
 import { capitalizeMonthFirstLetter } from '../../misc/commom_functions'
@@ -31,8 +26,6 @@ export const NovaColetaContent = (props) => {
     handleChangeReferencia,
     defaultSelected
   } = props
-
-  console.log(defaultSelected)
 
   useEffect(() => {
     if (typeof defaultSelected !== 'undefined') {
@@ -134,16 +127,16 @@ export const NovaColetaContent = (props) => {
             MLeft="8px"
             label="Leitura de:"
             disabled={margem.de === null || margem.de === margem.ate ? false : true}
-            value={margem.de === null ? '' : margem.de}
+            value={margem.deID === null ? '' : margem.deID}
             onChange={(e) => {
               setLeituraDoses([])
               setMargem({
-                de: e.target.value !== '' ? e.target.value : null,
-                deID: e.target.value !== '' ? leituras.filter(leit => leit.DataLeitura === e.target.value)[0].LeituraId : null,
-                deCont: e.target.value !== '' ? leituras.filter(leit => leit.DataLeitura === e.target.value)[0].Contador : null,
-                ate: e.target.value !== '' ? e.target.value : null,
-                ateID: e.target.value !== '' ? leituras.filter(leit => leit.DataLeitura === e.target.value)[0].LeituraId : null,
-                ateCont: e.target.value !== '' ? leituras.filter(leit => leit.DataLeitura === e.target.value)[0].Contador : null,
+                de: e.target.value !== '' ? leituras.filter(leit => leit.LeituraId === e.target.value)[0].DataLeitura : null,
+                deID: e.target.value !== '' ? leituras.filter(leit => leit.LeituraId === e.target.value)[0].LeituraId : null,
+                deCont: e.target.value !== '' ? leituras.filter(leit => leit.LeituraId === e.target.value)[0].Contador : null,
+                ate: e.target.value !== '' ? leituras.filter(leit => leit.LeituraId === e.target.value)[0].DataLeitura : null,
+                ateID: e.target.value !== '' ? leituras.filter(leit => leit.LeituraId === e.target.value)[0].LeituraId : null,
+                ateCont: e.target.value !== '' ? leituras.filter(leit => leit.LeituraId === e.target.value)[0].Contador : null,
                 excluir: null
               })
             }}
@@ -151,7 +144,7 @@ export const NovaColetaContent = (props) => {
             {
               leituras.map((leitura) =>
                 <MenuItem
-                  value={leitura.DataLeitura}
+                  value={leitura.LeituraId}
                   key={leitura.DataLeitura}
                 >
                   {moment(leitura.DataLeitura).utc().format("DD/MM/YYYY HH:mm:ss")}
@@ -174,15 +167,15 @@ export const NovaColetaContent = (props) => {
             MLeft="8px"
             label="Leitura até:"
             disabled={margem.de === null || margem.de === margem.ate ? true : false}
-            value={margem.ate === null ? '' : margem.ate}
+            value={margem.ateID === null ? '' : margem.ateID}
             onChange={(e) => {
               setLeituraDoses([])
               setMargem(oldObj => {
                 return {
                   ...oldObj,
-                  ate: e.target.value !== '' ? e.target.value : null,
-                  ateID: e.target.value !== '' ? leituras.filter(leit => leit.DataLeitura === e.target.value)[0].LeituraId : null,
-                  ateCont: e.target.value !== '' ? leituras.filter(leit => leit.DataLeitura === e.target.value)[0].Contador : null,
+                  ate: e.target.value !== '' ? leituras.filter(leit => leit.LeituraId === e.target.value)[0].DataLeitura : null,
+                  ateID: e.target.value !== '' ? leituras.filter(leit => leit.LeituraId === e.target.value)[0].LeituraId : null,
+                  ateCont: e.target.value !== '' ? leituras.filter(leit => leit.LeituraId === e.target.value)[0].Contador : null,
                 }
               })
             }
@@ -190,7 +183,7 @@ export const NovaColetaContent = (props) => {
           >
             {leituras.filter(leit => leit.DataLeitura !== margem.excluir).reverse().map((leitura) =>
               <MenuItem
-                value={leitura.DataLeitura}
+                value={leitura.LeituraId}
                 key={leitura.DataLeitura}
               >
                 {moment(leitura.DataLeitura).utc().format("DD/MM/YYYY HH:mm:ss")}
@@ -329,13 +322,13 @@ const returnConsumoTotalDoses = (leituras, margem, zerou, doses) => {
   }
   else {
     return (
-      leituras.filter(leit => leit.DataLeitura === margem.ate)[0] && margem.ate !== null && margem.de !== null ?
-        leituras.filter(leit => leit.DataLeitura === margem.ate)[0].Contador
+      leituras.filter(leit => leit.LeituraId === margem.ateID)[0] && margem.ateID !== null && margem.de !== null ?
+        leituras.filter(leit => leit.LeituraId === margem.ateID)[0].Contador
         :
         0)
       -
-      (leituras.filter(leit => leit.DataLeitura === margem.de)[0] && margem.de !== null && margem.ate !== null ?
-        leituras.filter(leit => leit.DataLeitura === margem.de)[0].Contador
+      (leituras.filter(leit => leit.LeituraId === margem.deID)[0] && margem.deID !== null && margem.ate !== null ?
+        leituras.filter(leit => leit.LeituraId === margem.deID)[0].Contador
         :
         0
       )

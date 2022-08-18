@@ -6,11 +6,7 @@ import {
   Typography,
   ListItem,
   ListItemText,
-  Divider
 } from '@material-ui/core'
-import { Face } from '@material-ui/icons'
-
-import { RED_PRIMARY, GREY_SECONDARY } from '../../misc/colors'
 
 export const LeadItem = ({ Lead, i, onOpenModal }) => {
   const classes = useStyles()

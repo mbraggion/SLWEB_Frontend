@@ -203,8 +203,8 @@ const Equipamentos = () => {
 
       await api.post('/equip/confirm', {
         Addresses: enderecos,
-        RefMes: moment(confirmPeriod[0].de).get('month') + 1,
-        RefAno: moment(confirmPeriod[0].de).get('year'),
+        RefMes: moment(confirmPeriod[0].ate).get('month') + 1,
+        RefAno: moment(confirmPeriod[0].ate).get('year'),
       })
 
       setConfirmModalState(false)

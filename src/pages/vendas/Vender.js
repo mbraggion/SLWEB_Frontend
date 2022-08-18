@@ -22,47 +22,14 @@ import Select from "../../components/materialComponents/Select";
 import InputMultline from "../../components/materialComponents/InputMultline";
 import { RED_PRIMARY } from '../../misc/colors'
 
-import {
-  SetCheckedProd,
-  ChangeCliente,
-  ChangeTipoVenda,
-  SetCondPag,
-  SetDepOrigem,
-  SetDepDestino,
-  SetObs,
-  EditPedido,
-  SwitchTab
-} from "../../global/actions/VendasAction";
+import { SetCheckedProd, ChangeCliente, ChangeTipoVenda, SetCondPag, SetDepOrigem, SetDepDestino, SetObs, EditPedido, SwitchTab } from "../../global/actions/VendasAction";
 
 function Vender(props) {
   const classes = useStyles();
 
-  const {
-    Produtos,
-    Checked,
-    Clientes,
-    Cliente,
-    TipoVenda,
-    Condicoes,
-    OBS,
-    CondPag,
-    RemOrigem,
-    RemDestino,
-    Depositos,
-    FixPedido
-  } = props.State;
+  const { Produtos, Checked, Clientes, Cliente, TipoVenda, Condicoes, OBS, CondPag, RemOrigem, RemDestino, Depositos, FixPedido } = props.State;
 
-  const {
-    SetCheckedProd,
-    ChangeCliente,
-    ChangeTipoVenda,
-    SetObs,
-    SetCondPag,
-    SetDepOrigem,
-    SetDepDestino,
-    EditPedido,
-    SwitchTab
-  } = props;
+  const { SetCheckedProd, ChangeCliente, ChangeTipoVenda, SetObs, SetCondPag, SetDepOrigem, SetDepDestino, EditPedido, SwitchTab } = props;
 
   useEffect(() => {
     SwitchTab(0)
@@ -364,7 +331,7 @@ const extraOptions = (
             MBottom='8px'
           >
             {Depositos.map((dep) => (
-              <MenuItem value={dep.DepId} key={dep.DepId}>
+              <MenuItem value={dep.DepId} key={dep.DepId} disabled={dep.DepId === depDestino}>
                 {dep.DepNome}
               </MenuItem>
             ))}
@@ -378,7 +345,7 @@ const extraOptions = (
             MBottom='8px'
           >
             {Depositos.map((dep) => (
-              <MenuItem value={dep.DepId} key={dep.DepId}>
+              <MenuItem value={dep.DepId} key={dep.DepId} disabled={dep.DepId === depOrigem}>
                 {dep.DepNome}
               </MenuItem>
             ))}

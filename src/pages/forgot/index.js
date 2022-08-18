@@ -4,11 +4,12 @@ import { Toast } from "../../components/toasty";
 import { Link } from "react-router-dom";
 
 import { Container, Box, Logo } from "../../components/commom_out";
-import Image from "../../assets/logo_sl.PNG";
+import Image from "../../assets/logo_sl.png";
 import Button from "../../components/materialComponents/Button";
 import InputUnderline from "../../components/materialComponents/InputUnderline";
 import { LockOutlined, ArrowBack, Work } from "@material-ui/icons";
 import { RED_PRIMARY } from '../../misc/colors'
+import { navigateTo } from '../../misc/commom_functions'
 
 export default function Forgot() {
   const [user_code, setUser] = useState("");
@@ -27,7 +28,7 @@ export default function Forgot() {
 
         Toast('Sua senha foi enviada para o seu e-mail!', 'update', toastId, 'success')
         setTimeout(() => {
-          window.location.assign("/");
+          navigateTo('move', '/')
         }, 3000);
       } catch (err) {
       }

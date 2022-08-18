@@ -24,9 +24,7 @@ export default class Logs extends React.Component {
       const response = await api.get("/equip/requests/own");
 
       this.setState({ logs: response.data, loaded: true });
-    } catch (err) {
-      // window.location.assign('/')
-    }
+    } catch (err) { }
   }
 
   async handleRetrivePDF(OSID) {
@@ -35,11 +33,7 @@ export default class Logs extends React.Component {
     try {
       toastId = Toast('Buscando...', 'wait')
 
-      const response = await api.get("/equip/requests/retrive", {
-        params: {
-          token: sessionStorage.getItem("token"),
-          OSID,
-        },
+      const response = await api.get(`/equip/requests/retrive/${OSID}`, {
         responseType: "arraybuffer",
       });
 

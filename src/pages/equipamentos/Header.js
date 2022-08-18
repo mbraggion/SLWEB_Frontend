@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment'
+// import moment from 'moment'
 import { Link } from "react-router-dom";
 
 import { ErrorOutline, Room, PlaylistAddCheck, Add } from '@material-ui/icons'
@@ -8,7 +8,8 @@ import { Typography, Button } from '@material-ui/core';
 import { GREY_SECONDARY } from '../../misc/colors'
 
 const Header = (props) => {
-  const shouldEnableConfirmButtom = props.confirmPeriodRef[0] ? moment().isBetween(moment(props.confirmPeriodRef[0].de), moment(props.confirmPeriodRef[0].ate)) : false
+  // const shouldEnableConfirmButtom = props.confirmPeriodRef[0] ? moment().isBetween(moment(props.confirmPeriodRef[0].de), moment(props.confirmPeriodRef[0].ate)) : false
+  const shouldEnableConfirmButtom = true
   
   return (
     <div
@@ -71,7 +72,7 @@ const Header = (props) => {
         >
           Aguardando instalação: {props.EquipamentosStandyBy}
         </Typography>
-        <Link to="/equipamentos/solicitacao">
+        <Link to="/solicitacao">
           <Button
             style={{ width: '230px' }}
             color="primary"

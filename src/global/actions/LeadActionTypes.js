@@ -6,3 +6,4 @@ export const ADD_LIMITE = 'ADD_LIMITE'
 export const SUB_LIMITE = 'SUB_LIMITE'
 
 export const MOVE_LEAD = 'MOVE_LEAD'
+export const UPD_LEAD = 'UPD_LEAD'

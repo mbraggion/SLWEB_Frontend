@@ -22,6 +22,7 @@ import { Icon } from "react-materialize";
 
 import NewFileInput from '../../../components/FileInput'
 import { Toast } from '../../../components/toasty'
+import { navigateTo } from '../../../misc/commom_functions'
 
 function ContasModal(props) {
   const [confirmDuplicatas, setConfirmDuplicatas] = useState(null)
@@ -70,7 +71,7 @@ function ContasModal(props) {
 
       Toast('Duplicata compensada', 'update', toastId, 'success')
       setTimeout(() => {
-        window.location.reload()
+        navigateTo('reload')
       }, 3000)
     } catch (err) {
       Toast('Falha ao compensar duplicata', 'update', toastId, 'error')
