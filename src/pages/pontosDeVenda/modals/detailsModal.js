@@ -130,11 +130,13 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
   }
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep === 2 ? 0 : prevActiveStep + 1);
+    setActiveStep((prevActiveStep) => prevActiveStep === 1 ? 0 : prevActiveStep + 1);
+    // setActiveStep((prevActiveStep) => prevActiveStep === 2 ? 0 : prevActiveStep + 1);
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep === 0 ? 2 : prevActiveStep - 1);
+    setActiveStep((prevActiveStep) => prevActiveStep === 0 ? 1 : prevActiveStep - 1);
+    // setActiveStep((prevActiveStep) => prevActiveStep === 0 ? 2 : prevActiveStep - 1);
   };
 
   const handleClose = () => {
@@ -145,7 +147,8 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
   }
 
   const handleMoveDirectToEquip = () => {
-    setActiveStep(2)
+    // setActiveStep(2)
+    setActiveStep(1)
     setAllowEditing(true)
     setWait(false)
   }
@@ -179,7 +182,7 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
         >
           {allowEditing ? (
             <MobileStepper
-              steps={3}
+              steps={2}
               position="static"
               variant="text"
               activeStep={activeStep}

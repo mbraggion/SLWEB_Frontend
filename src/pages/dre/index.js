@@ -202,15 +202,25 @@ const DRE = () => {
   return !loaded
     ? <Loading />
     : (
-      <Panel>
-        <div className='YAlign' style={{ height: '100%', width: '100%', flexWrap: 'nowrap' }}>
-          <section className='XAlign' style={{ height: 'calc(100% - 71px)'}}>
-            <div className={classes.metadinha}>
+      <Panel className={classes.panelMob}>
+        <div className='YAlign' style={{ height: '100%', width: '100%', flexWrap: 'nowrap', justifyContent: 'flex-start' }}>
+          <div className='XAlign' style={{ alignItems: 'flex-start' }}>
+            <section className={classes.barraDeBotoes}>
+              <Options
+                onChange={handleUpdateSelectedRef}
+                selectedRef={selRef}
+                refList={refs}
+                onReload={loadData}
+                onSave={handleSubmit}
+                onDownloadExcel={handleDownloadExcel}
+              />
+            </section>
+            <section className={classes.metadinha}>
               <Resumo
                 Res={dre.filter(d => d.DreCod < 23 || d.DreCod === 35)}
               />
-            </div>
-            <div className={classes.metadinha}>
+            </section>
+            <section className={classes.metadinha}>
               <Despesas
                 Des={dre.filter(d => d.DreCod > 22 && d.DreCod !== 35)}
                 onChangeValue={handleUpdateLineDre}
@@ -224,18 +234,8 @@ const DRE = () => {
                 onChangeValue={handleUpdateLineDov}
                 onUpdateLine={syncChangesDov}
               />
-            </div>
-          </section>
-          <section className={classes.barraDeBotoes}>
-            <Options
-              onChange={handleUpdateSelectedRef}
-              selectedRef={selRef}
-              refList={refs}
-              onReload={loadData}
-              onSave={handleSubmit}
-              onDownloadExcel={handleDownloadExcel}
-            />
-          </section>
+            </section>
+          </div>
         </div>
       </Panel>
     )
@@ -253,11 +253,11 @@ const useStyles = makeStyles((theme) => ({
   metadinha: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'flex-start',
     width: '50%',
     minWidth: '300px',
-    height: '100%',
+    height: 'auto',
 
     '@media (max-width: 900px)': {
       width: '100%',
