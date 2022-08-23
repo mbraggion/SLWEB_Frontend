@@ -1,159 +1,42 @@
 import React, { useState } from "react";
 import { api } from '../../../services/api'
-import { useHistory } from 'react-router-dom'
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
 import moment from 'moment';
 
 import { DataGrid } from "@material-ui/data-grid";
-import {
-  Close as CloseIcon,
-  ShoppingCart as ShoppingCartIcon,
-  Menu as MenuIcon,
-  Delete as DeleteIcon
-} from '@material-ui/icons';
+import { Close as CloseIcon, ShoppingCart as ShoppingCartIcon, Menu as MenuIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Dialog,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Slide,
-  Typography,
-  // Button,
-  Grow,
-  Fab
-} from '@material-ui/core';
-import { SetColetaCarga } from '../../../global/actions/VendasAction'
+import { Dialog, AppBar, Toolbar, IconButton, Slide, Typography, Grow, Fab } from '@material-ui/core';
+
 import { Toast } from '../../../components/toasty'
 import { RED_PRIMARY } from '../../../misc/colors'
+import { BillingModalWithRedux } from './BillModal'
 
-const DetalhesModalWithRedux = (props) => {
+export const DetalhesModal = (props) => {
   const classes = useStyles()
-  const history = useHistory()
-  const {
-    SetColetaCarga
-  } = props;
+
   const [expandedOptions, setExpandedOptions] = useState(false)
+  const [billingModal, setBillingModal] = useState(false)
+  const [billingDetails, setBillingDetails] = useState({})
 
   const DetalhesFormatado = fromProps2Datagrid(props.detalhes.Detalhes);
 
   const handleLoadVendas = async (coleta) => {
-    let dadosMinimo = null
-    let diferenca = null
-
     let toastId = null;
 
-    toastId = Toast("Contabilizando doses...", "wait");
+    toastId = Toast("Processando...", "wait");
 
     try {
       const response = await api.get(`/coletas/detalhes/minimo/${coleta.EquiCod}`)
 
-      dadosMinimo = response.data.DadosParaCalculoDeMinimo;
-
+      setBillingModal(true)
+      setBillingDetails(response.data.DadosParaCalculoDeMinimo)
       Toast("Cálculo de doses concluído", "update", toastId, "success");
     } catch (err) {
+      setBillingModal(false)
+      setBillingDetails({})
       Toast('Falha ao calcular doses', "update", toastId, "error");
       return
     }
-
-    if (
-      Number(dadosMinimo.CalcFatId) < 255 &&
-      (String(dadosMinimo.AnxFatMinimo).trim() === 'S' || String(dadosMinimo.PdvConsMin).trim() === 'S')
-    ) {
-      let minimoColeta = 0
-
-      if (String(dadosMinimo.AnxTipMin) === 'D') {
-        //calculo de doses na coleta
-        coleta.Detalhes.forEach((item) => {
-          minimoColeta = minimoColeta + Number(item.FfdQtdFaturar)
-        })
-      } else {
-        //calculo de R$ na coleta
-        coleta.Detalhes.forEach((item) => {
-          minimoColeta = minimoColeta + (Number(item.FfdQtdFaturar) * Number(item.PvpVvn1))
-        })
-      }
-
-      if (String(dadosMinimo.AnxTipMin) === 'D' && Number(dadosMinimo.PdvConsDose) > minimoColeta) {
-        //se o minimo por dose não for atingido
-        if (dadosMinimo.AnxMinMoeda === 'S') {
-          //considerar já pago para calculo do minimo
-          diferenca = {
-            ProdId: 12708,
-            VVenda: dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor),
-            QVenda: Number(dadosMinimo.PdvConsDose) - minimoColeta,
-            DVenda: 0
-          }
-        } else {
-          //desconsiderar já pago para calculo do minimo
-          diferenca = {
-            ProdId: 12708,
-            VVenda: dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor),
-            QVenda: Number(dadosMinimo.PdvConsDose),
-            DVenda: 0
-          }
-        }
-      } else if (String(dadosMinimo.AnxTipMin) === 'R' && (Number(dadosMinimo.PdvConsDose) * (dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor))) > minimoColeta) {
-        //se o minimo em R$ não for atingido
-        if (dadosMinimo.AnxMinMoeda === 'S') {
-          //considerar já pago para calculo do minimo
-          diferenca = {
-            ProdId: 12708,
-            VVenda: (Number(dadosMinimo.PdvConsDose) * (dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor))) - minimoColeta,
-            QVenda: 1,
-            DVenda: 0
-          }
-        } else {
-          //desconsiderar já pago para calculo do minimo
-          diferenca = {
-            ProdId: 12708,
-            VVenda: Number(dadosMinimo.PdvConsDose) * (dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor)),
-            QVenda: 1,
-            DVenda: 0
-          }
-        }
-      }
-    }
-
-    let carga = {
-      Cliente: coleta.CNPJ,
-      Items: []
-    }
-
-    coleta.Detalhes.forEach((item) => {
-      let repetido = false
-
-      //verifico se tem um mesmo produto em mais de uma posição, e se tiver eu somo as QTDs com o que já tem
-      carga.Items.forEach((cargaItem, index) => {
-        if (cargaItem.ProdId === item.ProdId) {
-          repetido = true
-          carga.Items[index] = {
-            ...cargaItem,
-            QVenda: cargaItem.QVenda + item.FfdQtdFaturar,
-          }
-        }
-      })
-
-      //se não for um produto repetido adiciono ele a carga
-      if (!repetido) {
-        carga.Items.push({
-          ProdId: item.ProdId,
-          VVenda: item.PvpVvn1,
-          QVenda: item.FfdQtdFaturar,
-          DVenda: 0
-        })
-      }
-    })
-
-    if (diferenca !== null) {
-      carga.Items.push(diferenca)
-    }
-
-    carga.Items = carga.Items.filter(item => item.QVenda > 0)
-
-    SetColetaCarga(carga)
-    history.push('/vendas')
   }
 
   const handleDeleteColeta = async (coleta) => {
@@ -181,6 +64,12 @@ const DetalhesModalWithRedux = (props) => {
 
   return (
     <>
+      <BillingModalWithRedux
+        open={billingModal}
+        onClose={() => setBillingModal(false)}
+        BillingDetails={props.detalhes}
+        BillingConfig={billingDetails}
+      />
       <Dialog
         fullScreen
         TransitionComponent={Transition}
@@ -363,24 +252,9 @@ const DetalhesModalWithRedux = (props) => {
           ) : null}
         </div>
       </Dialog>
-
     </>
   );
 }
-
-const mapStateToProps = (store) => ({
-  State: store.VendaState,
-})
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      SetColetaCarga
-    }
-    , dispatch
-  )
-
-export const DetalhesModal = connect(mapStateToProps, mapDispatchToProps)(DetalhesModalWithRedux);
 
 const useStyles = makeStyles((theme) => ({
   infoBox: {

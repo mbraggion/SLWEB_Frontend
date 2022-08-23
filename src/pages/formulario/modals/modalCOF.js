@@ -29,6 +29,7 @@ export const ModalCOF = ({ open, onClose }) => {
         <iframe
           src='https://drive.google.com/uc?export=view&id=1iG3X7qnH6sNar4J1VAiDT1oiG2l6R1IY'
           frameBorder="0"
+          title='COF'
           style={{
             width: '100%',
             height: '100%',
