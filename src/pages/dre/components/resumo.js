@@ -26,7 +26,7 @@ export const Resumo = ({ Res }) => {
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    margin: '8px',
+    margin: '8px 8px 0px 0px',
   },
   content: {
     display: 'flex',

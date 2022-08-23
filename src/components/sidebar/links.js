@@ -43,6 +43,20 @@ export const SidebarLinks = ({ onCloseDrawer, onOpenFiliaisModal }) => {
             </>
           ))}
           <Link
+            onClick={() => navigateTo('link', "/equipe")}
+            to="/equipe"
+            style={{ color: GREY_SECONDARY }}
+            title="Equipe"
+          >
+            <ListItem button onClick={onCloseDrawer}>
+              <ListItemIcon>
+                <Icon color={String(path).includes('/equipe') ? 'primary' : 'secondary'}>emoji_people</Icon>
+              </ListItemIcon>
+
+              <ListItemText primary="Equipe" />
+            </ListItem>
+          </Link>
+          <Link
             onClick={() => navigateTo('link', "/ajuda")}
             to="/ajuda"
             style={{ color: GREY_SECONDARY }}
@@ -71,7 +85,6 @@ export const SidebarLinks = ({ onCloseDrawer, onOpenFiliaisModal }) => {
 }
 
 const whichLinkDisplay = (link, onOpenFiliaisModal, onCloseDrawer, actualPath) => {
-
   if (link.Descricao === 'Filiais') {
     //se for o botão filiais
 

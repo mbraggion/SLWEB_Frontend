@@ -9,6 +9,7 @@ import notFound from "../../pages/1_NOT_FOUND/index";
 import Perfil from "../../pages/perfil/index";
 import Leads from "../../pages/leads/index";
 import Ajuda from "../../pages/ajuda/index";
+import Equipe from "../../pages/equipe/index";
 import Equipamentos from '../../pages/equipamentos/index';
 import AddEquipamentos from "../../pages/equipamentosSolicitacao/index";
 import GerenciarEquip from "../../pages/gerenciarSolicitacoes/index";
@@ -46,6 +47,7 @@ function Dashboard(props) {
         <div id="App">
           <Switch>
             <Route exact path="/" component={Home} />
+            <Route exact path="/equipe" component={Equipe} />
             <Route exact path="/ajuda" component={Ajuda} />
 
             <Route exact path={validateRouteAccess("/leads")} component={Leads} />

@@ -3,41 +3,17 @@ import { api } from "../../../services/api";
 import Draggable from "react-draggable";
 
 import { Settings, Check, Close } from "@material-ui/icons/";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Paper,
-  Typography,
-  TextField
-} from "@material-ui/core";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper, Typography, TextField } from "@material-ui/core";
 
 import Button from "../../../components/materialComponents/Button";
 import { roleLevel, convertData } from "../../../misc/commom_functions";
-import {
-  REACT_APP_SISTEMA_ROLE_LEVEL,
-  REACT_APP_BACKOFFICE_ROLE_LEVEL,
-  REACT_APP_TECNICA_ROLE_LEVEL,
-  REACT_APP_EXPEDICAO_ROLE_LEVEL,
-  REACT_APP_FRANQUEADO_ROLE_LEVEL,
-} from "../../../misc/role_levels";
+import { REACT_APP_SISTEMA_ROLE_LEVEL, REACT_APP_BACKOFFICE_ROLE_LEVEL, REACT_APP_TECNICA_ROLE_LEVEL, REACT_APP_EXPEDICAO_ROLE_LEVEL, REACT_APP_FRANQUEADO_ROLE_LEVEL, } from "../../../misc/role_levels";
 import { Toast } from "../../../components/toasty";
 import { RED_SECONDARY, GREY_SECONDARY } from "../../../misc/colors";
 import DatePicker from "../../../components/materialComponents/datePicker";
 
-function PaperComponent(props) {
-  return (
-    <Draggable
-      {...props}
-      handle="#draggable-dialog-title"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
-      <Paper {...props} />
-    </Draggable>
-  );
-}
+
+
 function DraggableDialog(props) {
   const [open, setOpen] = useState(false);
   const [stage, setStage] = useState(null);
@@ -616,3 +592,15 @@ const showStatus = (stage) => {
       return "Desconhecido";
   }
 };
+
+function PaperComponent(props) {
+  return (
+    <Draggable
+      {...props}
+      handle="#draggable-dialog-title"
+      cancel={'[class*="MuiDialogContent-root"]'}
+    >
+      <Paper {...props} />
+    </Draggable>
+  );
+}

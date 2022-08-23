@@ -45,7 +45,7 @@ export const DespesasVariaveis = ({ DesV, onAddNewLine, AllowAddNewLine, onChang
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
-    margin: '8px',
+    margin: '8px 0px 0px 8px',
   },
   content: {
     display: 'flex',
