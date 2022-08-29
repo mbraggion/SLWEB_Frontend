@@ -72,25 +72,23 @@ const Dashboard = () => {
   const handleCloseNewsModal = async () => {
     //da um check que a noticia foi vizualizada
     if (displayedNews.ReadConfirm === true && displayedNews.DtConfirmacao === null) {
-      try {
-        await api.post('/dashboard/news/check', {
+        api.post('/dashboard/news/check', {
           newsId: displayedNews.NewsId
-        })
+        }).then(res => {
+          setNews(oldState => {
+            let aux = [...oldState]
 
-        setNews(oldState => {
-          let aux = [...oldState]
+            aux.forEach((nw, i) => {
+              if (nw.NewsId === displayedNews.NewsId) {
+                aux[i].DtConfirmacao = new Date()
+              }
+            })
 
-          aux.forEach((nw, i) => {
-            if (nw.NewsId === displayedNews.NewsId) {
-              aux[i].DtConfirmacao = new Date()
-            }
+            return aux
           })
-
-          return aux
+        }).catch(err => {
+          console.log(err)
         })
-      } catch (err) {
-
-      }
     }
 
     setNewsModalOpen(false)
