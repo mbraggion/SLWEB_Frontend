@@ -29,9 +29,6 @@ function ContasModal({ open, onClose, duplicatas, confiavel, naoCompensavel }) {
   const [fileNames, setFileNames] = useState([])
   const [fetching, setFetching] = useState(false)
 
-  console.log(duplicatas[4])
-  console.log(naoCompensavel[0])
-
   const handleSubmit = async () => {
     setFetching(true)
     const arquivos = getFiles()
