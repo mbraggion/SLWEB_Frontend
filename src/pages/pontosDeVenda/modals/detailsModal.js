@@ -11,7 +11,7 @@ import { Configuracao } from '../components/_configuracao'
 import { Dados } from '../components/_dados'
 import { Equipamento } from '../components/_equipamentos'
 
-export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDVsArray }) => {
+export const DetailsModal = ({ open, onClose, PdvId, AnxId, EquiCod, PdvStatus, updatePDVsArray }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const childRef = useRef();
@@ -49,7 +49,7 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
     }
   }
 
-  const handleInativar = async ({ Status, PdvId, AnxId }) => {
+  const handleInativar = async ({ Status, PdvId, AnxId, EquiCod }) => {
     let toastId = null
 
     toastId = Toast(Status === 'A' ? 'Inativando...' : 'Ativando...', 'wait')
@@ -60,7 +60,8 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
       await api.put('/pontosdevenda/inativar', {
         PdvId: PdvId,
         AnxId: AnxId,
-        Status: Status === 'A' ? 'I' : 'A'
+        Status: Status === 'A' ? 'I' : 'A',
+        Eq: EquiCod,
       })
 
       Toast(Status === 'A' ? 'Ponto de venda inativado' : 'Ponto de venda ativado', 'update', toastId, 'success')
@@ -209,7 +210,7 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
             {allowEditing ?
               <Button
                 disabled={wait}
-                onClick={() => handleInativar({ Status: PdvStatus, PdvId: PdvId, AnxId: AnxId })}
+                onClick={() => handleInativar({ Status: PdvStatus, PdvId: PdvId, AnxId: AnxId, EquiCod: EquiCod })}
                 color="primary"
                 startIcon={PdvStatus === 'A' ? <ThumbDownAltIcon /> : <ThumbUpAltIcon />}
               >

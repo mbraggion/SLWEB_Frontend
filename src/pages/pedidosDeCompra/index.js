@@ -3,6 +3,7 @@ import { api } from '../../services/api'
 
 import { Panel } from '../../components/commom_in'
 import Loading from '../../components/loading_screen'
+import { Toast } from '../../components/toasty'
 
 import { PedidoList } from './pedidoList'
 import { PedidosListOptions } from './options'
@@ -33,6 +34,16 @@ const PedidosDeCompra = () => {
     LoadData()
   }, [])
 
+  const handleIntegrarPedidos = async () => {
+    try{
+      await api.get('/pedidos/compra/integracao')
+
+      Toast('Integração em andamento!', 'info')
+    }catch(err){
+      Toast('Falha ao solicitar integração', 'error')
+    }
+  }
+
   return !loaded ?
     <Loading />
     :
@@ -42,6 +53,7 @@ const PedidosDeCompra = () => {
           onChangeFiltro={setFiltro}
           mostrarProcessados={mostrarProcessados}
           switchProcessados={setMostrarProcessados}
+          onRequestIntegration={handleIntegrarPedidos}
           />
         <PedidoList
           Pedidos={returnPedidosFiltrados(pedidos, mostrarProcessados, filtro)}

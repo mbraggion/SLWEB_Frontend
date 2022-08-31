@@ -1,86 +1,112 @@
 import React, { useState } from 'react';
 
-import { makeStyles, FormControlLabel, Checkbox, Paper, InputBase, IconButton, Divider, Tooltip } from '@material-ui/core';
-import { Search as SearchIcon, Close as CloseIcon } from '@material-ui/icons'
+import {
+  makeStyles,
+  FormControlLabel,
+  Checkbox,
+  Paper,
+  InputBase,
+  IconButton,
+  Divider,
+  Tooltip,
+  Button
+} from '@material-ui/core';
+import { 
+  Search as SearchIcon, 
+  Close as CloseIcon,
+  TrendingUp as TrendingUpIcon } from '@material-ui/icons'
 
-export const PedidosListOptions = ({ onChangeFiltro, mostrarProcessados, switchProcessados }) => {
+export const PedidosListOptions = ({ onChangeFiltro, mostrarProcessados, switchProcessados, onRequestIntegration }) => {
   const classes = useStyles()
   const [filterWord, setFilterWord] = useState('')
 
   return (
-    <div>
-      <Paper component="form" className={classes.root}>
-        <InputBase
-          className={classes.input}
-          placeholder="Buscar Pedido"
-          inputProps={{ 'aria-label': 'buscar pedido' }}
-          onChange={e => {
-            onChangeFiltro('')
-            setFilterWord(e.target.value)
-          }}
-          value={filterWord}
-          disabled={false}
-        />
-        <Tooltip
-          title={
-            <label style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }} >
-              Buscar
-            </label>
-          }
-          placement="top"
-          arrow={true}
-        >
-          <IconButton
-            type='submit'
-            className={classes.iconButton}
-            aria-label="buscar"
-            onClick={(e) => {
-              e.preventDefault()
-              onChangeFiltro(filterWord)
-            }}
-          >
-            <SearchIcon />
-          </IconButton>
-        </Tooltip>
-        <Divider
-          className={classes.divider}
-          orientation="vertical"
-        />
-        <Tooltip
-          title={
-            <label style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
-              Limpar busca
-            </label>
-          }
-          placement="right"
-          arrow={true}
-        >
-          <IconButton
-            className={classes.iconButton}
-            aria-label="directions"
-            color="primary"
-            onClick={() => {
+    <div className={classes.container}>
+      <div style={{ width: '171.55px' }} />
+      <div>
+        <Paper component="form" className={classes.root}>
+          <InputBase
+            className={classes.input}
+            placeholder="Buscar Pedido"
+            inputProps={{ 'aria-label': 'buscar pedido' }}
+            onChange={e => {
               onChangeFiltro('')
-              setFilterWord('')
+              setFilterWord(e.target.value)
             }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </Tooltip>
-      </Paper>
-      <FormControlLabel
-        control={
-          <Checkbox
-            className={classes.checkbox}
-            checked={mostrarProcessados}
-            onChange={(e) => {
-              switchProcessados(e.target.checked)
-            }}
-            style={{ marginLeft: '8px' }}
+            value={filterWord}
+            disabled={false}
           />
-        }
-        label="Mostrar pedidos processados"
-      />
+          <Tooltip
+            title={
+              <label style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }} >
+                Buscar
+              </label>
+            }
+            placement="top"
+            arrow={true}
+          >
+            <IconButton
+              type='submit'
+              className={classes.iconButton}
+              aria-label="buscar"
+              onClick={(e) => {
+                e.preventDefault()
+                onChangeFiltro(filterWord)
+              }}
+            >
+              <SearchIcon />
+            </IconButton>
+          </Tooltip>
+          <Divider
+            className={classes.divider}
+            orientation="vertical"
+          />
+          <Tooltip
+            title={
+              <label style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
+                Limpar busca
+              </label>
+            }
+            placement="right"
+            arrow={true}
+          >
+            <IconButton
+              className={classes.iconButton}
+              aria-label="directions"
+              color="primary"
+              onClick={() => {
+                onChangeFiltro('')
+                setFilterWord('')
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
+        </Paper>
+        <FormControlLabel
+          control={
+            <Checkbox
+              className={classes.checkbox}
+              checked={mostrarProcessados}
+              onChange={(e) => {
+                switchProcessados(e.target.checked)
+              }}
+              style={{ marginLeft: '8px' }}
+            />
+          }
+          label="Mostrar pedidos processados"
+        />
+      </div>
+      <Button
+        className={classes.button}
+        variant="contained"
+        color="primary"
+        size="large"
+        onClick={onRequestIntegration}
+        startIcon={<TrendingUpIcon />}
+      >
+        Integrar Pedidos
+      </Button>
     </div>
   )
 }
@@ -125,6 +151,13 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
     height: '46px',
+    background: 'blue',
+    transition: '200ms',
+
+    '&:hover': {
+      background: 'blue',
+      filter: 'brightness(0.8)',
+    },
 
     '@media (max-width: 800px)': {
       width: '400px',
