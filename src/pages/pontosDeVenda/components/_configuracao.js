@@ -74,10 +74,12 @@ export const Configuracao = forwardRef(({ PdvId, AnxId, allowEditing }, ref) => 
   const handleAddConfig = () => {
     setConfigPDV(oldState => {
       let aux = [...oldState]
+
       let arrayOrganizadoPorSel = configPDV.sort((a, b) => a.Sel - b.Sel)
+      let nextSel = arrayOrganizadoPorSel.length === 0 ? 1 : arrayOrganizadoPorSel[arrayOrganizadoPorSel.length - 1].Sel + 1
 
       aux.push({
-        Sel: arrayOrganizadoPorSel[arrayOrganizadoPorSel.length - 1].Sel + 1,
+        Sel: nextSel,
         ProdId: null,
         TipoVenda: null,
         Valor_1: 0,
