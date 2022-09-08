@@ -3,7 +3,7 @@ import { api } from '../../services/api'
 
 import { Panel } from '../../components/commom_in'
 import Loading from '../../components/loading_screen'
-import { Toast } from '../../components/toasty'
+// import { Toast } from '../../components/toasty'
 
 import { PedidoList } from './pedidoList'
 import { PedidosListOptions } from './options'
@@ -35,13 +35,15 @@ const PedidosDeCompra = () => {
   }, [])
 
   const handleIntegrarPedidos = async () => {
-    try{
-      await api.get('/pedidos/compra/integracao')
+    alert('Em breve 😊')
 
-      Toast('Integração em andamento!', 'info')
-    }catch(err){
-      Toast('Falha ao solicitar integração', 'error')
-    }
+    // try{
+    //   await api.get('/pedidos/compra/integracao')
+
+    //   Toast('Integração em andamento!', 'info')
+    // }catch(err){
+    //   Toast('Falha ao solicitar integração', 'error')
+    // }
   }
 
   return !loaded ?

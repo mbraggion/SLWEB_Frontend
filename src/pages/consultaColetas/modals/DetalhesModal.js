@@ -16,7 +16,7 @@ export const DetalhesModal = (props) => {
 
   const [expandedOptions, setExpandedOptions] = useState(false)
   const [billingModal, setBillingModal] = useState(false)
-  const [billingDetails, setBillingDetails] = useState({})
+  const [billingDetails, setBillingDetails] = useState({ Minimo: null, FaixaDeConsumo: null })
 
   const DetalhesFormatado = fromProps2Datagrid(props.detalhes.Detalhes);
 
@@ -29,11 +29,14 @@ export const DetalhesModal = (props) => {
       const response = await api.get(`/coletas/detalhes/minimo/${coleta.EquiCod}`)
 
       setBillingModal(true)
-      setBillingDetails(response.data.DadosParaCalculoDeMinimo)
+      setBillingDetails({
+        Minimo: response.data.DadosParaCalculoDeMinimo,
+        FaixaDeConsumo: response.data.FaixaDeConsumo
+      })
       Toast("Cálculo de doses concluído", "update", toastId, "success");
     } catch (err) {
       setBillingModal(false)
-      setBillingDetails({})
+      setBillingDetails({ Minimo: null, FaixaDeConsumo: null })
       Toast('Falha ao calcular doses', "update", toastId, "error");
       return
     }

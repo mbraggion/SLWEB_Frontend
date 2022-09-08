@@ -3,14 +3,19 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Slide from '@material-ui/core/Slide';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Slide
+} from '@material-ui/core/';
+
+import { DoneAll as DoneAllIcon } from '@material-ui/icons'
 
 import { SetColetaCarga } from '../../../global/actions/VendasAction'
+import { RED_SECONDARY } from '../../../misc/colors'
 
 const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }) => {
   const history = useHistory()
@@ -83,6 +88,19 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
       Items: []
     }
 
+    let totalDoses = 0
+    let descontoPorFaixaDeConsumo = 0
+
+    totalDoses = BillingDetails.Detalhes?.reduce((oldValue, item) => {
+      return oldValue + Number(item.FfdQtdFaturar)
+    }, 0)
+
+    BillingConfig.FaixaDeConsumo.forEach(f => {
+      if(totalDoses >= f.Inicio && totalDoses <= f.Fim) {
+        descontoPorFaixaDeConsumo = f.Porcentagem
+      }
+    })
+
     coleta.Detalhes.forEach((item) => {
       let repetido = false
 
@@ -103,7 +121,7 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
           ProdId: item.ProdId,
           VVenda: item.PvpVvn1,
           QVenda: item.FfdQtdFaturar,
-          DVenda: 0
+          DVenda: Number.isNaN(Number(item.PvpVvn1 * descontoPorFaixaDeConsumo)) ? 0 : Number(item.PvpVvn1 * descontoPorFaixaDeConsumo).toFixed(4)
         })
       }
     })
@@ -128,16 +146,16 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
       >
         <DialogTitle>Configurações de Faturamento</DialogTitle>
         <DialogContent>
-          <p>Faturamento: <strong>{displayFatTipo(BillingConfig.CalcFatId)}</strong></p>
-          <p>Máquina tem mínimo? <strong>{String(BillingConfig.AnxFatMinimo).trim() === 'S' || String(BillingConfig.PdvConsMin).trim() === 'S' ? 'Sim' : 'Não'}</strong></p>
+          <p>Faturamento: <strong>{displayFatTipo(BillingConfig.Minimo?.CalcFatId)}</strong></p>
+          <p>Máquina tem mínimo? <strong>{String(BillingConfig.Minimo?.AnxFatMinimo).trim() === 'S' || String(BillingConfig.Minimo?.PdvConsMin).trim() === 'S' ? 'Sim' : 'Não'}</strong></p>
 
-          {String(BillingConfig.AnxFatMinimo).trim() === 'S' || String(BillingConfig.PdvConsMin).trim() === 'S'
+          {String(BillingConfig.Minimo?.AnxFatMinimo).trim() === 'S' || String(BillingConfig.Minimo?.PdvConsMin).trim() === 'S'
             ? <>
-              <p>Tipo de mínimo: <strong>{String(BillingConfig.AnxTipMin) === 'D' ? 'Doses' : 'Reais'}</strong></p>
+              <p>Tipo de mínimo: <strong>{String(BillingConfig.Minimo?.AnxTipMin) === 'D' ? 'Doses' : 'Reais'}</strong></p>
               <p>Consumo:
                 <strong>
                   {
-                    String(BillingConfig.AnxTipMin) === 'D'
+                    String(BillingConfig.Minimo?.AnxTipMin) === 'D'
                       ? BillingDetails.Detalhes?.reduce((oldValue, item) => {
                         return oldValue + Number(item.FfdQtdFaturar)
                       }, 0) + ' doses'
@@ -151,31 +169,65 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
               <p>Mínimo:
                 <strong>
                   {
-                    String(BillingConfig.AnxTipMin) === 'D' ? Number(BillingConfig.PdvConsDose) + ' doses' : 'R$ ' + Number(BillingConfig.PdvConsDose) * (BillingConfig.AnxCalcMinPor === 'A' ? Number(BillingConfig.AnxVlrUnitMin) : Number(BillingConfig.PdvConsValor))
+                    String(BillingConfig.Minimo?.AnxTipMin) === 'D' ? Number(BillingConfig.Minimo?.PdvConsDose) + ' doses' : 'R$ ' + Number(BillingConfig.Minimo?.PdvConsDose) * (BillingConfig.Minimo?.AnxCalcMinPor === 'A' ? Number(BillingConfig.Minimo?.AnxVlrUnitMin) : Number(BillingConfig.Minimo?.PdvConsValor))
                   }
                 </strong>
               </p>
               <p>
                 Considerar valor já pago para calculo de mínimo?
                 <strong>
-                  {BillingConfig.AnxMinMoeda === 'S' ? ' Sim' : ' Não'}
+                  {BillingConfig.Minimo?.AnxMinMoeda === 'S' ? ' Sim' : ' Não'}
                 </strong>
               </p>
             </>
             : <p>Consumo:
               <strong>
                 {
-                  String(BillingConfig.AnxTipMin) === 'D'
+                  String(BillingConfig.Minimo?.AnxTipMin) === 'D'
                     ? BillingDetails.Detalhes?.reduce((oldValue, item) => {
                       return oldValue + Number(item.FfdQtdFaturar)
                     }, 0) + ' doses'
-                    : 'R$' + BillingDetails.Detalhes?.reduce((oldValue, item) => {
+                    : ' R$' + BillingDetails.Detalhes?.reduce((oldValue, item) => {
                       return oldValue + (Number(item.FfdQtdFaturar) * Number(item.PvpVvn1))
                     }, 0)
                 }
               </strong>
             </p>
           }
+
+          {BillingConfig.FaixaDeConsumo?.length > 0
+            ? <h6 style={{
+              color: RED_SECONDARY,
+              padding: '32px 0px 8px 0px',
+              borderTop: '1px solid #CCC'
+            }}
+            >
+              Faixa de Consumo
+            </h6>
+            : null
+          }
+
+
+          {BillingConfig.FaixaDeConsumo?.map(F => (
+            <ul style={{ margin: '0px' }}>
+              <li style={{ marginBottom: '8px' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    De {F.Inicio} até {F.Fim} doses
+                    <label style={{ marginLeft: '8px', textDecoration: 'underline' }}>Desconto de {calculatePercentage(F.Porcentagem)}</label>
+                  </div>
+                  {BillingDetails.Detalhes?.reduce((oldValue, item) => {
+                    return oldValue + Number(item.FfdQtdFaturar)
+                  }, 0) > F.Inicio && BillingDetails.Detalhes?.reduce((oldValue, item) => {
+                    return oldValue + Number(item.FfdQtdFaturar)
+                  }, 0) <= F.Fim
+                    ? <DoneAllIcon fontSize='large' style={{ color: '#29ff8d' }} />
+                    : null
+                  }
+                </div>
+              </li>
+            </ul>
+          ))}
 
         </DialogContent>
         <DialogActions>
@@ -229,4 +281,14 @@ const displayFatTipo = (fat) => {
     default:
       return 'Indefinido'
   }
+}
+
+const calculatePercentage = (amount) => {
+  let s = Number(amount * 100)
+
+  return String(
+    Number.isNaN(s)
+      ? Number(0).toFixed(2)
+      : s.toFixed(2)
+  ) + '%'
 }

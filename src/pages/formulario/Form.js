@@ -62,7 +62,7 @@ export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
 
     try {
       //envia o formulario
-      await api.post(`/form/${COD}`,
+      await api.post(`/form/upload/form/${COD}`,
         {
           form: Form,
           secao: section + 1
@@ -133,7 +133,7 @@ export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
     try {
       toastId = Toast('Salvando arquivo...', 'wait')
 
-      await api.post(`/form/upload/`, formData, {
+      await api.post(`/form/upload/files`, formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         },
