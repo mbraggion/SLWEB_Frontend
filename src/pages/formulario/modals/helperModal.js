@@ -37,7 +37,6 @@ export const HelperModal = ({ open, onClose, title }) => {
   const classes = useStyles({
     fullScreen
   })
-  // const [mensagemWhatsapp, setMensagemWhatsapp] = useState(INITIAL_STRING)
 
   const handleClose = () => {
     onClose();
@@ -63,20 +62,6 @@ export const HelperModal = ({ open, onClose, title }) => {
     }
   }
 
-  // const handleSendWhatsappMessage = async () => {
-  //   if (mensagemWhatsapp.trim() === INITIAL_STRING) {
-  //     Toast('Altera a mensagem com seus dados antes de enviar aos consultores', 'warn')
-  //     return
-  //   }
-
-  //   //Número da Tati ou do Alessandro
-
-  //   let target = ''
-  //   let message = mensagemWhatsapp.replace(/ +/, '%20')
-
-  //   window.open(`https://api.whatsapp.com/send?phone=${target}&text=${message}`, '_blank').focus();
-  // }
-
   return (
     <Dialog
       fullScreen={fullScreen}
@@ -87,39 +72,11 @@ export const HelperModal = ({ open, onClose, title }) => {
         paper: classes.dialog
       }}
     >
-      <DialogTitle
-        id="customized-dialog-title"
-        onClose={handleClose}>
+      <DialogTitle id="customized-dialog-title" onClose={handleClose}>
         {title}
       </DialogTitle>
       <DialogContent dividers>
-        <div
-          className='YAlign'
-          style={{
-            padding: '8px'
-          }}
-        >
-          {/* <Typography>
-            Envie uma mensagem para os consultores e eles entrarão em contato para te auxiliar!
-          </Typography>
-          <TextField
-            className={classes.messageTextArea}
-            label="Mensagem"
-            multiline
-            rows={4}
-            value={mensagemWhatsapp}
-            onChange={e => setMensagemWhatsapp(e.currentTarget.value)}
-            variant="outlined"
-          />
-          <ButtonMaterial
-            className={classes.sendMessageButton}
-            variant="contained"
-            onClick={handleSendWhatsappMessage}
-
-            startIcon={<i class="fa fa-whatsapp" style={{ fontSize: '30px', }}></i>}
-          >
-            ENVIAR MENSAGEM
-          </ButtonMaterial> */}
+        <div className='YAlign' style={{ padding: '8px' }}>
           <Typography
             variant='body1'
             gutterBottom
@@ -203,5 +160,3 @@ const DialogContent = withStyles((theme) => ({
     padding: '0px',
   },
 }))(MuiDialogContent);
-
-// const INITIAL_STRING = 'Bom dia, meu nome é FULANO e estou precisando de uma ajuda com o formulário de franquia. Pode entrar em contato comigo por (XX) X XXXX-XXXX? Obrigado!'

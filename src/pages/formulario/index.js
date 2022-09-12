@@ -27,7 +27,7 @@ export const Formulario = () => {
   const [loading, setLoading] = useState(false);
   const [validado, setValidado] = useState(false);
   const [formSection, setFormSection] = useState(0);
-  const [form, setForm] = useState(INITIAL_STATE);
+  const [form, setForm] = useState({});
   const [wait, setWait] = useState(false);
   const [helperModalOpen, setHelperModalOpen] = useState(false);
 
@@ -144,13 +144,13 @@ export const Formulario = () => {
 
   return (
     <>
+      {whichContentDisplay()}
+
       <HelperModal
         open={helperModalOpen}
         onClose={handleCloseHelperModal}
         title="Ajuda com o Formulário"
       />
-
-      {whichContentDisplay()}
 
       <HelperButton
         helperModalOpen={helperModalOpen}
@@ -161,66 +161,3 @@ export const Formulario = () => {
 };
 
 export default Formulario;
-
-const INITIAL_STATE = {
-  Nome_Completo: "",
-  DtNascimento: null,
-  RG: "",
-  CPF: "",
-  Logradouro: "",
-  Número: "",
-  Complemento: "",
-  Bairro: "",
-  Municipio: "",
-  Estado: "",
-  CEP: "",
-  Email: "",
-  Tel_Residencial: "",
-  Celular: "",
-  Est_Civil: null,
-  Conj_Nome: "",
-  Conj_DtNascimento: null,
-  Conj_CPF: null,
-  Conj_RG: null,
-  TUnião: "",
-  Conj_RendMensal: "",
-  Profissao: "",
-  CLT: null,
-  Tem_filhos: null,
-  Qtd_filhos: "",
-  Idd_filhos: "",
-  T_Residencia: null,
-  P_Veiculo: null,
-  P_Imovel: null,
-  Expect: null,
-  Recolhimento: null,
-  T_Empresa: null,
-  Sociedade: null,
-  Part_invest: null,
-  T_Empreendimento: null,
-  Cob_Desp: null,
-  Prioridade: new Array(11),
-  Com_Regra: null,
-  Com_Med: null,
-  Com_Inf: null,
-  Rend_Mensal: null,
-  Residencia_Mensal: null,
-  Recolhimento_QTD: null,
-  Origem_Capital: "",
-  Renda_Familiar: "",
-  Renda_Composta: "",
-  Disp_Invest: "",
-  Detalhes_Atividade: "",
-  Form_Escolar: "",
-  Ult_exp: "",
-  Nome_Socio: null,
-  Socio_Vinculo: "",
-  Tempo_ConheceSocio: "",
-  Realizou_Socio: "",
-  Cond_Socio: "",
-  Prop_Invest: null,
-  Exp_Sociedade: null,
-  Conhece_Pilao: "",
-  Caracteristica_Peso: "",
-  Consultor: "",
-};

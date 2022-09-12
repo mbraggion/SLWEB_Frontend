@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Step, StepLabel, Stepper } from "@material-ui/core";
-import { useMediaQuery, useStyles, useTheme } from "@material-ui/styles";
+import { Step, StepLabel, Stepper, useMediaQuery, useTheme } from "@material-ui/core";
+import { makeStyles } from '@material-ui/styles'
 
 import {
   Edit as EditIcon
@@ -55,3 +55,16 @@ export const FormStepper = () => {
       </div>
   )
 }
+
+const useStyles = makeStyles((theme) => ({
+  StepLabelNumber: {
+    "& > span.MuiStepLabel-iconContainer > svg > circle": {
+      color: "#0056C7",
+      backgroundColor: "#0056C7",
+    },
+    "& > span.MuiStepLabel-iconContainer > svg > path": {
+      color: "#65e305",
+      backgroundColor: "#65e305",
+    },
+  },
+}));

@@ -1,7 +1,6 @@
 import React from 'react';
 
-import { Typography } from "@material-ui/core";
-import { useMediaQuery, useTheme } from "@material-ui/styles";
+import { Typography, useTheme, useMediaQuery } from "@material-ui/core";
 
 import {
   CheckCircle as CheckCircleIcon
