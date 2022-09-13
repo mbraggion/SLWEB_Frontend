@@ -27,7 +27,7 @@ export const Formulario = () => {
   const [loading, setLoading] = useState(false);
   const [validado, setValidado] = useState(false);
   const [formSection, setFormSection] = useState(0);
-  const [form, setForm] = useState({});
+  const [form, setForm] = useState(null);
   const [wait, setWait] = useState(false);
   const [helperModalOpen, setHelperModalOpen] = useState(false);
 
@@ -129,12 +129,14 @@ export const Formulario = () => {
       return (
         <FormContainer fullscreen={fullScreen}>
           <Intro />
-          <Form
-            Form={form}
-            onChangeForm={setForm}
-            COD={codCandidato}
-            lastFormSection={formSection}
-          />
+          {form !== null ? (
+            <Form
+              Form={form}
+              onChangeForm={setForm}
+              COD={codCandidato}
+              lastFormSection={formSection}
+            />
+          ) : null}
         </FormContainer>
       );
     } else {
