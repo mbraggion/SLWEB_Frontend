@@ -1,10 +1,15 @@
 import moment from "moment";
 import React from "react";
 
-import { Button, makeStyles, TextField } from "@material-ui/core";
+import { Button, makeStyles, TextField, Typography } from "@material-ui/core";
 import { Replay as ReplayIcon } from "@material-ui/icons";
 
 import DatePicker from "../../components/materialComponents/datePicker";
+import { InputCEP } from "./components/inputCEP";
+import { InputCPF } from "./components/inputCPF";
+import { InputRG } from "./components/inputRG";
+import { InputTelCelular } from "./components/inputTelCelular";
+import { InputTelFixo } from "./components/inputTelFixo";
 import { QuestionBox } from "./components/questionBox";
 
 import { Toast } from "../../components/toasty";
@@ -72,7 +77,7 @@ const whichContentDisplay = (
           Toast("Salvando etapa, aguarde...", "info")
         }
         onChangeAnswer={() => {}}
-        onAdvance={() => {}}
+        onAdvance={handleRequestAdvance}
         onRetreat={() => {}}
       />
     );
@@ -82,13 +87,23 @@ const whichContentDisplay = (
       <QuestionBox
         question={question.question}
         answer={returnAnswerComponent(question, classes, handleChangeAnswer)}
-        validation={() =>
-          question.answer !== null &&
-          String(question.answer).trim() !== "" &&
-          typeof question.answer != "undefined"
-        }
+        validation={() => {
+          if (question.invalidMessage === null) {
+            return true;
+          } else {
+            if (
+              question.answer !== null &&
+              String(question.answer).trim() !== "" &&
+              typeof question.answer != "undefined"
+            ) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+        }}
         validationErrorAction={() => {
-          Toast(question.invalidMessage);
+          Toast(question.invalidMessage, "warn");
         }}
         // onChangeAnswer={(e) =>
         //   handleChangeAnswer(question.questionId, e.currentTarget.value)
@@ -123,8 +138,8 @@ const whichContentDisplay = (
 
 const whereAlignArrow = (question) => {
   if (
-    question.slug === "Estado Civil" ||
-    question.slug === "Afirmacoes" ||
+    question.answerComponentType === "Estado Civil" ||
+    question.answerComponentType === "Afirmacoes" ||
     question.answerComponentType === "file"
   ) {
     return "flex-end";
@@ -146,11 +161,12 @@ const returnAnswerComponent = (question, classes, onChangeAnswer) => {
     case "input":
       return (
         <TextField
+          autoFocus
           className={classes.TextInput}
           variant="outlined"
-          label="Seu nome completo aqui"
+          label={question.FTP_slug}
           value={question.answer}
-          onChange={e => onChangeAnswer(e.currentTarget.value)}
+          onChange={(e) => onChangeAnswer(e.currentTarget.value)}
         />
       );
     case "date":
@@ -159,8 +175,61 @@ const returnAnswerComponent = (question, classes, onChangeAnswer) => {
           min={false}
           label="Data de nascimento"
           defaultValue={rawDateToMomentValidObject(question.answer)}
-          onChange={e => onChangeAnswer(e._d)}
+          onChange={(e) => onChangeAnswer(e._d)}
         />
+      );
+    case "RG":
+      return (
+        <InputRG
+          value={question.answer}
+          onChange={(e) => onChangeAnswer(e.target.value)}
+        />
+      );
+    case "CPF":
+      return (
+        <InputCPF
+          value={question.answer}
+          onChange={(e) => onChangeAnswer(e.target.value)}
+        />
+      );
+    case "Celular":
+      return (
+        <InputTelCelular
+          value={question.answer}
+          onChange={(e) => onChangeAnswer(e.target.value)}
+        />
+      );
+    case "Telefone":
+      return (
+        <InputTelFixo
+          value={question.answer}
+          onChange={(e) => onChangeAnswer(e.target.value)}
+        />
+      );
+    case "CEP":
+      return (
+        <InputCEP
+          value={question.answer}
+          onChange={(e) => onChangeAnswer(e.target.value)}
+        />
+      );
+    case "Estado Civil":
+      return (
+        <div>
+          {question.questionOptions.map((EC) => (
+            <div style={divStyle} key={EC.value}>
+              <input
+                type="checkbox"
+                onClick={(e) =>
+                  onChangeAnswer(e.target.checked ? e.target.value : null)
+                }
+                value={EC.value}
+                checked={EC.value === question.answer}
+              />
+              <Typography variant="subtitle1">{EC.label}</Typography>
+            </div>
+          ))}
+        </div>
       );
     default:
       return null;
@@ -214,3 +283,12 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+
+const divStyle = {
+  display: "Flex",
+  width: "100%",
+  flexDirection: "row",
+  justifyContent: "flex-start",
+  alignItems: "center",
+  marginBottom: "2%",
+};

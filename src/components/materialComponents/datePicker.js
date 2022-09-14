@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import "moment";
 import MomentUtils from "@date-io/moment";
 import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
+  KeyboardDatePicker, MuiPickersUtilsProvider
 } from "@material-ui/pickers";
+import "moment";
+import React, { useEffect, useState } from "react";
 
 export default function MaterialUIPickers({ min, onChange, defaultValue, disabled, label, style }) {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -29,6 +28,7 @@ export default function MaterialUIPickers({ min, onChange, defaultValue, disable
   return (
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <KeyboardDatePicker
+      autoFocus
         style={{ width: "170px", ...style }}
         disabled={disabled}
         disableToolbar
