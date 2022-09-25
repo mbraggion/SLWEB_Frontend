@@ -1,10 +1,14 @@
 import moment from "moment";
-import React from "react";
+import React, { useState } from "react";
+import { api } from '../../services/api';
 
-import { Button, makeStyles, TextField, Typography } from "@material-ui/core";
+import { Button, makeStyles, MenuItem, TextField, Typography } from "@material-ui/core";
 import { Replay as ReplayIcon } from "@material-ui/icons";
+import { Icon } from "react-materialize";
 
+import NewFileInput from '../../components/FileInput';
 import DatePicker from "../../components/materialComponents/datePicker";
+import Select from '../../components/materialComponents/Select';
 import { InputCEP } from "./components/inputCEP";
 import { InputCPF } from "./components/inputCPF";
 import { InputRG } from "./components/inputRG";
@@ -16,13 +20,47 @@ import { Toast } from "../../components/toasty";
 
 export const FormQuestion = ({
   loading,
+  formFinished,
   question,
   submitError,
   handleRequestAdvance,
   handleRequestRetreat,
   handleChangeAnswer,
+  COD
 }) => {
   const classes = useStyles();
+  const [fileNames, setFilenames] = useState([])
+
+  const handleUploadFile = async () => {
+    const arquivos = getFiles()
+    const formData = makeFormData(arquivos)
+
+    let qtdArquivos = formData.getAll('formData').length
+
+    if(qtdArquivos === 0) return true
+
+    let toastId = null
+
+    formData.append('multiple', qtdArquivos > 1 ? "S" : "N")
+    formData.append('cod', COD)
+
+    try {
+      toastId = Toast('Salvando arquivo...', 'wait')
+
+      await api.post(`/form/upload/files`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+      })
+
+      Toast('Arquivo(s) salvo(s)', 'update', toastId, 'success')
+      setFilenames([])
+      return true
+    } catch (err) {
+      Toast('Falha ao salvar arquivo(s)', 'update', toastId, 'error')
+      return false
+    }
+  }
 
   return (
     <div
@@ -32,12 +70,16 @@ export const FormQuestion = ({
     >
       {whichContentDisplay(
         loading,
+        formFinished,
         question,
         submitError,
         handleRequestAdvance,
         handleRequestRetreat,
         handleChangeAnswer,
-        classes
+        classes,
+        fileNames,
+        setFilenames,
+        handleUploadFile
       )}
     </div>
   );
@@ -45,12 +87,16 @@ export const FormQuestion = ({
 
 const whichContentDisplay = (
   loading,
+  formFinished,
   question,
   submitError,
   handleRequestAdvance,
   handleRequestRetreat,
   handleChangeAnswer,
-  classes
+  classes,
+  filenames,
+  setFilenames,
+  onUploadFiles
 ) => {
   if (loading) {
     // FIM DA ETAPA
@@ -76,17 +122,17 @@ const whichContentDisplay = (
         validationErrorAction={() =>
           Toast("Salvando etapa, aguarde...", "info")
         }
-        onChangeAnswer={() => {}}
+        onChangeAnswer={() => { }}
         onAdvance={handleRequestAdvance}
-        onRetreat={() => {}}
+        onRetreat={() => { }}
       />
     );
-  } else if (!loading && typeof question !== "undefined") {
+  } else if (!loading && !formFinished) {
     // QUESTÃO COMUM
     return (
       <QuestionBox
         question={question.question}
-        answer={returnAnswerComponent(question, classes, handleChangeAnswer)}
+        answer={returnAnswerComponent(question, classes, handleChangeAnswer, filenames, setFilenames)}
         validation={() => {
           if (question.invalidMessage === null) {
             return true;
@@ -105,11 +151,19 @@ const whichContentDisplay = (
         validationErrorAction={() => {
           Toast(question.invalidMessage, "warn");
         }}
-        // onChangeAnswer={(e) =>
-        //   handleChangeAnswer(question.questionId, e.currentTarget.value)
-        // }
         onChangeAnswer={null}
-        onAdvance={handleRequestAdvance}
+        onAdvance={async () => {
+          if (question.answerComponentType === 'file') {
+            const res = await onUploadFiles()
+
+            if (res === true) {
+              handleRequestAdvance()
+            }
+
+          } else {
+            handleRequestAdvance()
+          }
+        }}
         onRetreat={handleRequestRetreat}
         alignArrow={whereAlignArrow(question)}
         answerOnly={isAnswerOnly(question)}
@@ -121,16 +175,16 @@ const whichContentDisplay = (
       <QuestionBox
         question="Formulário completo!"
         answer={null}
-        validation={() => false}
-        validationErrorAction={() =>
-          Toast(
-            "Voce já respondeu a todas as questões do formulário",
-            "success"
-          )
-        }
-        onChangeAnswer={() => {}}
-        onAdvance={() => {}}
-        onRetreat={() => {}}
+        validation={() => true}
+        validationErrorAction={() => { }}
+        onChangeAnswer={() => { }}
+        onAdvance={() => Toast(
+          "Voce já respondeu a todas as questões do formulário",
+          "success"
+        )}
+        onRetreat={() => Toast(
+          "Não é possivel navegar de volta a um formulário já preenchido"
+        )}
       />
     );
   }
@@ -156,7 +210,7 @@ const isAnswerOnly = (question) => {
   }
 };
 
-const returnAnswerComponent = (question, classes, onChangeAnswer) => {
+const returnAnswerComponent = (question, classes, onChangeAnswer, filenames, setFilenames) => {
   switch (question.answerComponentType) {
     case "input":
       return (
@@ -164,7 +218,7 @@ const returnAnswerComponent = (question, classes, onChangeAnswer) => {
           autoFocus
           className={classes.TextInput}
           variant="outlined"
-          label={question.FTP_slug}
+          label={question.slug}
           value={question.answer}
           onChange={(e) => onChangeAnswer(e.currentTarget.value)}
         />
@@ -231,6 +285,77 @@ const returnAnswerComponent = (question, classes, onChangeAnswer) => {
           ))}
         </div>
       );
+    case "select":
+      return (
+        <Select
+          onChange={(e) => onChangeAnswer(e.target.value)}
+          label="Selecione..."
+          value={question.answer}
+        >
+          {question.questionOptions.map(opc => (
+            <MenuItem key={opc.value} value={opc.value}>{opc.label}</MenuItem>
+          ))}
+
+        </Select>
+      );
+    case "input muiltiline":
+      return (
+        <TextField
+          autoFocus
+          className={classes.TextInput}
+          variant='outlined'
+          label={question.slug}
+          value={question.answer}
+          onChange={(e) => onChangeAnswer(e.currentTarget.value)}
+
+          multiline
+          rowsMax={4}
+        />
+      );
+    case "file":
+      return (
+        <div
+          className='YAlign'
+          style={{
+            width: '100%',
+            flex: 'unset',
+            maxWidth: '250px'
+          }}
+        >
+          <Typography variant='body1'>
+            <strong>Selecione o arquivo</strong>
+          </Typography>
+          <NewFileInput
+            ContainerStyle={{
+              display: 'flex',
+              flexDirection: "column",
+              height: '100%',
+              width: '80%',
+            }}
+            onChange={() => setFilenames(getFileNames(makeFormData(getFiles())))}
+            multiple={question.questionOptions[0].multiple}
+            name="upload"
+            accept="application/pdf,image/png, image/jpeg"
+            label={
+              <div className="XAlign">
+                <Icon>attach_file</Icon>
+                ANEXAR
+              </div>
+            }
+          />
+          {filenames.length > 0 ? (
+            <ul style={{ listStyleType: 'disclosure-closed', paddingLeft: '16px' }}>
+              {filenames.map(filename => (
+                <li key={filename} style={{ listStyleType: 'disclosure-closed' }}>
+                  <Typography variant='subtitle1'>
+                    {filename}
+                  </Typography>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+      )
     default:
       return null;
   }
@@ -258,6 +383,36 @@ const rawDateToMomentValidObject = (rawDate) => {
     return MomentValidObj;
   }
 };
+
+const getFiles = () => {
+  //Pega todos inputs do tipo arquivos
+  const arquivos = document.getElementsByClassName("files");
+
+  return arquivos
+}
+
+const makeFormData = (htmlFileCollection) => {
+  //cria um objeto do tipo formulario
+  const formData = new FormData();
+
+  //poe o conteudo de todos os inputs do tipo arquivo dentro do mesmo formulario
+  for (let j = 0; j < htmlFileCollection.length; j++) {
+    for (let i = 0; i < htmlFileCollection[j].files.length; i++) {
+      formData.append(`formData`, htmlFileCollection[j].files[i]);
+    }
+  }
+
+  return formData
+}
+
+const getFileNames = (FormData) => {
+  let aux = []
+  for (let i = 0; i < FormData.getAll('formData').length; i++) {
+    aux.push(FormData.getAll('formData')[i].name)
+  }
+
+  return aux
+}
 
 const useStyles = makeStyles((theme) => ({
   TextInput: {

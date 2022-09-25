@@ -27,6 +27,7 @@ export const Formulario = () => {
   const [loading, setLoading] = useState(false);
   const [validado, setValidado] = useState(false);
   const [formSection, setFormSection] = useState(0);
+  const [isFormComplete, setIsFormComplete] = useState(false)
   const [form, setForm] = useState(null);
   const [wait, setWait] = useState(false);
   const [helperModalOpen, setHelperModalOpen] = useState(false);
@@ -47,11 +48,14 @@ export const Formulario = () => {
 
     try {
       const response = await api.get(`/form/check/${codigo}`);
+
       setLoading(false);
       setValidado(true);
       setWait(false);
       setFormSection(response.data.SECAO);
       setForm(response.data.FORM);
+      setIsFormComplete(response.data.CONCLUÍDO)
+
     } catch (err) {
       Toast("Código inválido", "info");
       setLoading(false);
@@ -135,6 +139,7 @@ export const Formulario = () => {
               onChangeForm={setForm}
               COD={codCandidato}
               lastFormSection={formSection}
+              isFormComplete={isFormComplete}
             />
           ) : null}
         </FormContainer>

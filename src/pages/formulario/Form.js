@@ -5,33 +5,54 @@ import { FormQuestion } from "./FormQuestion";
 import { FormStepper } from "./FormStepper";
 import { ModalCOF } from "./modals/modalCOF";
 
-import { Toast } from "../../components/toasty";
+import { Toast } from '../../components/toasty';
+import { api } from '../../services/api';
 
-export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
-  const [section, setSection] = useState(0);
-  const [question, setQuestion] = useState(13);
+export const Form = ({ Form, onChangeForm, COD, lastFormSection, isFormComplete }) => {
+  const [section, setSection] = useState(1);
+  const [question, setQuestion] = useState(0);
+
   const [loading, setLoading] = useState(false);
+  const [formFinished, setFormFinished] = useState(false);
   const [submitError, setSubmitError] = useState(false);
   const [modalCOFOpen, setModalCOFOpen] = useState(false);
-  // 963406
 
-  const sessao = !loading ? Form[Object.keys(Form)[section]] : [];
-  const questao = !loading
+  const sessao = !loading && !isFormComplete ? Form[Object.keys(Form)[section]] : [];
+  const questao = !loading && !isFormComplete
     ? Form[Object.keys(Form)[section]][question]
     : questionModal;
 
   useEffect(() => {
-    setSection(Number(lastFormSection));
+    if (lastFormSection !== null) {
+      setSection(Number(lastFormSection));
+    } else {
+
+    }
   }, [lastFormSection]);
 
-  const validateQuestion = () => {
-    if (questao && questao.dependences !== null) {
+  useEffect(() => {
+    setFormFinished(isFormComplete);
+  }, [isFormComplete]);
+
+  const validateQuestion = (q) => {
+    if (q.dependences !== null) {
       let valid = true;
 
-      questao.dependences.forEach((d) => {
-        let targetQuestion = Form[Object.keys(Form)[section]].filter(
-          (q) => q.questionId === d.id
-        )[0];
+      // check equals
+      q.dependences.forEach((d) => {
+        let targetQuestion = null
+
+        for (let i = 1; i < Object.keys(Form).length; i++) {
+          let result = Form[Object.keys(Form)[i]].filter(
+            (tq) => tq.questionId === d.id
+          )
+
+          if (result.length > 0) {
+            targetQuestion = result[0]
+          }
+        }
+
+        if (targetQuestion === null) throw new Error('questão dependida não encontrada')
 
         //testo o que deve ser igual
         if (Array.isArray(d.equals)) {
@@ -51,10 +72,21 @@ export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
         }
       });
 
-      questao.dependences.forEach((d) => {
-        let targetQuestion = Form[Object.keys(Form)[section]].filter(
-          (q) => q.questionId === d.id
-        );
+      // check not equals
+      q.dependences.forEach((d) => {
+        let targetQuestion = null
+
+        for (let i = 1; i < Object.keys(Form).length; i++) {
+          let result = Form[Object.keys(Form)[i]].filter(
+            (tq) => tq.questionId === d.id
+          )
+
+          if (result.length > 0) {
+            targetQuestion = result[0]
+          }
+        }
+
+        if (targetQuestion === null) throw new Error('questão dependida não encontrada')
 
         //testo o que deve ser diferente
         if (Array.isArray(d.notEquals)) {
@@ -74,83 +106,145 @@ export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
         }
       });
 
-      return valid;
+      return valid
     } else {
-      alert('não foi possivel validar a questão')
-      return false;
+      return true
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   };
 
   const handleRequestAdvance = async () => {
-    if (
-      question + 1 === sessao.length &&
-      typeof Form[Object.keys(Form)[section + 1]] != "undefined"
-    ) {
+    const finishForm = async () => {
       setLoading(true);
       setSubmitError(false);
 
       try {
-        await handleSubmit();
+        if (!await handleSubmit(true)) {
+          throw new Error()
+        }
+
+        setLoading(false);
+        setSubmitError(false);
+        setFormFinished(true)
+      } catch (err) {
+        setSubmitError(true);
+      }
+    }
+
+    //testo se estou tentando avançar alem do formulario
+    if (question + 1 === sessao.length && section + 1 === Object.keys(Form).length) {
+      await finishForm()
+
+      return
+    }
+
+    let newSection = question + 1 === sessao.length && section + 1 !== Object.keys(Form)[section + 1].length ? section + 1 : section
+    let newQuestion = question + 1 === sessao.length && section + 1 !== Object.keys(Form)[section + 1].length ? 0 : question + 1
+    let validated = false
+
+    for (let s = newSection; s < Object.entries(Form).length && !validated; s++) {
+      for (let q = newQuestion; q < Form[Object.keys(Form)[s]].length && !validated; q++) {
+        if (validateQuestion(Form[Object.keys(Form)[s]][q])) {
+          validated = true
+          newSection = s
+          newQuestion = q
+        }
+      }
+
+      if (!validated) newQuestion = 0
+    }
+
+    if(!validated){
+      await finishForm()
+
+      return
+    }
+
+    if (newSection > section) {
+      setLoading(true);
+      setSubmitError(false);
+
+      try {
+        if (!await handleSubmit()) {
+          throw new Error()
+        }
 
         //volta o question para 0
-        setQuestion(0);
+        setQuestion(newQuestion);
 
         //avança a section
-        setSection((oldState) => oldState + 1);
+        setSection(newSection);
 
         setLoading(false);
         setSubmitError(false);
       } catch (err) {
         setSubmitError(true);
       }
-    } else if (typeof Form[Object.keys(Form)[section + 1]] == "undefined") {
-      setLoading(true);
-      setSubmitError(false);
-
-      try {
-        await handleSubmit();
-
-        /*Essa posicao no array das perguntas vai retornar um undefined,
-        que o FormQuestion vai considerar que o formulário acabou*/
-        setQuestion((oldState) => oldState + 1);
-
-        setLoading(false);
-        setSubmitError(false);
-      } catch (err) {
-        setSubmitError(true);
-      }
-    } else {
-      setQuestion((oldState) => oldState + 1);
+    } else if (newSection === section && newQuestion !== question) {
+      setQuestion(newQuestion);
     }
   };
 
   const handleRequestRetreat = async () => {
-    if (question === 0 && section === 1) {
+    let newSection = question === 0 ? section - 1 : section
+    let newQuestion = question === 0 ? Form[Object.keys(Form)[section - 1]].length - 1 : question - 1
+
+    if (newSection < 1 || newQuestion < 0) {
       Toast("Você já está na primeira pergunta", "info");
-    } else if (question > 0) {
-      setQuestion(question - 1);
-    } else if (question === 0 && section > 0) {
-      setQuestion(Form[Object.keys(Form)[section - 1]].length - 1);
-      setSection(section - 1);
+    } else {
+      let validated = false
+
+      for (let s = newSection; s < Object.entries(Form).length && !validated; s--) {
+        for (let q = newQuestion; q < Form[Object.keys(Form)[s]].length && !validated; q--) {
+
+          if (validateQuestion(Form[Object.keys(Form)[s]][q])) {
+            validated = true
+            newSection = s
+            newQuestion = q
+          }
+        }
+
+        if (!validated) newQuestion = 0
+      }
+
+      setSection(newSection);
+      setQuestion(newQuestion);
     }
+
+    // if (question === 0 && section === 1) {
+    //   // se for a primeira pergunta da primeira section = Toast = voce ja esta no comeco do formulario
+
+    //   Toast("Você já está na primeira pergunta", "info");
+    // } else if (question === 0 && section > 1) {
+    //   // se for a primeira pergunta e nao for a primeira section = section = section - 1, question = form[section - 1].length - 1
+
+    //   setQuestion(Form[Object.keys(Form)[section - 1]].length - 1);
+    //   setSection(section - 1);
+    // } else if (question > 0 && section > 0) {
+    //   // se nao for a primeira pergunta de qualquer section = question = question - 1
+
+    //   setQuestion(question - 1);
+    // }
   };
 
-  const handleSubmit = async () => {
-    // let toastId = null
-    // toastId = Toast('Salvando...', 'wait')
-    // try {
-    //   //envia o formulario
-    //   await api.post(`/form/upload/form/${COD}`,
-    //     {
-    //       form: Form,
-    //       secao: section + 1
-    //     },
-    //   );
-    //   Toast('Etapa salva', 'update', toastId, 'success')
-    // } catch (err) {
-    //   Toast('Falha ao salvar dados, tente novamente', 'update', toastId, 'error')
-    // }
+  const handleSubmit = async (isFinish = false) => {
+    let toastId = null
+    toastId = Toast('Salvando...', 'wait')
+
+    try {
+      //envia o formulario
+      await api.post(`/form/upload/form/${COD}`,
+        {
+          form: Form,
+          secao: isFinish ? null : section + 1
+        },
+      );
+
+      Toast('Etapa salva', 'update', toastId, 'success')
+      return true
+    } catch (err) {
+      Toast('Falha ao salvar dados, tente novamente', 'update', toastId, 'error')
+      return false
+    }
   };
 
   const handleChangeAnswer = (newAnswer) => {
@@ -170,10 +264,17 @@ export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
     <>
       <ModalCOF open={modalCOFOpen} onClose={() => setModalCOFOpen(false)} />
 
-      <FormHelper />
+      <FormHelper
+        loading={loading}
+        question={question}
+        sectionLength={sessao.length}
+        submitError={submitError}
+        formFinished={formFinished}
+      />
 
       <FormQuestion
         loading={loading}
+        formFinished={formFinished}
         question={questao}
         submitError={submitError}
         handleRequestAdvance={() => {
@@ -183,16 +284,23 @@ export const Form = ({ Form, onChangeForm, COD, lastFormSection }) => {
           handleRequestRetreat();
         }}
         handleChangeAnswer={handleChangeAnswer}
+        COD={COD}
       />
 
-      <FormStepper />
+      <FormStepper
+        stepsName={Object.keys(Form).filter(objName => objName !== 'NC')}
+        section={section - 1}
+        formFinished={formFinished}
+      />
     </>
   );
 };
 
 let questionModal = {
   questionId: 0,
+  slug: null,
   question: null,
+  questionOptions: null,
   answer: null,
   answerComponentType: null,
   invalidMessage: null,
