@@ -43,6 +43,7 @@ export const FormQuestion = ({
 
     formData.append('multiple', qtdArquivos > 1 ? "S" : "N")
     formData.append('cod', COD)
+    formData.append('qId', question.questionId)
 
     try {
       toastId = Toast('Salvando arquivo...', 'wait')
@@ -123,7 +124,7 @@ const whichContentDisplay = (
           Toast("Salvando etapa, aguarde...", "info")
         }
         onChangeAnswer={() => { }}
-        onAdvance={handleRequestAdvance}
+        onAdvance={() => { }}
         onRetreat={() => { }}
       />
     );
@@ -192,8 +193,7 @@ const whichContentDisplay = (
 
 const whereAlignArrow = (question) => {
   if (
-    question.answerComponentType === "Estado Civil" ||
-    question.answerComponentType === "Afirmacoes" ||
+    question.answerComponentType === "radio select" ||
     question.answerComponentType === "file"
   ) {
     return "flex-end";
@@ -227,7 +227,7 @@ const returnAnswerComponent = (question, classes, onChangeAnswer, filenames, set
       return (
         <DatePicker
           min={false}
-          label="Data de nascimento"
+          label={question.slug}
           defaultValue={rawDateToMomentValidObject(question.answer)}
           onChange={(e) => onChangeAnswer(e._d)}
         />
@@ -267,7 +267,7 @@ const returnAnswerComponent = (question, classes, onChangeAnswer, filenames, set
           onChange={(e) => onChangeAnswer(e.target.value)}
         />
       );
-    case "Estado Civil":
+    case "radio select":
       return (
         <div>
           {question.questionOptions.map((EC) => (
@@ -289,8 +289,9 @@ const returnAnswerComponent = (question, classes, onChangeAnswer, filenames, set
       return (
         <Select
           onChange={(e) => onChangeAnswer(e.target.value)}
-          label="Selecione..."
+          label={question.slug}
           value={question.answer}
+          width='200px'
         >
           {question.questionOptions.map(opc => (
             <MenuItem key={opc.value} value={opc.value}>{opc.label}</MenuItem>
@@ -298,7 +299,7 @@ const returnAnswerComponent = (question, classes, onChangeAnswer, filenames, set
 
         </Select>
       );
-    case "input muiltiline":
+    case "input multiline":
       return (
         <TextField
           autoFocus

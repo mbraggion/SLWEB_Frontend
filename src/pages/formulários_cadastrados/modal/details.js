@@ -5,7 +5,7 @@ import { api } from '../../../services/api';
 import {
   AppBar, Button, Dialog, IconButton, makeStyles, Slide, Toolbar, Typography
 } from '@material-ui/core/';
-import { Close, GetApp as GetAppIcon } from '@material-ui/icons';
+import { Close, AttachFile as AttachFileIcon, Description as DescriptionIcon } from '@material-ui/icons';
 
 import moment from "moment/moment";
 import { Toast } from '../../../components/toasty';
@@ -35,6 +35,25 @@ export const DetailsModal = ({ Form, isModalOpen, onClose, modalTitle }) => {
     }
   }
 
+  const handleDownloadZIP = async () => {
+    let toastId = null
+    toastId = Toast('Buscando...', 'wait')
+
+    try {
+      const response = await api.get(`/form/zip/${Form.Cod}`, {
+        responseType: "arraybuffer",
+      })
+
+      Toast('Encontrado!', 'update', toastId, 'success')
+
+      const blob = new Blob([response.data], { type: "application/zip" });
+
+      saveAs(blob, `Arquivos_${Form.Cod}_${new Date().getTime()}.zip`);
+    } catch (err) {
+      Toast('Falha ao recuperar ZIP do servidor', 'update', toastId, 'error')
+    }
+  }
+
   return (
     <Dialog
       fullScreen
@@ -55,12 +74,13 @@ export const DetailsModal = ({ Form, isModalOpen, onClose, modalTitle }) => {
           <Typography variant="h6" className={classes.title}>
             {modalTitle}
           </Typography>
-          <Button
-            color="inherit"
-            onClick={() => handleDownloadPDF()}
-          >
-            <GetAppIcon />
-            Baixar PDF
+          <Button color="inherit" onClick={() => handleDownloadZIP()} >
+            <AttachFileIcon />
+            Arquivos
+          </Button>
+          <Button color="inherit" onClick={() => handleDownloadPDF()} >
+            <DescriptionIcon />
+            PDF
           </Button>
         </Toolbar>
       </AppBar>
@@ -68,7 +88,7 @@ export const DetailsModal = ({ Form, isModalOpen, onClose, modalTitle }) => {
         <div style={divAlinha}>
           <div style={divColuna}>
             {Form !== null ? Object.keys(Form.Questions).map((s, i) => {
-              if (i % 2 === 0) {
+              if (i % 2 === 0 && s !== 'Encerramento') {
                 return (
 
                   <div style={divMetade}>
@@ -96,7 +116,7 @@ export const DetailsModal = ({ Form, isModalOpen, onClose, modalTitle }) => {
           </div>
           <div style={divColuna}>
             {Form !== null ? Object.keys(Form.Questions).map((s, i) => {
-              if (i % 2 !== 0) {
+              if (i % 2 !== 0 && s !== 'Encerramento') {
                 return (
 
                   <div style={divMetade}>
