@@ -87,15 +87,16 @@ const useStyles = makeStyles((theme) => ({
   },
   values: (props) => ({
     padding: '0px 0px 0px 8px !important',
-    width: '80px !important',
+    width: '90px !important',
     border: 'none !important',
     background: props.editavel === true ? '#CCC !important' : 'transparent',
     color: '#000 !important',
     height: '100% !important',
-    fontWeight: props.editavel === true ? 'normal !important' : 'bold !important'
+    textAlign: 'end'
   }),
   percentages: {
     padding: '0px 0px 0px 4px',
-    width: '70px'
+    width: '70px',
+    textAlign: 'end'
   }
 }))

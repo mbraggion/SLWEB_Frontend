@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import moment from 'moment'
-import { api } from '../../services/api'
-import { saveAs } from 'file-saver'
+import { saveAs } from 'file-saver';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { api } from '../../services/api';
 
-import { makeStyles } from '@material-ui/styles'
+import { makeStyles } from '@material-ui/styles';
 
-import { Resumo } from './components/resumo'
-import { Despesas } from './components/despesas'
-import { DespesasVariaveis } from './components/despesasVariaveis'
-import { Options } from './components/options'
+import { Despesas } from './components/despesas';
+import { DespesasVariaveis } from './components/despesasVariaveis';
+import { Options } from './components/options';
+import { Resumo } from './components/resumo';
 
-import { Panel } from '../../components/commom_in'
-import Loading from '../../components/loading_screen'
-import { Toast } from '../../components/toasty'
+import { Panel } from '../../components/commom_in';
+import Loading from '../../components/loading_screen';
+import { Toast } from '../../components/toasty';
 
 const DRE = () => {
   const classes = useStyles()
@@ -226,6 +226,7 @@ const DRE = () => {
                 onChangeValue={handleUpdateLineDre}
                 onUpdateLine={syncChangesDre}
                 pRef={dre.filter(d => d.DreCod === 1)[0]?.DreVlr}
+                editavel={Math.abs(moment(selRef).add(3, 'hours').diff(moment().startOf('month'), 'months')) < 2}
               />
               <DespesasVariaveis
                 DesV={dov}
@@ -233,6 +234,7 @@ const DRE = () => {
                 AllowAddNewLine={selRef !== ''}
                 onChangeValue={handleUpdateLineDov}
                 onUpdateLine={syncChangesDov}
+                editavel={Math.abs(moment(selRef).add(3, 'hours').diff(moment().startOf('month'), 'months')) < 2}
               />
             </section>
           </div>

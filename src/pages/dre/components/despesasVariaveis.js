@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { makeStyles } from '@material-ui/styles'
-import { Button, Accordion, AccordionSummary, AccordionDetails, Typography } from '@material-ui/core'
-import { ExpandMore as ExpandMoreIcon, Add as AddIcon } from '@material-ui/icons'
+import { Accordion, AccordionDetails, AccordionSummary, Button, Typography } from '@material-ui/core';
+import { Add as AddIcon, ExpandMore as ExpandMoreIcon } from '@material-ui/icons';
+import { makeStyles } from '@material-ui/styles';
 
-import { LinhaVariavel } from './linhaVariavel'
+import { LinhaVariavel } from './linhaVariavel';
 
-export const DespesasVariaveis = ({ DesV, onAddNewLine, AllowAddNewLine, onChangeValue, onUpdateLine }) => {
+export const DespesasVariaveis = ({ DesV, onAddNewLine, AllowAddNewLine, onChangeValue, onUpdateLine, editavel }) => {
   const classes = useStyles()
 
   return (
@@ -23,6 +23,7 @@ export const DespesasVariaveis = ({ DesV, onAddNewLine, AllowAddNewLine, onChang
                 linha={d}
                 onChangeValue={onChangeValue}
                 onUpdateLine={onUpdateLine}
+                editavel={editavel}
               />
             )}
           </div>
@@ -32,7 +33,7 @@ export const DespesasVariaveis = ({ DesV, onAddNewLine, AllowAddNewLine, onChang
             color="primary"
             startIcon={<AddIcon />}
             onClick={onAddNewLine}
-            disabled={!AllowAddNewLine}
+            disabled={!AllowAddNewLine || !editavel}
           >
             Nova Despesa Variável
           </Button>

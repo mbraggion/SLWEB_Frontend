@@ -72,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
   },
   percentages: {
     padding: '0px 0px 0px 4px',
-    width: '70px'
+    width: '70px',
+    textAlign: 'end'
   }
 }))
