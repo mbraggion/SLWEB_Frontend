@@ -29,13 +29,11 @@ function Equip() {
             borderRadius: '5px'
           }}
         >
-          <img
-            src='https://drive.google.com/uc?export=view&id=1IK-QSK3PLj3nNOjYEM9LWLW38begGqyH'
-            alt='Colaboradores'
-            style={{
-              width: '100%',
-              maxWidth: '700px'
-            }}
+          <embed
+            src="https://drive.google.com/uc?export=view&id=1--dBOrhVdUreTUlMlZ04jJqKbHbnyXKt#toolbar=0&navpanes=0&scrollbar=0"
+            type="application/pdf"
+            width="500"
+            height='100%'
           />
         </div>
         <div
