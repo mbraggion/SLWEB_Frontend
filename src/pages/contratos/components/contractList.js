@@ -11,7 +11,6 @@ export const ContractList = ({ Contracts, onOpenModal }) => {
     <div className={classes.container}>
       {Contracts.map(con => (
         <ContractListItem
-          key={con.ConId}
           contract={con}
           onOpenModal={onOpenModal}
         />
