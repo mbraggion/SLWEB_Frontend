@@ -1,7 +1,7 @@
-import React from 'react'
+import React from 'react';
 
-import { makeStyles } from '@material-ui/core'
-import { Close as CloseIcon } from '@material-ui/icons'
+import { makeStyles } from '@material-ui/core';
+import { Close as CloseIcon } from '@material-ui/icons';
 import NumberFormat from "react-number-format";
 
 export const ConfigListItemHeader = ({ Sel, Produtos, ProdCod, TiposDeVenda, TVendaId, V1, V2, Receitas, RecId, Linha, onUpdateConfig, onRemoveConfig, Editing }) => {
@@ -16,7 +16,6 @@ export const ConfigListItemHeader = ({ Sel, Produtos, ProdCod, TiposDeVenda, TVe
         type='text'
         allowNegative={false}
         allowLeadingZeros={false}
-        allowedDecimalSeparators={false}
         decimalScale={0}
         onValueChange={(e) => onUpdateConfig('Sel', e.value, Linha)}
         disabled={true}

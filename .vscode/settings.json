@@ -1,0 +1,20 @@
+{
+  "sqltools.connections": [
+    {
+      "mssqlOptions": {
+        "appName": "SQLTools",
+        "useUTC": true,
+        "encrypt": true
+      },
+      "previewLimit": 50,
+      "server": "192.168.1.248",
+      "port": 1433,
+      "driver": "MSSQL",
+      "name": "SLTEC",
+      "group": "PILAO",
+      "database": "SLAPLIC",
+      "username": "SLuser",
+      "password": "Tec1910@"
+    }
+  ]
+}

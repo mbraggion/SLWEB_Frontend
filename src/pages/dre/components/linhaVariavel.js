@@ -26,7 +26,6 @@ export const LinhaVariavel = ({ linha, onChangeValue, onUpdateLine, editavel }) 
           prefix='R$'
           allowNegative={false}
           allowLeadingZeros={false}
-          allowedDecimalSeparators={false}
           decimalSeparator=','
           thousandSeparator='.'
           decimalScale={2}

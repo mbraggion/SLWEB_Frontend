@@ -75,6 +75,29 @@ export const Contrato = ({ contract }) => {
           label='Email'
         />
       </div>
+      <div className={classes.linha}>
+        <TextField
+          value={contract.Contato_Empresa_2}
+          onChange={() => { }}
+          disabled={true}
+          label='Contato'
+        />
+        <InputTel
+          value={contract.Fone_2}
+          onChange={() => { }}
+          disabled={!allowEdit}
+          className={classes.telInput}
+          label={'Telefone para contato'}
+        />
+      </div>
+      <div className={classes.linha}>
+        <TextField
+          value={contract.Email_2}
+          onChange={() => { }}
+          disabled={true}
+          label='Email'
+        />
+      </div>
 
     </div>
   )
@@ -85,15 +108,16 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   linha: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    width: '100%'
   },
   numberInput: {
-
+    width: '100%'
   },
   telInput: {
 
