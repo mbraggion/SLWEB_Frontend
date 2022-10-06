@@ -1,30 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { api } from '../../../services/api'
 import { saveAs } from "file-saver";
+import React, { useEffect, useState } from 'react';
+import { api } from '../../../services/api';
 
-import { withStyles, useTheme, } from '@material-ui/core/styles';
-import {
-  Close as CloseIcon,
-  VpnLock as VpnLockIcon,
-  PermDataSetting as PermDataSettingIcon
-} from '@material-ui/icons';
 import {
   Button,
-  Dialog,
-  DialogTitle as MuiDialogTitle,
-  DialogContent as MuiDialogContent,
-  DialogActions as MuiDialogActions,
-  IconButton,
+  Dialog, DialogActions as MuiDialogActions, DialogContent as MuiDialogContent, DialogTitle as MuiDialogTitle, IconButton,
   Typography,
   useMediaQuery
-} from '@material-ui/core'
-import { Toast } from '../../../components/toasty'
-import { toValidString } from '../../../misc/commom_functions'
+} from '@material-ui/core';
+import { useTheme, withStyles } from '@material-ui/core/styles';
+import {
+  Close as CloseIcon, PermDataSetting as PermDataSettingIcon, VpnLock as VpnLockIcon
+} from '@material-ui/icons';
+import { Toast } from '../../../components/toasty';
+import { toValidString } from '../../../misc/commom_functions';
 
-export const NewsDialog = ({ open, onClose }) => {
+export const NewVPNModal = ({ open, onClose }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [vpnPin, setVpnPin] = useState(null)
+
+  async function LoadData() {
+    try {
+      const response = await api.get('/vpn/pin')
+
+      setVpnPin(response.data.vpn_pin)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+  
+  useEffect(() => {
+    LoadData()
+  }, [])
 
   const handleRequestVPNFiles = async (type) => {
     let toastId = null
@@ -50,19 +58,6 @@ export const NewsDialog = ({ open, onClose }) => {
       Toast('Falha no download', 'update', toastId, 'error')
     }
   }
-
-  useEffect(() => {
-    async function LoadData() {
-      try {
-        const response = await api.get('/vpn/pin')
-
-        setVpnPin(response.data.vpn_pin)
-      } catch (err) {
-
-      }
-    }
-    LoadData()
-  }, [])
 
   return (
     <div>

@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { api } from "../../../services/api";
 import Draggable from "react-draggable";
+import { api } from "../../../services/api";
 
-import { Settings, Check, Close } from "@material-ui/icons/";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper, Typography, TextField } from "@material-ui/core";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper, TextField, Typography } from "@material-ui/core";
+import { Check, Close, Settings } from "@material-ui/icons/";
 
 import Button from "../../../components/materialComponents/Button";
-import { roleLevel, convertData } from "../../../misc/commom_functions";
-import { REACT_APP_SISTEMA_ROLE_LEVEL, REACT_APP_BACKOFFICE_ROLE_LEVEL, REACT_APP_TECNICA_ROLE_LEVEL, REACT_APP_EXPEDICAO_ROLE_LEVEL, REACT_APP_FRANQUEADO_ROLE_LEVEL, } from "../../../misc/role_levels";
-import { Toast } from "../../../components/toasty";
-import { RED_SECONDARY, GREY_SECONDARY } from "../../../misc/colors";
 import DatePicker from "../../../components/materialComponents/datePicker";
+import { Toast } from "../../../components/toasty";
+import { GREY_SECONDARY, RED_SECONDARY } from "../../../misc/colors";
+import { convertData, roleLevel } from "../../../misc/commom_functions";
+import { REACT_APP_BACKOFFICE_ROLE_LEVEL, REACT_APP_EXPEDICAO_ROLE_LEVEL, REACT_APP_FRANQUEADO_ROLE_LEVEL, REACT_APP_SISTEMA_ROLE_LEVEL, REACT_APP_TECNICA_ROLE_LEVEL } from "../../../misc/role_levels";
 
 function DraggableDialog(props) {
   const { Req } = props;
@@ -175,6 +175,9 @@ const CheckStage = (requisicao) => {
   if (requisicao.OSCStatus === "Concluido") {
     //pedido concluido
     return 0;
+  } else if (requisicao.OSCStatus === "Cancelado") {
+    //pedido cancelado pelo usuário
+    return 4;
   } else if (
     requisicao.OSCComDtValidação === null &&
     requisicao.OSCStatus === "Ativo"
@@ -211,9 +214,6 @@ const CheckStage = (requisicao) => {
   ) {
     //aguardando previsão de entrega da expedição
     return -3;
-  } else if (requisicao.OSCStatus === "Cancelado") {
-    //pedido cancelado pelo usuário
-    return 4;
   } else {
     //só Deus sabe quando vai cair aqui, provavelmente se mecherem manualmente na OSCtrl
     return 9;

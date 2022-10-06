@@ -17,13 +17,13 @@ export const InputTel = ({ value, onChange, disabled, className, label }) => {
       InputProps={{
         inputComponent: NumberFormatCustom,
       }}
-      variant='outlined'
+      variant='standard'
     />
   )
 }
 
 const NumberFormatCustom = (props) => {
-  const { inputRef, onChange, Tipo, ...other } = props;
+  const { inputRef, onChange, ...other } = props;
 
   return (
     <NumberFormat
@@ -41,7 +41,8 @@ const NumberFormatCustom = (props) => {
       isNumericString
       allowNegative={false}
       allowEmptyFormatting={false}
-      mask={'(##) # ####-####'}
+      format="(##) # ####-####"
+      mask="_"
     />
   );
 }

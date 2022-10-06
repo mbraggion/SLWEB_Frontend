@@ -4,8 +4,8 @@ import React from 'react'
 import { makeStyles, Typography } from '@material-ui/core'
 import { Description as DescriptionIcon } from '@material-ui/icons'
 
-import { RED_PRIMARY } from '../../../misc/colors'
-import { maskCNPJ } from '../../../misc/commom_functions'
+import { RED_PRIMARY } from '../../misc/colors'
+import { maskCNPJ } from '../../misc/commom_functions'
 
 export const ContractListItem = ({ contract, onOpenModal }) => {
   const classes = useStyles({

@@ -1,7 +1,7 @@
 import React from 'react';
-import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
-import { useHistory } from 'react-router-dom'
+import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
 
 import {
   Button,
@@ -12,10 +12,10 @@ import {
   Slide
 } from '@material-ui/core/';
 
-import { DoneAll as DoneAllIcon } from '@material-ui/icons'
+import { DoneAll as DoneAllIcon } from '@material-ui/icons';
 
-import { SetColetaCarga } from '../../../global/actions/VendasAction'
-import { RED_SECONDARY } from '../../../misc/colors'
+import { SetColetaCarga } from '../../../global/actions/VendasAction';
+import { RED_SECONDARY } from '../../../misc/colors';
 
 const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }) => {
   const history = useHistory()
@@ -24,10 +24,7 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
   const handleBill = (dadosMinimo, coleta) => {
     let diferenca = null
 
-    if (
-      Number(dadosMinimo.CalcFatId) < 255 &&
-      (String(dadosMinimo.AnxFatMinimo).trim() === 'S' || String(dadosMinimo.PdvConsMin).trim() === 'S')
-    ) {
+    if ( Number(dadosMinimo.CalcFatId) < 255 && (String(dadosMinimo.AnxFatMinimo).trim() === 'S' || String(dadosMinimo.PdvConsMin).trim() === 'S') ) {
       let minimoColeta = 0
 
       if (String(dadosMinimo.AnxTipMin) === 'D') {
@@ -234,7 +231,7 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
           <Button onClick={onClose} color="secondary">
             Fechar
           </Button>
-          <Button onClick={() => handleBill(BillingConfig, BillingDetails)} color="primary">
+          <Button onClick={() => handleBill(BillingConfig.Minimo, BillingDetails)} color="primary">
             Faturar
           </Button>
         </DialogActions>
