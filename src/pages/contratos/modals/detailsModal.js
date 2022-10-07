@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle as MuiDialogTitle, IconButton, MobileStepper, Typography, useMediaQuery } from '@material-ui/core/';
 import { useTheme, withStyles } from '@material-ui/core/styles';
 import { Close as CloseIcon, Edit as EditIcon, KeyboardArrowLeft, KeyboardArrowRight, Save as SaveIcon } from '@material-ui/icons';
 
-import { Anexo } from './anexo';
-import { Contrato } from './contrato';
+import { Toast } from '../../../components/toasty';
+import { Anexo } from './_anexo';
+import { Contrato } from './_contrato';
 
 
-export const DetailsModal = ({ open, onClose, target }) => {
+export const DetailsModal = ({ open, onClose, target, onUpdate }) => {
   const theme = useTheme();
+  const childRef = useRef();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [activeStep, setActiveStep] = useState(0);
@@ -25,27 +27,28 @@ export const DetailsModal = ({ open, onClose, target }) => {
   const handleChangeEditingState = async () => {
     setAllowEditing(oldState => !oldState)
 
-    // if (!allowEditing) {
-    //   let toastId = null
-    //   toastId = Toast('Salvando Alterações...', 'wait')
-    //   setWait(true)
+    if (!allowEditing) {
+      let toastId = null
+      toastId = Toast('Salvando Alterações...', 'wait')
+      setWait(true)
 
-    //   try {
-    //     if (!await childRef.current.handleSubmit()) {
-    //       throw new Error()
-    //     }
+      try {
+        if (!await childRef.current.handleSubmit()) {
+          throw new Error()
+        }
 
-    //     Toast('Alterações salvas com sucesso', 'update', toastId, 'success')
-    //     setWait(false)
-    //   } catch (err) {
-    //     Toast('Falha ao salvar alterações', 'update', toastId, 'error')
-    //     setWait(false)
-    //     setAllowEditing(false)
-    //   }
-    // }
+        Toast('Alterações salvas com sucesso', 'update', toastId, 'success')
+        setWait(false)
+      } catch (err) {
+        Toast('Falha ao salvar alterações', 'update', toastId, 'error')
+        setWait(false)
+        setAllowEditing(false)
+      }
+    }
   }
 
   const handleDiscardChanges = () => {
+    childRef.current.undoChanges()
     setAllowEditing(true)
   }
 
@@ -53,11 +56,11 @@ export const DetailsModal = ({ open, onClose, target }) => {
     switch (stage) {
       case 0:
         return (
-          <Contrato contract={target} />
+          <Contrato ref={childRef} contract={target} allowEdit={allowEditing} onUpdate={onUpdate} />
         )
       case 1:
         return (
-          <Anexo />
+          <Anexo ref={childRef} contract={target} allowEdit={allowEditing} />
         )
       default:
         return null

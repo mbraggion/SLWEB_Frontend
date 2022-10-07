@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from "react";
+import { saveAs } from "file-saver";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import moment from "moment";
-import { saveAs } from "file-saver";
 import { api } from "../../services/api";
 
-import { Receipt } from '@material-ui/icons'
-import { withStyles, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button, } from "@material-ui/core/";
+import { Button, Paper, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, withStyles } from "@material-ui/core/";
+import { Receipt } from '@material-ui/icons';
 
-import { ChangeTab, SetMin, SetPodeRetirar, } from "../../global/actions/ComprasAction";
+import { ChangeTab, SetMin, SetPodeRetirar } from "../../global/actions/ComprasAction";
 
 import Loading from "../../components/loading_screen";
 import { Toast } from "../../components/toasty";
 
 import { Table } from "../../components/table";
-import ContaModal from './modals/ContasModal'
-import PagamentoModal from './modals/PagamentoModal'
+import ContaModal from './modals/ContasModal';
+import PagamentoModal from './modals/PagamentoModal';
 
 const Contas = (props) => {
   const TabIndex = 1;
@@ -50,10 +50,11 @@ const Contas = (props) => {
         setTotalDuplicatas(DefineTotalDuplicatas(response.data.Duplicatas));
         setTotalAno(response.data.ComprasAno[0]);
         setAFaturar(response.data.AFaturar[0].Total);
-        setConfiavel(response.data.Confiavel)
-        SetMin(response.data.Geral.VlrMinCompra);
-        SetPodeRetirar(response.data.Geral.Retira);
-        setNaoCompensavel(response.data.NaoCompensavel)
+        setConfiavel(response.data.Confiavel);
+        setNaoCompensavel(response.data.NaoCompensavel);
+
+        SetMin(response.data.VlrMinCompra);
+        SetPodeRetirar(response.data.Retira);
 
         setLoaded(true);
       } catch (err) {

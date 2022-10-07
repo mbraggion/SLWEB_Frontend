@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-import { Button, Checkbox, Divider, FormControlLabel, IconButton, InputBase, makeStyles, Paper, Tooltip } from '@material-ui/core';
+import { Checkbox, Divider, FormControlLabel, IconButton, InputBase, makeStyles, Paper, Tooltip } from '@material-ui/core';
 
-import { Add as AddIcon, Close as CloseIcon, Search as SearchIcon } from '@material-ui/icons';
+import { Close as CloseIcon, Search as SearchIcon } from '@material-ui/icons';
 
-export const ContractsListOptions = ({ onChangeFiltro, mostrarInativos, switchInativos, onOpenNewContractModal }) => {
+export const ContractsListOptions = ({ onChangeFiltro, mostrarInativos, switchInativos }) => {
   const classes = useStyles()
   const [filterWord, setFilterWord] = useState('')
 
@@ -95,16 +95,7 @@ export const ContractsListOptions = ({ onChangeFiltro, mostrarInativos, switchIn
           label="Mostrar contratos inativos"
         />
       </div>
-      <Button
-        className={classes.button}
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={onOpenNewContractModal}
-        startIcon={<AddIcon />}
-      >
-        Novo Contrato
-      </Button>
+      <div style={{ width: '171.55px' }} />
     </div>
   )
 }

@@ -4,7 +4,7 @@ import NumberFormat from 'react-number-format';
  
 import { TextField } from '@material-ui/core/';
 
-export const InputNumber = ({ value, onChange, disabled, className, label, Tipo }) => {
+export const InputTel = ({ value, onChange, disabled, className, label }) => {
   return (
     <TextField
       className={className}
@@ -16,15 +16,14 @@ export const InputNumber = ({ value, onChange, disabled, className, label, Tipo 
       disabled={disabled}
       InputProps={{
         inputComponent: NumberFormatCustom,
-        inputProps: { Tipo: Tipo }
       }}
-      variant='outlined'
+      variant='standard'
     />
   )
 }
 
 const NumberFormatCustom = (props) => {
-  const { inputRef, onChange, Tipo, ...other } = props;
+  const { inputRef, onChange, ...other } = props;
 
   return (
     <NumberFormat
@@ -42,7 +41,8 @@ const NumberFormatCustom = (props) => {
       isNumericString
       allowNegative={false}
       allowEmptyFormatting={false}
-      mask={Tipo === 'CNPJ' ? '##.###.###/####-##' : Tipo === 'CPF' ? '###.###.###-##' : null }
+      format="(##) # ####-####"
+      mask="_"
     />
   );
 }

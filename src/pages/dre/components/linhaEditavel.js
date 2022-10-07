@@ -25,8 +25,8 @@ export const LinhaEditavel = ({ linha, pRef, onChangeValue, onUpdateLine, editav
           type='text'
           prefix='R$'
           allowNegative={false}
+          isNumericString
           allowLeadingZeros={false}
-          allowedDecimalSeparators={true}
           decimalSeparator=','
           thousandSeparator='.'
           decimalScale={2}
