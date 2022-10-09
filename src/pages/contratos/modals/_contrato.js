@@ -3,6 +3,7 @@ import { api } from '../../../services/api';
 
 import { Divider, makeStyles, TextField, Typography } from '@material-ui/core';
 import { Icon } from "react-materialize";
+import { saveAs } from 'file-saver'
 
 import FileInput from '../../../components/FileInput';
 import Datepicker from '../../../components/materialComponents/datePicker';
@@ -18,7 +19,7 @@ export const Contrato = forwardRef(({ contract, allowEdit }, ref) => {
 
   const LoadData = async () => {
     try {
-      const response = await api.get(`/contratos/contrato/${contract.CNPJ}/${contract.ConId}`)
+      const response = await api.get(`/contracts/info/contrato/${contract.CNPJ}/${contract.ConId}`)
 
       setInfoContrato(response.data.Contract)
       setLoaded(true)
@@ -34,7 +35,7 @@ export const Contrato = forwardRef(({ contract, allowEdit }, ref) => {
   useImperativeHandle(ref, () => ({
     async handleSubmit() {
       try {
-        await api.put(`/contratos/contrato/${contract.CNPJ}/${contract.ConId}`, {
+        await api.put(`/contracts/info/contrato/${contract.CNPJ}/${contract.ConId}`, {
           payload: infoContrato
         })
 
@@ -53,6 +54,7 @@ export const Contrato = forwardRef(({ contract, allowEdit }, ref) => {
 
   const handleSelectFile = async () => {
     setFetching(true)
+
     const arquivos = getFiles()
     const formData = makeFormData(arquivos)
 
@@ -75,28 +77,50 @@ export const Contrato = forwardRef(({ contract, allowEdit }, ref) => {
     formData.append('CNPJ', contract.CNPJ)
     formData.append('ConId', contract.ConId)
 
-    alert(JSON.stringify(fn))
-
     let toastId = null
 
     try {
       toastId = Toast('Enviando...', 'wait')
 
-      await api.post(`/contratos/upload`, formData, {
+      await api.post(`/contracts/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         },
       })
 
       Toast('Documento salvo', 'update', toastId, 'success')
+
+      document.getElementsByClassName("files")[0].value = ''
       setFetching(false)
       LoadData()
     } catch (err) {
       Toast('Falha ao salvar documento', 'update', toastId, 'error')
+
+      document.getElementsByClassName("files")[0].value = ''
       setFetching(false)
     }
   }
 
+  const handleDownloadFile = async (filename) => {
+    let toastId = null;
+    toastId = Toast("Baixando...", "wait");
+
+    try {
+      const response = await api.get(`/contracts/documents/${contract.CNPJ}/${contract.ConId}/${encodeURI(filename)}`, {
+        responseType: "arraybuffer",
+      })
+
+      Toast("Download concluído", "update", toastId, "success");
+
+      //Converto o PDF para BLOB
+      const blob = new Blob([response.data], { type: response.headers['content-type'] });
+
+      //Salvo em PDF junto com a data atual, só pra não sobreescrever nada
+      saveAs(blob, filename);
+    } catch (err) {
+      Toast("Falha no download", "update", toastId, "error");
+    }
+  }
 
   const getFiles = () => {
     //Pega todos inputs do tipo arquivos
@@ -293,16 +317,28 @@ export const Contrato = forwardRef(({ contract, allowEdit }, ref) => {
           </Typography>
         </li>
 
-        <ul style={{ listStyleType: 'disclosure-closed', paddingLeft: '16px' }}>
-          {/* Lista dos documentos já salvos com um onClick que baixa eles */}
-
-          {/* {fileNames.map(filename => (
-                  <li style={{ listStyleType: 'disclosure-closed' }}>
-                    <Typography variant='subtitle1'>
-                      {filename}
-                    </Typography>
-                  </li>
-                ))} */}
+        <ul
+          style={{
+            listStyleType: 'disclosure-closed',
+            paddingLeft: '16px',
+            maxWidth: '400px'
+          }}
+        >
+          {infoContrato.documents.map(filename => (
+            <li
+              style={{
+                listStyleType: 'disclosure-closed',
+              }}
+            >
+              <Typography
+                variant='body1'
+                className={classes.documentsLink}
+                onClick={() => handleDownloadFile(filename)}
+              >
+                {filename}
+              </Typography>
+            </li>
+          ))}
         </ul>
 
         <FileInput
@@ -325,6 +361,7 @@ export const Contrato = forwardRef(({ contract, allowEdit }, ref) => {
           name='upload'
           accept='application/pdf,image/png, image/jpeg'
           multiple={true}
+          disabled={fetching}
         />
 
       </div>
@@ -363,5 +400,18 @@ const useStyles = makeStyles((theme) => ({
   },
   dividerInset: {
     margin: `5px 0 0 ${theme.spacing(9)}px`,
+  },
+  documentsLink: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    fontSize: '16px',
+    padding: '4px 0px',
+    
+    '&:hover': {
+      textDecoration: 'underline',
+      color: 'blue',
+      cursor: 'pointer'
+    }
   }
 }))

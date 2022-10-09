@@ -15,20 +15,20 @@ const Contratos = () => {
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [targetContract, setTargetContract] = useState(null);
 
-  useEffect(() => {
-    LoadData()
-  }, [])
-
   const LoadData = async () => {
     try {
-      const response = await api.get('/contratos')
+      const response = await api.get('/contracts')
 
       setContracts(response.data.contracts)
       setLoaded(true);
     } catch (err) {
-
+      console.log(err)
     }
   }
+
+  useEffect(() => {
+    LoadData();
+  }, []);
 
   const handleOpenDetailsModal = (tg) => {
     setDetailsModalOpen(true)
@@ -80,7 +80,7 @@ const returnContractsFilter = (contracts, shouldShowInactive, filterString) => {
     if (filterString.trim() === '') {
       return true
     } else if (filterString.trim() !== '' && (
-      contract.Nome_Fantasia.trim().toLowerCase().match(re) || 
+      contract.Nome_Fantasia.trim().toLowerCase().match(re) ||
       contract.CNPJ.trim().toLowerCase().match(re) ||
       contract.CNPJss.trim().toLowerCase().match(re)
     )) {

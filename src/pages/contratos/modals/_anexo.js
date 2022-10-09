@@ -15,7 +15,7 @@ export const Anexo = forwardRef(({ contract, allowEdit }, ref) => {
 
   const LoadData = async () => {
     try {
-      const response = await api.get(`/contratos/anexo/${contract.CNPJ}/${contract.ConId}`)
+      const response = await api.get(`/contracts/info/anexo/${contract.CNPJ}/${contract.ConId}`)
 
       setInfoAnexo(response.data.ContractAnx)
       setFaixa(response.data.ContractFxCon)
@@ -32,7 +32,7 @@ export const Anexo = forwardRef(({ contract, allowEdit }, ref) => {
   useImperativeHandle(ref, () => ({
     async handleSubmit() {
       try {
-        await api.put(`/contratos/anexo/${contract.CNPJ}/${contract.ConId}`, {
+        await api.put(`/contracts/info/anexo/${contract.CNPJ}/${contract.ConId}`, {
           payload: {
             ...infoAnexo,
             Faixa: [...infoFaixa]

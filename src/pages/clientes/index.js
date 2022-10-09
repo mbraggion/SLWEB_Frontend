@@ -101,7 +101,8 @@ const returnClientesFilter = (clientes, shouldShowInactive, filterString) => {
     if (filterString.trim() === '') {
       return true
     } else if (filterString.trim() !== '' && (
-      cliente.Nome_Fantasia.trim().toLowerCase().match(re) || cliente.Razão_Social.trim().toLowerCase().match(re)
+      cliente.Nome_Fantasia.trim().toLowerCase().match(re) || 
+      cliente.Razão_Social.trim().toLowerCase().match(re)
     )) {
       return true
     } else {

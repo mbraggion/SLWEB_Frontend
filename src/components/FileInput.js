@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TextInput = ({ ContainerStyle, label, ButtonStyle, onChange, name, accept, multiple }) => {
+const TextInput = ({ ContainerStyle, label, ButtonStyle, onChange, name, accept, multiple, disabled }) => {
   return (
     <div
       className={`custom file-field`}
@@ -17,6 +17,7 @@ const TextInput = ({ ContainerStyle, label, ButtonStyle, onChange, name, accept,
           className={`${name} files`}
           accept={accept}
           multiple={multiple}
+          disabled={disabled}
         />
       </div>
     </div>
