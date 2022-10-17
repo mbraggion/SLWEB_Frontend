@@ -26,7 +26,6 @@ export const NewVPNModal = ({ open, onClose }) => {
 
       setVpnPin(response.data.vpn_pin)
     } catch (err) {
-      console.log(err)
     }
   }
   

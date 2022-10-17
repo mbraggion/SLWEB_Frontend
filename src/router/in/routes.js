@@ -22,6 +22,7 @@ import FormsAcompanhamento from "../../pages/formulários_cadastrados";
 import Franqueados from '../../pages/franqueados';
 import GerenciarEquip from "../../pages/gerenciarSolicitacoes/index";
 import GerirLeads from '../../pages/gerirLeads/index';
+import Inventario from '../../pages/inventario/index';
 import Leads from "../../pages/leads/index";
 import Monitor from "../../pages/monitor/index";
 import PedidosCompra from '../../pages/pedidosDeCompra/index';
@@ -65,6 +66,7 @@ function Dashboard(props) {
             <Route exact path={validateRouteAccess("/contratos")} component={Contratos} />
             <Route exact path={validateRouteAccess("/monitor")} component={Monitor} />
             <Route exact path={validateRouteAccess("/dre")} component={DRE} />
+            <Route exact path={validateRouteAccess("/inventario")} component={Inventario} />
             <Route exact path={validateRouteAccess("/arquivos")} component={ () => <FilesProvider> <Arquivos /> </FilesProvider> } />
 
             <Route exact path={validateRouteAccess("/administracao/solicitacao/management")} component={GerenciarEquip} />

@@ -2,8 +2,8 @@ import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'rea
 import { api } from '../../../services/api';
 
 import { Divider, makeStyles, TextField, Typography } from '@material-ui/core';
+import { saveAs } from 'file-saver';
 import { Icon } from "react-materialize";
-import { saveAs } from 'file-saver'
 
 import FileInput from '../../../components/FileInput';
 import Datepicker from '../../../components/materialComponents/datePicker';

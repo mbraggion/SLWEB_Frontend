@@ -89,7 +89,6 @@ const Dashboard = () => {
           return aux
         })
       }).catch(err => {
-        console.log(err)
       })
     }
 

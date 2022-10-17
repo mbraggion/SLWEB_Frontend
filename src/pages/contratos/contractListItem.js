@@ -4,14 +4,14 @@ import React from 'react'
 import { makeStyles, Typography } from '@material-ui/core'
 import { Description as DescriptionIcon } from '@material-ui/icons'
 
-import { RED_PRIMARY } from '../../misc/colors'
+import { GREY_SECONDARY, RED_PRIMARY } from '../../misc/colors'
 import { maskCNPJ } from '../../misc/commom_functions'
 
 export const ContractListItem = ({ contract, onOpenModal }) => {
   const classes = useStyles({
-    color: RED_PRIMARY,
+    color: contract.ConStatus === 'A' ? RED_PRIMARY : GREY_SECONDARY,
     background: 'unset',
-    border: `1px solid ${RED_PRIMARY}`
+    border: contract.ConStatus === 'A' ? `1px solid ${RED_PRIMARY}` : `1px solid ${GREY_SECONDARY}`
   })
 
   return (

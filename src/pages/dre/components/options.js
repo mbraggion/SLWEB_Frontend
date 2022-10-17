@@ -13,7 +13,7 @@ export const Options = ({ onChange, selectedRef, refList, onReload, onSave, onDo
   const ano = moment(selectedRef).add(3, 'hours').month() === 0 ? moment(selectedRef).year() + 1 : moment(selectedRef).year()
 
   return (
-    <>
+    <div className={classes.container}>
       <Tooltip
         title={
           <div
@@ -99,11 +99,19 @@ export const Options = ({ onChange, selectedRef, refList, onReload, onSave, onDo
           ))}
         </Select>
       </FormControl>
-    </>
+    </div>
   )
 }
 
 const useStyles = makeStyles((theme) => ({
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottom: '1px dashed #CCC',
+    width: '100%',
+    paddingBottom: '8px'
+  },
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,

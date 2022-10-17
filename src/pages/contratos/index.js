@@ -5,6 +5,7 @@ import { Panel } from '../../components/commom_in'
 import Loading from '../../components/loading_screen'
 import { ContractList } from './contractList'
 import { DetailsModal } from './modals/detailsModal'
+import { NewContractModal } from './modals/newContractModal'
 import { ContractsListOptions } from './options'
 
 const Contratos = () => {
@@ -13,16 +14,18 @@ const Contratos = () => {
   const [filtro, setFiltro] = useState('');
   const [mostrarInativos, setMostrarInativos] = useState(false);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [newContractModalOpen, setNewContractModalOpen] = useState(false);
   const [targetContract, setTargetContract] = useState(null);
 
   const LoadData = async () => {
+    setLoaded(false);
+
     try {
       const response = await api.get('/contracts')
 
       setContracts(response.data.contracts)
       setLoaded(true);
     } catch (err) {
-      console.log(err)
     }
   }
 
@@ -40,20 +43,49 @@ const Contratos = () => {
     setTargetContract(null)
   }
 
+  const handleOpenNewContractModal = () => {
+    setNewContractModalOpen(true)
+  }
+
+  const handleCloseNewContractModal = () => {
+    setNewContractModalOpen(false)
+  }
+
+  const updateContractStatus = (CNPJ, ConId, newStatus) => {
+    setContracts(oldState => {
+      let aux = [...oldState]
+
+      aux.forEach((item, index) => {
+        if (item.CNPJ === CNPJ && item.ConId === ConId) {
+          aux[index].ConStatus = newStatus
+        }
+      })
+
+      return aux
+    })
+  }
+
   return !loaded ? (
     <Loading />
   ) : (
     <Panel>
+      <NewContractModal
+        open={newContractModalOpen}
+        onClose={handleCloseNewContractModal}
+        onRefresh={LoadData}
+      />
       <DetailsModal
         open={detailsModalOpen}
         onClose={handleCloseDetailsModal}
         target={targetContract}
         onUpdate={setTargetContract}
+        onUpdateContractStatus={updateContractStatus}
       />
       <ContractsListOptions
         onChangeFiltro={setFiltro}
         mostrarInativos={mostrarInativos}
         switchInativos={setMostrarInativos}
+        onOpenNewContractModal={handleOpenNewContractModal}
       />
       <ContractList
         Contracts={returnContractsFilter(contracts, mostrarInativos, filtro)}

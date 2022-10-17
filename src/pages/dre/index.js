@@ -122,7 +122,7 @@ const DRE = () => {
 
   const loadRefs = async () => {
     try {
-      const response = await api.get(`/dre/referencia`)
+      const response = await api.get(`/referencia`)
 
       setRefs(response.data.Referencias)
     } catch (err) {
@@ -202,7 +202,7 @@ const DRE = () => {
   return !loaded
     ? <Loading />
     : (
-      <Panel className={classes.panelMob}>
+      <Panel>
         <div className='YAlign' style={{ height: '100%', width: '100%', flexWrap: 'nowrap', justifyContent: 'flex-start' }}>
           <div className='XAlign' style={{ alignItems: 'flex-start' }}>
             <section className={classes.barraDeBotoes}>

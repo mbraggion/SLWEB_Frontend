@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react'
-import moment from 'moment'
+import moment from 'moment';
+import React, { useEffect } from 'react';
 
-import { FilterList } from '@material-ui/icons'
-import { Button, MenuItem, Typography, Divider, } from '@material-ui/core';
+import { Button, Divider, MenuItem, Typography } from '@material-ui/core';
+import { FilterList } from '@material-ui/icons';
 
-import Select from '../../components/materialComponents/Select'
-import { capitalizeMonthFirstLetter } from '../../misc/commom_functions'
-import { RED_PRIMARY } from '../../misc/colors'
+import Select from '../../components/materialComponents/Select';
+import { RED_PRIMARY } from '../../misc/colors';
+import { capitalizeMonthFirstLetter } from '../../misc/commom_functions';
 
 export const NovaColetaContent = (props) => {
   const {
@@ -243,7 +243,9 @@ export const NovaColetaContent = (props) => {
         style={{
           height: '100%',
           width: '100%',
-          justifyContent: 'flex-start'
+          justifyContent: 'flex-start',
+          overflowY: 'auto',
+          flexWrap: 'nowrap'
         }}
       >
         {leituraDoses.map(leit => (
@@ -252,8 +254,6 @@ export const NovaColetaContent = (props) => {
             style={{
               width: '100%',
               justifyContent: 'space-between',
-              overflowY: 'auto',
-              overflowX: 'hidden',
               padding: '0px 8px 1px 8px',
               borderBottom: '1px solid #CCC',
               flexWrap: 'nowrap'

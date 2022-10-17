@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react'
 import moment from 'moment'
+import React, { useEffect, useState } from 'react'
 import { api } from '../../services/api'
 
-import { Add as AddIcon } from '@material-ui/icons'
+import { Fab, Paper, Typography, useMediaQuery } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import { Paper, useMediaQuery, Typography, Fab } from '@material-ui/core';
+import { Add as AddIcon } from '@material-ui/icons'
 
 import { Toast } from '../../components/toasty'
 
-import { NovaColetaModal } from './modals/NovaColeta';
-import { NovaColetaContent } from './novaColetaContent';
+import { NovaColetaModal } from './modals/NovaColeta'
+import { NovaColetaContent } from './novaColetaContent'
 
 export const NovaColeta = (props) => {
   const classes = useStyles();
-  const isMdUp = useMediaQuery('@media (min-width: 1500px)');
+  const isMdUp = useMediaQuery('@media (min-width: 1080px)');
   const { handleCloseModal, handleOpenModal } = props;
 
   const [leiturasDisponiveis, setLeiturasDisponiveis] = useState([]);
@@ -205,7 +205,9 @@ export const NovaColeta = (props) => {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: '30%',
+    width: '100%',
+    minWidth: '430px',
+    maxWidth: '500px',
     height: '100%',
     overflowY: 'auto',
     marginLeft: '8px',
@@ -217,7 +219,8 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "flex-start",
     height: '100%',
     width: '100%',
-    minWidth: '430px'
+    minWidth: '430px',
+    maxWidth: '500px',
   },
   infoBox: {
     display: 'flex',

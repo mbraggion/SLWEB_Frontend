@@ -1,21 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { api } from '../../../services/api'
+import React, { useEffect, useRef, useState } from 'react';
+import { api } from '../../../services/api';
 
-import { Button, Dialog, MobileStepper, DialogActions, DialogContent, DialogTitle as MuiDialogTitle, useMediaQuery, IconButton, Typography } from '@material-ui/core/';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle as MuiDialogTitle, IconButton, MobileStepper, Typography, useMediaQuery } from '@material-ui/core/';
 import { useTheme, withStyles } from '@material-ui/core/styles';
-import { Close as CloseIcon, Save as SaveIcon, ThumbDownAlt as ThumbDownAltIcon, ThumbUpAlt as ThumbUpAltIcon, Edit as EditIcon, KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
+import { Close as CloseIcon, Edit as EditIcon, KeyboardArrowLeft, KeyboardArrowRight, Save as SaveIcon, ThumbDownAlt as ThumbDownAltIcon, ThumbUpAlt as ThumbUpAltIcon } from '@material-ui/icons';
 
-import { Toast } from '../../../components/toasty'
+import { Toast } from '../../../components/toasty';
 
-import { Configuracao } from '../components/_configuracao'
-import { Dados } from '../components/_dados'
-import { Equipamento } from '../components/_equipamentos'
+import { Configuracao } from '../components/_configuracao';
+import { Dados } from '../components/_dados';
+import { Equipamento } from '../components/_equipamentos';
 
 export const DetailsModal = ({ open, onClose, PdvId, AnxId, EquiCod, PdvStatus, updatePDVsArray }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const childRef = useRef();
-  
+
   const [activeStep, setActiveStep] = useState(0);
   const [allowEditing, setAllowEditing] = useState(true);
   const [wait, setWait] = useState(false);
@@ -35,7 +35,7 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, EquiCod, PdvStatus, 
       setWait(true)
 
       try {
-        if(!await childRef.current.handleSubmit()){
+        if (!await childRef.current.handleSubmit()) {
           throw new Error()
         }
 
@@ -121,7 +121,7 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, EquiCod, PdvStatus, 
           <Equipamento
             PdvId={PdvId}
             AnxId={AnxId}
-            onClose={handleClose} 
+            onClose={handleClose}
             updatePDVsArray={updatePDVsArray}
           />
         )
@@ -141,7 +141,7 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, EquiCod, PdvStatus, 
   };
 
   const handleClose = () => {
-    if(!wait){
+    if (!wait) {
       onClose()
       setAllowEditing(true)
     }

@@ -1,8 +1,7 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from 'react-router-dom';
 
-import { List, Divider, ListItem, ListItemIcon, ListItemText } from "@material-ui/core/";
+import { Divider, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core/";
 import Icon from '@material-ui/core/Icon';
 import { ExitToApp, Help } from "@material-ui/icons/";
 
@@ -36,11 +35,11 @@ export const SidebarLinks = ({ onCloseDrawer, onOpenFiliaisModal }) => {
         justifyContent: 'flex-start'
       }}>
         <List>
-          {Links.map(sess => (
-            <>
+          {Links.map((sess, i) => (
+            <div key={i}>
               {sess.map(lnk => whichLinkDisplay(lnk, onOpenFiliaisModal, onCloseDrawer, path))}
               <Divider />
-            </>
+            </div>
           ))}
           <Link
             onClick={() => navigateTo('link', "/equipe")}

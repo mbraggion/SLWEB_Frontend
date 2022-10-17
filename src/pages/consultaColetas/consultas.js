@@ -1,92 +1,83 @@
+import moment from 'moment';
 import React from 'react';
-import moment from 'moment'
 
+import { Accordion, AccordionDetails, Divider, ListItemText, Paper, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
-import { ExpandLess as ExpandLessIcon } from '@material-ui/icons'
-import { makeStyles } from '@material-ui/core/styles'
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Typography,
-  Divider,
-  ListItemText,
-  Paper
-} from '@material-ui/core/';
+import { capitalizeMonthFirstLetter } from '../../misc/commom_functions';
 
-import { capitalizeMonthFirstLetter } from '../../misc/commom_functions'
 
 export const Consultas = (props) => {
   const classes = useStyles();
 
   return (
-    <Paper className={classes.root}>
-      <Accordion
-        expanded
+    <div className={classes.container}>
+      <Typography
+        variant='h5'
+        className={classes.title}
       >
-        <AccordionSummary
-          expandIcon={<ExpandLessIcon />}
-          aria-controls="panel1c-content"
-          id="panel1c-header"
-        >
-          <div className={classes.column}>
-            <Typography
-              variant='h5'
-            >
-              Coletas gravadas
-            </Typography>
-          </div>
-        </AccordionSummary>
-        <section
-          style={{
-            height: '100%',
-            overflowY: 'auto'
-          }}
-        >
-          {props.Coletas.length === 0 ?
-            <div className='XAlign'>
-              <Typography>
-                Nenhuma coleta gravada
-              </Typography>
-            </div>
-            :
-            props.Coletas.map(coleta =>
-              <>
-                <AccordionDetails
-                  onClick={() => props.onOpenColetaDetails(coleta.AnxId, coleta.PdvId, coleta.FfmSeq, coleta)}
-                  button
-                  className={classes.details}
-                >
-                  <ListItemText primary={coleta.Anexo} secondary={coleta.EquiCod} />
-                  <div className={classes.helper}>
-                    <Typography variant="body2" gutterBottom>
-                      <strong>Referencia</strong>
-                      <br />
-                      {capitalizeMonthFirstLetter(moment(coleta.Ref).utc().format('MMMM YYYY'))}
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Sequencia</strong>
-                      <br />
-                      {coleta.FfmSeq}
-                    </Typography>
-                  </div>
-                </AccordionDetails>
-                <Divider />
-              </>
-            )}
-        </section>
-      </Accordion>
-    </Paper>
+        Coletas gravadas
+      </Typography>
+      <Paper className={classes.root}>
+        <Accordion expanded>
+          <section
+            style={{
+              height: '100%',
+              overflowY: 'auto'
+            }}
+          >
+            {props.Coletas.length === 0 ?
+              <div className='XAlign'>
+                <Typography>
+                  Nenhuma coleta gravada
+                </Typography>
+              </div>
+              :
+              props.Coletas.map(coleta =>
+                <>
+                  <AccordionDetails
+                    onClick={() => props.onOpenColetaDetails(coleta.AnxId, coleta.PdvId, coleta.FfmSeq, coleta)}
+                    button
+                    className={classes.details}
+                  >
+                    <ListItemText primary={coleta.Anexo} secondary={coleta.EquiCod} />
+                    <div className={classes.helper}>
+                      <Typography variant="body2" gutterBottom>
+                        <strong>Referencia</strong>
+                        <br />
+                        {capitalizeMonthFirstLetter(moment(coleta.Ref).utc().format('MMMM YYYY'))}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Sequencia</strong>
+                        <br />
+                        {coleta.FfmSeq}
+                      </Typography>
+                    </div>
+                  </AccordionDetails>
+                  <Divider />
+                </>
+              )}
+          </section>
+        </Accordion>
+      </Paper>
+    </div>
   )
 }
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    minWidth: '70%',
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
     height: '100%',
+    width: '100%',
+  },
+  root: {
+    width: '100%',
+    height: '100%',
+    overflowY: 'auto',
 
     '&:first-child> div': {
-      height: '100%',
+      height: '100%'
     },
 
     '&:first-child> div > div:last-child': {
@@ -123,9 +114,6 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer",
     }
   },
-  column: {
-    flexBasis: '33.33%',
-  },
   helper: {
     borderLeft: `2px solid ${theme.palette.divider}`,
     padding: theme.spacing(1, 2),
@@ -139,4 +127,7 @@ const useStyles = makeStyles((theme) => ({
       textDecoration: 'underline',
     },
   },
+  title: {
+    margin: '0px 0px 8px 8px'
+  }
 }));

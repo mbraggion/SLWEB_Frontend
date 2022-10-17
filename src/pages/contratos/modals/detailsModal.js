@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { api } from '../../../services/api';
 
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle as MuiDialogTitle, IconButton, MobileStepper, Typography, useMediaQuery } from '@material-ui/core/';
 import { useTheme, withStyles } from '@material-ui/core/styles';
-import { Close as CloseIcon, Edit as EditIcon, KeyboardArrowLeft, KeyboardArrowRight, Save as SaveIcon } from '@material-ui/icons';
+import { Close as CloseIcon, Edit as EditIcon, KeyboardArrowLeft, KeyboardArrowRight, Save as SaveIcon, ThumbDownAlt as ThumbDownAltIcon, ThumbUpAlt as ThumbUpAltIcon } from '@material-ui/icons';
 
 import { Toast } from '../../../components/toasty';
 import { Anexo } from './_anexo';
 import { Contrato } from './_contrato';
 
 
-export const DetailsModal = ({ open, onClose, target, onUpdate }) => {
+export const DetailsModal = ({ open, onClose, target, onUpdate, onUpdateContractStatus }) => {
   const theme = useTheme();
   const childRef = useRef();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -84,6 +85,27 @@ export const DetailsModal = ({ open, onClose, target, onUpdate }) => {
     }
   }
 
+  const handleInativar = async (CNPJ, ConId, currentStatus) => {
+    let toastId = null
+
+    toastId = Toast(currentStatus === 'A' ? 'Inativando...' : 'Reativando...', 'wait')
+    setWait(true)
+
+    try {
+      await api.put(`/contracts/${CNPJ}/${ConId}`, {
+        action: currentStatus === 'A' ? 'inativar' : 'ativar'
+      })
+
+      Toast(currentStatus === 'A' ? 'Contrato inativado' : 'Contrato reativado', 'update', toastId, 'success')
+      setWait(false)
+
+      onUpdateContractStatus(CNPJ, ConId, currentStatus === 'A' ? 'I' : 'A')
+    } catch (err) {
+      Toast(currentStatus === 'A' ? 'Falha ao inativar contrato' : 'Falha ao reativar contrato', 'update', toastId, 'error')
+      setWait(false)
+    }
+  }
+
   return (
     <Dialog
       fullScreen={fullScreen}
@@ -137,7 +159,16 @@ export const DetailsModal = ({ open, onClose, target, onUpdate }) => {
               alignItem: 'center',
             }}
           >
-            {!allowEditing ?
+            {allowEditing ?
+              <Button
+                disabled={wait}
+                onClick={() => handleInativar(target.CNPJ, target.ConId, target.ConStatus)}
+                color="primary"
+                startIcon={target?.ConStatus === 'A' ? <ThumbDownAltIcon /> : <ThumbUpAltIcon />}
+              >
+                {target?.ConStatus === 'A' ? 'Inativar' : 'Reativar'}
+              </Button>
+              :
               <Button
                 disabled={wait}
                 onClick={handleDiscardChanges}
@@ -146,8 +177,6 @@ export const DetailsModal = ({ open, onClose, target, onUpdate }) => {
               >
                 Descartar Alterações
               </Button>
-              :
-              null
             }
 
             <Button
