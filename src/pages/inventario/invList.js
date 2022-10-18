@@ -9,7 +9,6 @@ export const InventarioList = ({ Inventario, isFetching, isRefSelected }) => {
   const classes = useStyles()
 
   const handleExpandProd = (expandedId) => {
-    console.log('chegou aqui')
     setExpandedProdId(oldState => {
       if (expandedId === oldState) {
         return null
