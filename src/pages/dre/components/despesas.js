@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: '8px',
   },
   heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
+    fontSize: theme.typography.pxToRem(16),
+    fontWeight: 'bold',
   },
 }))
