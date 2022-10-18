@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import moment from "moment";
+import React, { useState } from "react";
 import Draggable from "react-draggable";
 
 import ButtonPure from "@material-ui/core/Button";
@@ -7,13 +7,14 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
-import History from "@material-ui/icons/History";
 import Typography from "@material-ui/core/Typography";
+import History from "@material-ui/icons/History";
 import { Campo } from "../../../components/commom_in";
 
 import Button from "../../../components/materialComponents/Button";
-import { GREY_SECONDARY } from "../../../misc/colors";
+import { GREY_SECONDARY, RED_PRIMARY } from "../../../misc/colors";
 
 function PaperComponent(props) {
   return (
@@ -77,20 +78,23 @@ function DraggableDialog(props) {
               </Typography>
 
               {Req.OSCComDtValidação !== null ? (
-                <Typography variant="subtitle1" gutterBottom>
-                  <strong>{convertData(Req.OSCComDtValidação)}: </strong>
-                  Validação pelo departamento comercial
-                </Typography>
+                <>
+                  <Divider />
+                  <Typography variant="subtitle1" gutterBottom>
+                    <strong>{convertData(Req.OSCComDtValidação)}: </strong>
+                    Validação pelo departamento comercial
+                  </Typography>
+                </>
               ) : null}
 
               {Req.OSCComAceite === true ? (
-                <Typography variant="subtitle1" gutterBottom>
+                <Typography style={{ color: RED_PRIMARY }} variant="subtitle1" gutterBottom>
                   <strong>Aprovado</strong>
                 </Typography>
               ) : null}
 
               {Req.OSCComAceite === false ? (
-                <Typography variant="subtitle1" gutterBottom>
+                <Typography style={{ color: RED_PRIMARY }} variant="subtitle1" gutterBottom>
                   <strong>Rejeitado</strong>
                 </Typography>
               ) : null}
@@ -101,23 +105,26 @@ function DraggableDialog(props) {
                   {Req.OSCComMotivo}
                 </Typography>
               ) : null}
-              
+
               {Req.OSCTecDtValidação !== null ? (
-                <Typography variant="subtitle1" gutterBottom>
-                  <strong>{convertData(Req.OSCTecDtValidação)}: </strong>
-                  Validação pela Técnica
-                </Typography>
+                <>
+                  <Divider />
+                  <Typography variant="subtitle1" gutterBottom>
+                    <strong>{convertData(Req.OSCTecDtValidação)}: </strong>
+                    Validação pela Técnica
+                  </Typography>
+                </>
               ) : null}
 
 
               {Req.OSCTecAceite === true ? (
-                <Typography variant="subtitle1" gutterBottom>
+                <Typography style={{ color: RED_PRIMARY }} variant="subtitle1" gutterBottom>
                   <strong>Aprovado</strong>
                 </Typography>
               ) : null}
 
               {Req.OSCTecAceite === false ? (
-                <Typography variant="subtitle1" gutterBottom>
+                <Typography style={{ color: RED_PRIMARY }} variant="subtitle1" gutterBottom>
                   <strong>Rejeitado</strong>
                 </Typography>
               ) : null}
@@ -137,10 +144,13 @@ function DraggableDialog(props) {
               ) : null}
 
               {Req.OSCExpDtPrevisao !== null ? (
-                <Typography variant="subtitle1" gutterBottom>
-                  <strong>Data de entrega foi prevista para: </strong>
-                  {convertData(Req.OSCExpDtPrevisao, "LL")}
-                </Typography>
+                <>
+                  <Divider />
+                  <Typography variant="subtitle1" gutterBottom>
+                    <strong>Data de entrega foi prevista para: </strong>
+                    {convertData(Req.OSCExpDtPrevisao, "LL")}
+                  </Typography>
+                </>
               ) : null}
 
               {Req.OSCDtFechamento !== null && Req.OSCStatus === "Concluido" ? (

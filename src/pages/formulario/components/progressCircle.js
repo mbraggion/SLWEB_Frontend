@@ -10,7 +10,7 @@ function CircularProgressWithLabel(props) {
       <CircularProgress
         variant="determinate"
         style={{
-          color: '#34AF23'
+          color: '#29ff8d'
         }}
         {...props}
       />

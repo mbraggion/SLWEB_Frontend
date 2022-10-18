@@ -29,7 +29,6 @@ const Equipamentos = () => {
   const [equipamentos, setEquipamentos] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [enderecos, setEnderecos] = useState([]);
-  const [confirmPeriod, setConfirmPeriod] = useState([]);
   const [targetAtivo, setTargetAtivo] = useState('');
 
   useEffect(() => {
@@ -39,7 +38,6 @@ const Equipamentos = () => {
 
         setEquipamentos(response.data.Ativos)
         setClientes(response.data.Clientes)
-        setConfirmPeriod(response.data.ConfirmEqPeriod)
         setAlreadyReported(response.data.JaReportou)
 
         setLoaded(true)
@@ -196,6 +194,11 @@ const Equipamentos = () => {
   }
 
   const handleConfirmAddresses = async () => {
+    if(enderecos.length < equipamentos.length){
+      Toast('Uma ou mais máquinas não estão vinculadas a nenhum endereço', 'warn')
+      return
+    }
+
     let toastId = null
 
     try {
@@ -203,8 +206,6 @@ const Equipamentos = () => {
 
       await api.post('/equip/confirm', {
         Addresses: enderecos,
-        RefMes: moment(confirmPeriod[0].ate).get('month') + 1,
-        RefAno: moment(confirmPeriod[0].ate).get('year'),
       })
 
       setConfirmModalState(false)
@@ -224,7 +225,6 @@ const Equipamentos = () => {
         EquipamentosStandyBy={equipamentos.filter(ativo => ativo.Nome_Fantasia === null).length}
         onOpenMiFixModal={HandleOpenMiFixModal}
         onOpenReportModal={HandleOpenReportModal}
-        confirmPeriodRef={confirmPeriod}
         onOpenConfirmModal={HandleOpenConfirmModal}
       />
 

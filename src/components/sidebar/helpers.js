@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { api } from '../../services/api'
 
 import { Tooltip, Typography, IconButton } from '@material-ui/core'
-import { LocalAtm as LocalAtmIcon, LocalShipping as LocalShippingIcon, Lock as LockIcon } from '@material-ui/icons'
+import { LocalAtm as LocalAtmIcon, LocalShipping as LocalShippingIcon, Lock as LockIcon, DepartureBoard as DepartureBoardIcon } from '@material-ui/icons'
 
 export const Helpers = () => {
   const [faturamento, setFaturamento] = useState(null)
@@ -102,6 +102,26 @@ const fixedContentToShow = (blocks) => {
         >
           <IconButton color="default" >
             <LockIcon fontSize='large' />
+          </IconButton>
+        </Tooltip>
+      </>
+    )
+  }
+
+  if (blocks.Deliver) {
+    returnableIcons.push(
+      <>
+        <Tooltip
+          title={
+            <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
+              Você tem uma ou mais Solicitações de máquina aguardando a confirmação de entrega.
+              <p>Acesse a <strong>tela "Solicitação"</strong> {'>'} na <strong>aba "Solicitações"</strong> {'>'} confirme o recebimento através do botão <strong>"Gerenciar"</strong> </p>
+            </div>}
+          placement="bottom"
+          arrow={true}
+        >
+          <IconButton color="default" >
+            <DepartureBoardIcon fontSize='large' />
           </IconButton>
         </Tooltip>
       </>

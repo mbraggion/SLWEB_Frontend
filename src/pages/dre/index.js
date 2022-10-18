@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import moment from 'moment'
-import { api } from '../../services/api'
-import { saveAs } from 'file-saver'
+import { saveAs } from 'file-saver';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { api } from '../../services/api';
 
-import { makeStyles } from '@material-ui/styles'
+import { makeStyles } from '@material-ui/styles';
 
-import { Resumo } from './components/resumo'
-import { Despesas } from './components/despesas'
-import { DespesasVariaveis } from './components/despesasVariaveis'
-import { Options } from './components/options'
+import { Despesas } from './components/despesas';
+import { DespesasVariaveis } from './components/despesasVariaveis';
+import { Options } from './components/options';
+import { Resumo } from './components/resumo';
 
-import { Panel } from '../../components/commom_in'
-import Loading from '../../components/loading_screen'
-import { Toast } from '../../components/toasty'
+import { Panel } from '../../components/commom_in';
+import Loading from '../../components/loading_screen';
+import { Toast } from '../../components/toasty';
 
 const DRE = () => {
   const classes = useStyles()
@@ -22,6 +22,9 @@ const DRE = () => {
   const [refs, setRefs] = useState([])
   const [dre, setDre] = useState([])
   const [dov, setDov] = useState([])
+
+  const mes = moment(selRef).add(3, 'hours').month() + 1
+  const ano = moment(selRef).add(3, 'hours').month() === 0 ? moment(selRef).year() + 1 : moment(selRef).year()
 
   const handleUpdateSelectedRef = (selref) => {
     setSelRef(selref)
@@ -87,8 +90,8 @@ const DRE = () => {
 
   const syncChangesDre = async (lineID, lineValue, linePercentage) => {
     api.put('/dre', {
-      ano: moment(selRef).get('year'),
-      mes: moment(selRef).add(3, 'hours').get('month') + 1,
+      ano: ano,
+      mes: mes,
       cod: lineID,
       vlr: Number(lineValue),
       porc: linePercentage
@@ -103,8 +106,8 @@ const DRE = () => {
 
   const syncChangesDov = async (lineID, lineValue, lineDesc) => {
     api.put('/dov', {
-      ano: moment(selRef).get('year'),
-      mes: moment(selRef).add(3, 'hours').get('month') + 1,
+      ano: ano,
+      mes: mes,
       cod: lineID,
       vlr: Number(lineValue),
       desc: lineDesc
@@ -119,7 +122,7 @@ const DRE = () => {
 
   const loadRefs = async () => {
     try {
-      const response = await api.get(`/dre/referencia`)
+      const response = await api.get(`/referencia`)
 
       setRefs(response.data.Referencias)
     } catch (err) {
@@ -148,9 +151,6 @@ const DRE = () => {
   }
 
   const handleDownloadExcel = async (type) => {
-    const ano = moment(selRef).get('year')
-    const mes = moment(selRef).add(3, 'hours').get('month') + 1
-
     let toastId = null
     toastId = Toast('Gerando excel...', 'wait')
 
@@ -181,7 +181,7 @@ const DRE = () => {
         saveAs(blob, `Base Royalties_${ano}_${mes}.xlsx`);
 
         Toast('Excel recebido!', 'update', toastId, 'success')
-      }else{
+      } else {
         throw new Error()
       }
     } catch (err) {
@@ -195,16 +195,26 @@ const DRE = () => {
 
   useEffect(() => {
     if (selRef !== '') {
-      loadData(moment(selRef).get('year'), moment(selRef).add(3, 'hours').get('month') + 1)
+      loadData(ano, mes)
     }
-  }, [selRef])
+  }, [selRef, ano, mes])
 
   return !loaded
     ? <Loading />
     : (
       <Panel>
-        <div className='YAlign' style={{ height: '100%', width: '100%', flexWrap: 'nowrap' }}>
-          <div className='XAlign'>
+        <div className='YAlign' style={{ height: '100%', width: '100%', flexWrap: 'nowrap', justifyContent: 'flex-start' }}>
+          <div className='XAlign' style={{ alignItems: 'flex-start' }}>
+            <section className={classes.barraDeBotoes}>
+              <Options
+                onChange={handleUpdateSelectedRef}
+                selectedRef={selRef}
+                refList={refs}
+                onReload={loadData}
+                onSave={handleSubmit}
+                onDownloadExcel={handleDownloadExcel}
+              />
+            </section>
             <section className={classes.metadinha}>
               <Resumo
                 Res={dre.filter(d => d.DreCod < 23 || d.DreCod === 35)}
@@ -216,6 +226,7 @@ const DRE = () => {
                 onChangeValue={handleUpdateLineDre}
                 onUpdateLine={syncChangesDre}
                 pRef={dre.filter(d => d.DreCod === 1)[0]?.DreVlr}
+                editavel={Math.abs(moment(selRef).add(3, 'hours').diff(moment().startOf('month'), 'months')) < 2}
               />
               <DespesasVariaveis
                 DesV={dov}
@@ -223,19 +234,10 @@ const DRE = () => {
                 AllowAddNewLine={selRef !== ''}
                 onChangeValue={handleUpdateLineDov}
                 onUpdateLine={syncChangesDov}
+                editavel={Math.abs(moment(selRef).add(3, 'hours').diff(moment().startOf('month'), 'months')) < 2}
               />
             </section>
           </div>
-          <section className={classes.barraDeBotoes}>
-            <Options
-              onChange={handleUpdateSelectedRef}
-              selectedRef={selRef}
-              refList={refs}
-              onReload={loadData}
-              onSave={handleSubmit}
-              onDownloadExcel={handleDownloadExcel}
-            />
-          </section>
         </div>
       </Panel>
     )
@@ -253,11 +255,11 @@ const useStyles = makeStyles((theme) => ({
   metadinha: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'flex-start',
     width: '50%',
     minWidth: '300px',
-    height: '100%',
+    height: 'auto',
 
     '@media (max-width: 900px)': {
       width: '100%',

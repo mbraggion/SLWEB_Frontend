@@ -1,52 +1,51 @@
 import React, { useState } from "react";
-import { api } from "../../../services/api";
 import Draggable from "react-draggable";
+import { api } from "../../../services/api";
 
-import { Settings, Check, Close } from "@material-ui/icons/";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Paper,
-  Typography,
-  TextField
-} from "@material-ui/core";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper, TextField, Typography } from "@material-ui/core";
+import { Check, Close, Settings } from "@material-ui/icons/";
 
 import Button from "../../../components/materialComponents/Button";
-import { roleLevel, convertData } from "../../../misc/commom_functions";
-import {
-  REACT_APP_SISTEMA_ROLE_LEVEL,
-  REACT_APP_BACKOFFICE_ROLE_LEVEL,
-  REACT_APP_TECNICA_ROLE_LEVEL,
-  REACT_APP_EXPEDICAO_ROLE_LEVEL,
-  REACT_APP_FRANQUEADO_ROLE_LEVEL,
-} from "../../../misc/role_levels";
-import { Toast } from "../../../components/toasty";
-import { RED_SECONDARY, GREY_SECONDARY } from "../../../misc/colors";
 import DatePicker from "../../../components/materialComponents/datePicker";
+import { Toast } from "../../../components/toasty";
+import { GREY_SECONDARY, RED_SECONDARY } from "../../../misc/colors";
+import { convertData, roleLevel } from "../../../misc/commom_functions";
+import { REACT_APP_BACKOFFICE_ROLE_LEVEL, REACT_APP_EXPEDICAO_ROLE_LEVEL, REACT_APP_FRANQUEADO_ROLE_LEVEL, REACT_APP_SISTEMA_ROLE_LEVEL, REACT_APP_TECNICA_ROLE_LEVEL } from "../../../misc/role_levels";
 
-function PaperComponent(props) {
-  return (
-    <Draggable
-      {...props}
-      handle="#draggable-dialog-title"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
-      <Paper {...props} />
-    </Draggable>
-  );
-}
 function DraggableDialog(props) {
+  const { Req } = props;
+  const { SLRaspyNum, EquipCod, TelemetriaNum } = props.Req;
+
   const [open, setOpen] = useState(false);
   const [stage, setStage] = useState(null);
   const [rejectReason, setReject] = useState("");
+  const [eqInfo, setEqInfo] = useState({ SLRaspyNum, EquipCod, TelemetriaNum });
   const [prevDate, setPrev] = useState(null);
   const [updated, setUpdated] = useState(false);
   const [wait, setWait] = useState(false);
 
-  const { Req } = props;
+  const handleSaveEqInfo = async () => {
+    setWait(true);
+    let toastId = null
+
+    try {
+      toastId = Toast('Aguarde...', 'wait')
+
+      await api.put('/equip/requests/inform', {
+        OSID: Req.OSCId,
+        EqCod: eqInfo.EquipCod,
+        RaspyCod: eqInfo.SLRaspyNum,
+        TelemetriaCod: eqInfo.TelemetriaNum
+      })
+
+      Toast('Atualização gravada', 'update', toastId, 'success')
+      setUpdated(true);
+      handleClose();
+    } catch (err) {
+      Toast('Falha ao atualizar', 'update', toastId, 'error')
+      setWait(false);
+    }
+  }
 
   const handleClickOpen = async () => {
     setStage(CheckStage(Req));
@@ -81,6 +80,7 @@ function DraggableDialog(props) {
       setUpdated(true);
       handleClose();
     } catch (err) {
+      Toast('Falha ao atualizar', 'update', toastId, 'error')
       setWait(false);
     }
   };
@@ -145,7 +145,10 @@ function DraggableDialog(props) {
             updateDate,
             handleManagement,
             wait,
-            SUDO
+            SUDO,
+            eqInfo,
+            setEqInfo,
+            handleSaveEqInfo
           )}
         </DialogContent>
         <DialogActions style={{ padding: '8px 24px' }}>
@@ -172,6 +175,9 @@ const CheckStage = (requisicao) => {
   if (requisicao.OSCStatus === "Concluido") {
     //pedido concluido
     return 0;
+  } else if (requisicao.OSCStatus === "Cancelado") {
+    //pedido cancelado pelo usuário
+    return 4;
   } else if (
     requisicao.OSCComDtValidação === null &&
     requisicao.OSCStatus === "Ativo"
@@ -208,9 +214,6 @@ const CheckStage = (requisicao) => {
   ) {
     //aguardando previsão de entrega da expedição
     return -3;
-  } else if (requisicao.OSCStatus === "Cancelado") {
-    //pedido cancelado pelo usuário
-    return 4;
   } else {
     //só Deus sabe quando vai cair aqui, provavelmente se mecherem manualmente na OSCtrl
     return 9;
@@ -226,7 +229,10 @@ const ShowControlls = (
   updateDate,
   handleManagement,
   wait,
-  SUDO
+  SUDO,
+  eqInfo,
+  setEqInfo,
+  onSaveInfo
 ) => {
   if (roleLevel() === REACT_APP_SISTEMA_ROLE_LEVEL) {
     //Superuser
@@ -532,6 +538,119 @@ const ShowControlls = (
         </div>
       </div>
     );
+  } else if (roleLevel() === REACT_APP_TECNICA_ROLE_LEVEL && stage > 2) {
+    //Técnica depois da aprovação
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
+          width: "100%",
+        }}
+      >
+        <div
+          className="YAlign"
+          style={{
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+            width: "100%",
+          }}
+        >
+          <div
+            className="XAlign"
+            style={{
+              justifyContent: "space-between",
+              alignItems: "flex-end",
+            }}
+          >
+            <TextField
+              label="Número de Ativo"
+              value={eqInfo.EquipCod}
+              onChange={(e) => {
+                e.persist()
+                setEqInfo(oldState => {
+                  return {
+                    ...oldState,
+                    EquipCod: e.target.value
+                  }
+                })
+              }}
+              style={{
+                borderBottom: "1px solid #AAA",
+                width: '100%'
+              }}
+            />
+          </div>
+        </div>
+
+        <div
+          className="XAlign"
+          style={{
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+          }}
+        >
+          <TextField
+            label="Número SLRaspy"
+            value={eqInfo.SLRaspyNum}
+            onChange={(e) => {
+              e.persist()
+              setEqInfo(oldState => {
+                return {
+                  ...oldState,
+                  SLRaspyNum: e.target.value
+                }
+              })
+            }}
+            style={{
+              borderBottom: "1px solid #AAA",
+              width: '100%'
+            }}
+          />
+        </div>
+
+        <div
+          className="XAlign"
+          style={{
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+          }}
+        >
+          <TextField
+            label="Número Telemetria"
+            value={eqInfo.TelemetriaNum}
+            onChange={(e) => {
+              e.persist()
+              setEqInfo(oldState => {
+                return {
+                  ...oldState,
+                  TelemetriaNum: e.target.value
+                }
+              })
+            }}
+            style={{
+              borderBottom: "1px solid #AAA",
+              width: '100%'
+            }}
+          />
+        </div>
+
+
+        <Button
+          style={{
+            marginTop: "8px",
+            width: '100%'
+          }}
+          onClick={onSaveInfo}
+        >
+          <Check />
+          Salvar
+        </Button>
+
+      </div>
+    );
   } else if (roleLevel() === REACT_APP_EXPEDICAO_ROLE_LEVEL && stage === 3) {
     //Expedição
     return (
@@ -616,3 +735,15 @@ const showStatus = (stage) => {
       return "Desconhecido";
   }
 };
+
+function PaperComponent(props) {
+  return (
+    <Draggable
+      {...props}
+      handle="#draggable-dialog-title"
+      cancel={'[class*="MuiDialogContent-root"]'}
+    >
+      <Paper {...props} />
+    </Draggable>
+  );
+}

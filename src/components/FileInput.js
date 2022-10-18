@@ -1,22 +1,23 @@
 import React from 'react';
 
-const TextInput = (props) => {
+const TextInput = ({ ContainerStyle, label, ButtonStyle, onChange, name, accept, multiple, disabled }) => {
   return (
     <div
       className={`custom file-field`}
-      style={props.ContainerStyle}
+      style={ContainerStyle}
     >
       <div
         className="btn"
       >
-        <span>{props.label}</span>
+        <span>{label}</span>
         <input
-          style={props.ButtonStyle}
+          style={ButtonStyle}
           type="file"
-          onChange={props.onChange}
-          className={`${props.name} files`}
-          accept={props.accept}
-          multiple={props.multiple}
+          onChange={onChange}
+          className={`${name} files`}
+          accept={accept}
+          multiple={multiple}
+          disabled={disabled}
         />
       </div>
     </div>

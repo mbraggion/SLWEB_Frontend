@@ -1,13 +1,7 @@
+import { api } from '../services/api';
 import {
-  REACT_APP_FRANQUEADO_ROLE_LEVEL,
-  REACT_APP_EXPEDICAO_ROLE_LEVEL,
-  REACT_APP_SISTEMA_ROLE_LEVEL,
-  REACT_APP_JURIDICO_ROLE_LEVEL,
-  REACT_APP_BACKOFFICE_ROLE_LEVEL,
-  REACT_APP_TECNICA_ROLE_LEVEL,
-  REACT_APP_MARKETING_ROLE_LEVEL
+  REACT_APP_BACKOFFICE_ROLE_LEVEL, REACT_APP_EXPEDICAO_ROLE_LEVEL, REACT_APP_FRANQUEADO_ROLE_LEVEL, REACT_APP_JURIDICO_ROLE_LEVEL, REACT_APP_MARKETING_ROLE_LEVEL, REACT_APP_SISTEMA_ROLE_LEVEL, REACT_APP_TECNICA_ROLE_LEVEL
 } from "./role_levels";
-import { api } from '../services/api'
 
 //Retorna CNPJ/CPF formatado
 export const maskCNPJ = (cnpj) => {
@@ -139,7 +133,6 @@ export const navigateTo = (type, url = null) => {
       saveNavigationToDB(url)
       break
     default:
-      console.log('navigate type not acceptable')
       break
   }
 }

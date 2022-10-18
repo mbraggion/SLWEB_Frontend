@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { api } from '../../services/api'
+import React, { useEffect, useState } from 'react';
+import { api } from '../../services/api';
 
-import { Panel } from '../../components/commom_in'
-import Loading from '../../components/loading_screen'
+import { Panel } from '../../components/commom_in';
+import Loading from '../../components/loading_screen';
+import { Toast } from '../../components/toasty';
 
-import { PedidoList } from './pedidoList'
-import { PedidosListOptions } from './options'
+import { PedidosListOptions } from './options';
+import { PedidoList } from './pedidoList';
 
 const PedidosDeCompra = () => {
   const timeFilter = 'week'
@@ -33,6 +34,18 @@ const PedidosDeCompra = () => {
     LoadData()
   }, [])
 
+  const handleIntegrarPedidos = async () => {
+    // alert('Em breve 😊')
+
+    try{
+      await api.get('/pedidos/compra/integracao')
+
+      Toast('Integração em andamento!', 'info')
+    }catch(err){
+      Toast('Falha ao solicitar integração', 'error')
+    }
+  }
+
   return !loaded ?
     <Loading />
     :
@@ -42,6 +55,7 @@ const PedidosDeCompra = () => {
           onChangeFiltro={setFiltro}
           mostrarProcessados={mostrarProcessados}
           switchProcessados={setMostrarProcessados}
+          onRequestIntegration={handleIntegrarPedidos}
           />
         <PedidoList
           Pedidos={returnPedidosFiltrados(pedidos, mostrarProcessados, filtro)}

@@ -68,10 +68,11 @@ const useStyles = makeStyles((theme) => ({
   },
   values: {
     padding: '0px 4px 0px 0px',
-    width: '100px'
+    // width: '100px'
   },
   percentages: {
     padding: '0px 0px 0px 4px',
-    width: '70px'
+    width: '70px',
+    textAlign: 'end'
   }
 }))

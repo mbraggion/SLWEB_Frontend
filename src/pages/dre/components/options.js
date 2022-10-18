@@ -1,17 +1,19 @@
-import React from 'react'
 import moment from 'moment'
+import React from 'react'
 
-import { InputLabel, Typography, MenuItem, Tooltip, IconButton, Select, FormControl, } from '@material-ui/core'
+import { FormControl, IconButton, InputLabel, MenuItem, Select, Tooltip, Typography } from '@material-ui/core'
+import { Refresh as RefreshIcon } from '@material-ui/icons'
 import { makeStyles } from '@material-ui/styles'
-import { Refresh as RefreshIcon, Save as SaveIcon } from '@material-ui/icons'
 
-import ExcelLogo from '../../../assets/svg/EXCEL.svg';
+import ExcelLogo from '../../../assets/svg/EXCEL.svg'
 
 export const Options = ({ onChange, selectedRef, refList, onReload, onSave, onDownloadExcel }) => {
   const classes = useStyles();
+  const mes = moment(selectedRef).add(3, 'hours').month() + 1
+  const ano = moment(selectedRef).add(3, 'hours').month() === 0 ? moment(selectedRef).year() + 1 : moment(selectedRef).year()
 
   return (
-    <>
+    <div className={classes.container}>
       <Tooltip
         title={
           <div
@@ -25,14 +27,16 @@ export const Options = ({ onChange, selectedRef, refList, onReload, onSave, onDo
         placement="top"
         arrow={true}
       >
-        <IconButton disabled={selectedRef === ''} onClick={() => onDownloadExcel('BASE')} aria-label="Excel">
-          <img
-            src={ExcelLogo}
-            width='23px'
-            height='23px'
-            alt='Excel Icon'
-          />
-        </IconButton>
+        <span>
+          <IconButton disabled={selectedRef === ''} onClick={() => onDownloadExcel('BASE')} aria-label="Excel">
+            <img
+              src={ExcelLogo}
+              width='23px'
+              height='23px'
+              alt='Excel Icon'
+            />
+          </IconButton>
+        </span>
       </Tooltip>
       <Tooltip
         title={
@@ -47,32 +51,18 @@ export const Options = ({ onChange, selectedRef, refList, onReload, onSave, onDo
         placement="top"
         arrow={true}
       >
-        <IconButton disabled={selectedRef === ''} onClick={() => onDownloadExcel('DRE')} aria-label="Excel" color='primary'>
-          <img
-            src={ExcelLogo}
-            width='23px'
-            height='23px'
-            alt='Excel Icon'
-          />
-        </IconButton>
+        <span>
+
+          <IconButton disabled={selectedRef === ''} onClick={() => onDownloadExcel('DRE')} aria-label="Excel" color='primary'>
+            <img
+              src={ExcelLogo}
+              width='23px'
+              height='23px'
+              alt='Excel Icon'
+            />
+          </IconButton>
+        </span>
       </Tooltip>
-      {/* <Tooltip
-        title={
-          <div
-            style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}
-          >
-            <Typography color="inherit">
-              Salvar alterações
-            </Typography>
-          </div>
-        }
-        placement="top"
-        arrow={true}
-      >
-        <IconButton disabled={selectedRef === ''} onClick={onSave} aria-label="save" color='primary'>
-          <SaveIcon />
-        </IconButton>
-      </Tooltip> */}
       <Tooltip
         title={
           <div
@@ -86,9 +76,11 @@ export const Options = ({ onChange, selectedRef, refList, onReload, onSave, onDo
         placement="top"
         arrow={true}
       >
-        <IconButton disabled={selectedRef === ''} onClick={() => onReload(moment(selectedRef).get('year'), moment(selectedRef).add(3, 'hours').get('month') + 1)} aria-label="refresh">
-          <RefreshIcon />
-        </IconButton>
+        <span>
+          <IconButton disabled={selectedRef === ''} onClick={() => onReload(ano, mes)} aria-label="refresh">
+            <RefreshIcon />
+          </IconButton>
+        </span>
       </Tooltip>
       <FormControl variant="outlined" className={classes.formControl}>
         <InputLabel id="demo-simple-select-outlined-label">Referencia</InputLabel>
@@ -107,11 +99,19 @@ export const Options = ({ onChange, selectedRef, refList, onReload, onSave, onDo
           ))}
         </Select>
       </FormControl>
-    </>
+    </div>
   )
 }
 
 const useStyles = makeStyles((theme) => ({
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottom: '1px dashed #CCC',
+    width: '100%',
+    paddingBottom: '8px'
+  },
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,

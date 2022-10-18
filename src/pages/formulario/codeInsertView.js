@@ -1,24 +1,10 @@
 import React, { useState } from "react";
 
-import {
-  TextField,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Button as ButtonMaterial,
-} from "@mui/material";
+import { Button as ButtonMaterial, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
 
-import {
-  Container,
-  Block,
-  Title,
-  Text,
-  Button
-} from "./styles";
+import { Block, Button, Container, Text, Title } from "./styles";
 
-const CodeView = (props) => {
+const CodeView = ({ email, fetching, onEmailChange, onCodeRequest, onCodeInsertion }) => {
   const [openM1, setOpenM1] = useState(false);
   const [openM2, setOpenM2] = useState(false);
 
@@ -33,7 +19,7 @@ const CodeView = (props) => {
   const handleClickOpen2 = (e) => {
     setOpenM2(true);
     e.persist();
-    props.onCodeInsertion(e.target.value, e);
+    onCodeInsertion(e.target.value, e);
   };
 
   const handleClose2 = () => {
@@ -78,14 +64,14 @@ const CodeView = (props) => {
               type="email"
               fullWidth
               variant="standard"
-              value={props.email}
-              onChange={(e) => props.onEmailChange(e.target.value)}
+              value={email}
+              onChange={(e) => onEmailChange(e.target.value)}
             />
           </DialogContent>
           <DialogActions>
             <ButtonMaterial 
-            disabled={props.fetching}
-            onClick={(e) => props.onCodeRequest(e)}>Solicitar</ButtonMaterial>
+            disabled={fetching}
+            onClick={(e) => onCodeRequest(e)}>Solicitar</ButtonMaterial>
           </DialogActions>
         </Dialog>
         <Button
@@ -113,7 +99,7 @@ const CodeView = (props) => {
               type="text"
               fullWidth
               variant="standard"
-              onChange={(e) => props.onCodeInsertion(e.target.value, e)}
+              onChange={(e) => onCodeInsertion(e.target.value, e)}
             />
           </DialogContent>
         </Dialog>

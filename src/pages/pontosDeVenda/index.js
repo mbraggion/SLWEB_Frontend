@@ -66,6 +66,11 @@ const PontosDeVenda = ({ match }) => {
         onClose={handleCloseDetailsModal}
         PdvId={targetPDV.pdv}
         AnxId={targetPDV.anx}
+        EquiCod={
+          returnPDVsFilter(PDVs, mostrarInativos, filtro).filter(pdv => pdv.PdvId === targetPDV.pdv && pdv.AnxId === targetPDV.anx).length > 0
+            ? returnPDVsFilter(PDVs, mostrarInativos, filtro).filter(pdv => pdv.PdvId === targetPDV.pdv && pdv.AnxId === targetPDV.anx)[0].PdvStatus
+            : null
+        }
         updatePDVsArray={setPDVs}
         PdvStatus={
           returnPDVsFilter(PDVs, mostrarInativos, filtro).filter(pdv => pdv.PdvId === targetPDV.pdv && pdv.AnxId === targetPDV.anx).length > 0

@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { api } from '../../services/api'
+import React, { useEffect, useState } from 'react';
+import { api } from '../../services/api';
 
+import { Fab, Grow } from '@material-ui/core';
+import { Add, Close, Delete, Menu } from '@material-ui/icons';
 import { Panel } from "../../components/commom_in";
-import { Menu, Close, Add, Delete } from '@material-ui/icons';
-import { Fab, Grow } from '@material-ui/core'
 
-import { RED_PRIMARY } from '../../misc/colors'
-import { roleLevel } from '../../misc/commom_functions'
-import { REACT_APP_FRANQUEADO_ROLE_LEVEL } from '../../misc/role_levels'
+import { RED_PRIMARY } from '../../misc/colors';
+import { roleLevel } from '../../misc/commom_functions';
+import { REACT_APP_FRANQUEADO_ROLE_LEVEL } from '../../misc/role_levels';
 
-import News from './News'
-import { NewsDialog } from './dialogs/NewsDialog'
-import { CreateNews } from './dialogs/CreateNewsDialog'
-import { DeleteNewsDialog } from './dialogs/DeleteNewsDialog'
+import { CreateNews } from './dialogs/CreateNewsDialog';
+import { DeleteNewsDialog } from './dialogs/DeleteNewsDialog';
+import { NewsDialog } from './dialogs/NewsDialog';
+import { NewVPNModal } from './dialogs/NewsDialogNovaVPN';
+import News from './News';
 
 const Dashboard = () => {
+  const [newVPNModalOpen, setNewVPNModalOpen] = useState(false)
   const [newsModalOpen, setNewsModalOpen] = useState(false)
   const [createNewsModalOpen, setCreateNewsModalOpen] = useState(false);
   const [deleteNewsModalOpen, setDeleteNewsModalOpen] = useState(false);
@@ -72,11 +74,9 @@ const Dashboard = () => {
   const handleCloseNewsModal = async () => {
     //da um check que a noticia foi vizualizada
     if (displayedNews.ReadConfirm === true && displayedNews.DtConfirmacao === null) {
-      try {
-        await api.post('/dashboard/news/check', {
-          newsId: displayedNews.NewsId
-        })
-
+      api.post('/dashboard/news/check', {
+        newsId: displayedNews.NewsId
+      }).then(res => {
         setNews(oldState => {
           let aux = [...oldState]
 
@@ -88,17 +88,28 @@ const Dashboard = () => {
 
           return aux
         })
-      } catch (err) {
-
-      }
+      }).catch(err => {
+      })
     }
 
     setNewsModalOpen(false)
     // setDisplayedNews(null)
   }
 
+  const handleOpenNewVPNModal = () => {
+    setNewVPNModalOpen(true)
+  }
+
+  const handleCloseNewVPNModal = async () => {    
+    setNewVPNModalOpen(false)
+  }
+
   return (
     <Panel>
+      <NewVPNModal
+        open={newVPNModalOpen}
+        onClose={handleCloseNewVPNModal}
+      />
       <NewsDialog
         open={newsModalOpen}
         onClose={handleCloseNewsModal}
@@ -118,6 +129,7 @@ const Dashboard = () => {
       <News
         onOpenModal={handleOpenNewsModal}
         News={news}
+        onOpenNewVPNModal={handleOpenNewVPNModal}
       />
       {roleLevel() <= REACT_APP_FRANQUEADO_ROLE_LEVEL ?
         null

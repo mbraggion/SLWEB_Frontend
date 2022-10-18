@@ -24,7 +24,7 @@ import NewFileInput from '../../../components/FileInput'
 import { Toast } from '../../../components/toasty'
 import { navigateTo } from '../../../misc/commom_functions'
 
-function ContasModal(props) {
+function ContasModal({ open, onClose, duplicatas, confiavel, naoCompensavel }) {
   const [confirmDuplicatas, setConfirmDuplicatas] = useState(null)
   const [fileNames, setFileNames] = useState([])
   const [fetching, setFetching] = useState(false)
@@ -81,7 +81,7 @@ function ContasModal(props) {
 
   const handleClickDuplicata = (checked, index) => {
     if (checked) {
-      setConfirmDuplicatas(props.duplicatas[index])
+      setConfirmDuplicatas(duplicatas[index])
     } else {
       setConfirmDuplicatas(null)
     }
@@ -117,14 +117,14 @@ function ContasModal(props) {
   }
 
   const handleClose = () => {
-    props.onClose()
+    onClose()
     setFileNames([])
     setConfirmDuplicatas([])
   }
 
   return (
     <Dialog
-      open={props.open}
+      open={open}
       onClose={handleClose}
       PaperComponent={PaperComponent}
       TransitionComponent={Transition}
@@ -211,7 +211,7 @@ function ContasModal(props) {
                   </strong>
                 </FormLabel>
                 <FormGroup>
-                  {props.duplicatas.map((duplicata, index) => (
+                  {duplicatas.map((duplicata, index) => (
                     <FormControlLabel
                       key={duplicata.E1_NUM}
                       control={
@@ -228,19 +228,22 @@ function ContasModal(props) {
                           onChange={e => handleClickDuplicata(e.target.checked, index)}
                           name={duplicata.E1_NUM}
                           value={duplicata}
+                        // disabled={naoCompensavel.filter(nc => nc.E1_PREFIXO.trim() === duplicata.E1_PREFIXO[0].trim() && nc.E1_NUM.trim() === duplicata.E1_NUM.trim() && nc.E1_PARCELA.trim() === duplicata.E1_PARCELA.trim()).length > 0}
                         />
                       }
-                      label={<>
-                        <strong>
-                          {duplicata.E1_NUM}
-                          {duplicata.E1_PARCELA.trim() !== '' ?
-                            ` | ${duplicata.E1_PARCELA.trim()}`
-                            :
-                            null
-                          }
-                        </strong>
-                        {` (R$ ${duplicata.E1_SALDO})`}
-                      </>}
+                      label={
+                        <>
+                          <strong>
+                            {duplicata.E1_NUM}
+                            {duplicata.E1_PARCELA.trim() !== '' ?
+                              ` | ${duplicata.E1_PARCELA.trim()}`
+                              :
+                              null
+                            }
+                          </strong>
+                          {naoCompensavel.filter(nc => nc.E1_PREFIXO.trim() === duplicata.E1_PREFIXO[0].trim() && nc.E1_NUM.trim() === duplicata.E1_NUM.trim() && nc.E1_PARCELA.trim() === duplicata.E1_PARCELA.trim()).length > 0 ? ` (em análise)` : ` (R$ ${duplicata.E1_SALDO})`}
+                        </>
+                      }
                     />
                   ))}
                 </FormGroup>

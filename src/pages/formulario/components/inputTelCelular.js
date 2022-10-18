@@ -1,10 +1,9 @@
-import React from 'react';
-import NumberFormat from 'react-number-format'
 import PropTypes from 'prop-types';
+import React from 'react';
+import NumberFormat from 'react-number-format';
 
 import {
-  TextField,
-  makeStyles
+  makeStyles, TextField
 } from '@material-ui/core/';
 
 export const InputTelCelular = ({ value, onChange, disabled }) => {
@@ -12,6 +11,7 @@ export const InputTelCelular = ({ value, onChange, disabled }) => {
 
   return (
     <TextField
+    autoFocus
       label='Celular'
       className={classes.TextInput}
       variant='outlined'

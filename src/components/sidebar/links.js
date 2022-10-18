@@ -1,8 +1,7 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from 'react-router-dom';
 
-import { List, Divider, ListItem, ListItemIcon, ListItemText } from "@material-ui/core/";
+import { Divider, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core/";
 import Icon from '@material-ui/core/Icon';
 import { ExitToApp, Help } from "@material-ui/icons/";
 
@@ -36,12 +35,26 @@ export const SidebarLinks = ({ onCloseDrawer, onOpenFiliaisModal }) => {
         justifyContent: 'flex-start'
       }}>
         <List>
-          {Links.map(sess => (
-            <>
+          {Links.map((sess, i) => (
+            <div key={i}>
               {sess.map(lnk => whichLinkDisplay(lnk, onOpenFiliaisModal, onCloseDrawer, path))}
               <Divider />
-            </>
+            </div>
           ))}
+          <Link
+            onClick={() => navigateTo('link', "/equipe")}
+            to="/equipe"
+            style={{ color: GREY_SECONDARY }}
+            title="Equipe"
+          >
+            <ListItem button onClick={onCloseDrawer}>
+              <ListItemIcon>
+                <Icon color={String(path).includes('/equipe') ? 'primary' : 'secondary'}>emoji_people</Icon>
+              </ListItemIcon>
+
+              <ListItemText primary="Equipe" />
+            </ListItem>
+          </Link>
           <Link
             onClick={() => navigateTo('link', "/ajuda")}
             to="/ajuda"
@@ -71,7 +84,6 @@ export const SidebarLinks = ({ onCloseDrawer, onOpenFiliaisModal }) => {
 }
 
 const whichLinkDisplay = (link, onOpenFiliaisModal, onCloseDrawer, actualPath) => {
-
   if (link.Descricao === 'Filiais') {
     //se for o botão filiais
 

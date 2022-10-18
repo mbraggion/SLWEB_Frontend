@@ -25,8 +25,8 @@ export const LinhaEditavel = ({ linha, pRef, onChangeValue, onUpdateLine, editav
           type='text'
           prefix='R$'
           allowNegative={false}
+          isNumericString
           allowLeadingZeros={false}
-          allowedDecimalSeparators={true}
           decimalSeparator=','
           thousandSeparator='.'
           decimalScale={2}
@@ -51,7 +51,13 @@ export const LinhaEditavel = ({ linha, pRef, onChangeValue, onUpdateLine, editav
 }
 
 const calculatePercentage = (amount, refAmount) => {
-  return String(Number((amount / refAmount) * 100).toFixed(2)) + '%'
+  let s = Number((amount / refAmount) * 100)
+
+  return String(
+    Number.isNaN(s)
+      ? Number(0).toFixed(2)
+      : s.toFixed(2)
+  ) + '%'
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -81,13 +87,16 @@ const useStyles = makeStyles((theme) => ({
   },
   values: (props) => ({
     padding: '0px 0px 0px 8px !important',
-    width: '80px !important',
+    width: '90px !important',
     border: 'none !important',
     background: props.editavel === true ? '#CCC !important' : 'transparent',
+    color: '#000 !important',
     height: '100% !important',
+    textAlign: 'end'
   }),
   percentages: {
     padding: '0px 0px 0px 4px',
-    width: '70px'
+    width: '70px',
+    textAlign: 'end'
   }
 }))

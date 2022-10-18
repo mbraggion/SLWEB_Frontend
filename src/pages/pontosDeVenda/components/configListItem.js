@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 
-import { makeStyles } from '@material-ui/core'
-import { Close as CloseIcon } from '@material-ui/icons'
-import { RED_PRIMARY } from '../../../misc/colors'
+import { makeStyles } from '@material-ui/core';
+import { Close as CloseIcon } from '@material-ui/icons';
 import NumberFormat from "react-number-format";
+import { RED_PRIMARY } from '../../../misc/colors';
 
-import { Toast } from '../../../components/toasty'
+import { Toast } from '../../../components/toasty';
 
 export const ConfigListItem = ({ Sel, Produtos, ProdCod, TiposDeVenda, TVendaId, V1, V2, Receitas, RecId, Linha, onUpdateConfig, onRemoveConfig, Editing }) => {
   const classes = useStyles();
@@ -19,7 +19,6 @@ export const ConfigListItem = ({ Sel, Produtos, ProdCod, TiposDeVenda, TVendaId,
         type='text'
         allowNegative={false}
         allowLeadingZeros={false}
-        allowedDecimalSeparators={false}
         decimalScale={0}
         onValueChange={(e) => onUpdateConfig('Sel', e.value, Linha)}
         disabled={Editing}

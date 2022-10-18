@@ -1,33 +1,36 @@
 import React from "react";
-import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
 import { connect } from "react-redux";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-import Sidebar from '../../components/sidebar/sidebar'
+import Sidebar from '../../components/sidebar/sidebar';
 
 //import de telas
 import notFound from "../../pages/1_NOT_FOUND/index";
-import Perfil from "../../pages/perfil/index";
-import Leads from "../../pages/leads/index";
 import Ajuda from "../../pages/ajuda/index";
+import Arquivos from '../../pages/arquivos/index';
+import Clientes from '../../pages/clientes';
+import Compras from '../../pages/compras/index';
+import Coletas from '../../pages/consultaColetas/index';
+import Contratos from '../../pages/contratos';
+import Home from "../../pages/dashboard/index";
+import DRE from '../../pages/dre';
+import CentralEmails from "../../pages/emails/index";
 import Equipamentos from '../../pages/equipamentos/index';
 import AddEquipamentos from "../../pages/equipamentosSolicitacao/index";
-import GerenciarEquip from "../../pages/gerenciarSolicitacoes/index";
-import Home from "../../pages/dashboard/index";
-import Monitor from "../../pages/monitor/index";
+import Equipe from "../../pages/equipe/index";
 import FormsAcompanhamento from "../../pages/formulários_cadastrados";
-import CentralEmails from "../../pages/emails/index";
-import Compras from '../../pages/compras/index'
-import Vendas from '../../pages/vendas/index'
-import Coletas from '../../pages/consultaColetas/index'
-import PDV from '../../pages/pontosDeVenda/index'
-import Clientes from '../../pages/clientes'
-import GerirLeads from '../../pages/gerirLeads/index'
-import PedidosCompra from '../../pages/pedidosDeCompra/index'
-import Arquivos from '../../pages/arquivos/index'
-import Franqueados from '../../pages/franqueados'
-import DRE from '../../pages/dre'
+import Franqueados from '../../pages/franqueados';
+import GerenciarEquip from "../../pages/gerenciarSolicitacoes/index";
+import GerirLeads from '../../pages/gerirLeads/index';
+import Inventario from '../../pages/inventario/index';
+import Leads from "../../pages/leads/index";
+import Monitor from "../../pages/monitor/index";
+import PedidosCompra from '../../pages/pedidosDeCompra/index';
+import Perfil from "../../pages/perfil/index";
+import PDV from '../../pages/pontosDeVenda/index';
+import Vendas from '../../pages/vendas/index';
 
-import { FilesProvider } from '../../hooks/useFiles'
+import { FilesProvider } from '../../hooks/useFiles';
 
 function Dashboard(props) {
   return (
@@ -46,6 +49,7 @@ function Dashboard(props) {
         <div id="App">
           <Switch>
             <Route exact path="/" component={Home} />
+            <Route exact path="/equipe" component={Equipe} />
             <Route exact path="/ajuda" component={Ajuda} />
 
             <Route exact path={validateRouteAccess("/leads")} component={Leads} />
@@ -59,8 +63,10 @@ function Dashboard(props) {
             <Route exact path={validateRouteAccess("/pontodevenda")} component={PDV} />
             <Route exact path={validateRouteAccess("/pontodevenda/:ativo")} component={PDV} />
             <Route exact path={validateRouteAccess("/clientes")} component={Clientes} />
+            <Route exact path={validateRouteAccess("/contratos")} component={Contratos} />
             <Route exact path={validateRouteAccess("/monitor")} component={Monitor} />
             <Route exact path={validateRouteAccess("/dre")} component={DRE} />
+            <Route exact path={validateRouteAccess("/inventario")} component={Inventario} />
             <Route exact path={validateRouteAccess("/arquivos")} component={ () => <FilesProvider> <Arquivos /> </FilesProvider> } />
 
             <Route exact path={validateRouteAccess("/administracao/solicitacao/management")} component={GerenciarEquip} />

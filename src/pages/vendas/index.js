@@ -1,34 +1,34 @@
 import React, { useEffect, useState } from "react";
+import Draggable from "react-draggable";
 import Input from "react-number-format";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { api } from "../../services/api";
-import Draggable from "react-draggable";
 
-import { DataGrid } from "@material-ui/data-grid";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { ShoppingCart, Add } from "@material-ui/icons";
-import Fab from "@material-ui/core/Fab";
-import Zoom from "@material-ui/core/Zoom";
 import Badge from "@material-ui/core/Badge";
 import Button from "@material-ui/core/Button";
-import Tooltip from "@material-ui/core/Tooltip";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Typography from "@material-ui/core/Typography";
+import Fab from "@material-ui/core/Fab";
 import Paper from "@material-ui/core/Paper";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
+import Zoom from "@material-ui/core/Zoom";
+import { DataGrid } from "@material-ui/data-grid";
+import { Add, ShoppingCart } from "@material-ui/icons";
 
-import MenuAbas from "../../components/materialComponents/PainelAbas";
-import Loading from "../../components/loading_screen";
 import { Panel } from "../../components/commom_in";
-import { Toast } from '../../components/toasty'
-import { RED_PRIMARY } from '../../misc/colors'
+import Loading from "../../components/loading_screen";
+import MenuAbas from "../../components/materialComponents/PainelAbas";
+import { Toast } from '../../components/toasty';
+import { RED_PRIMARY } from '../../misc/colors';
 
-import { LoadInsumos, UpdateCarrinho, UpdateProdutos, SetBuyQtt, SetCheckedProd, ClearCarrinho, ResetarDetalhes, DestroyStore, LoadClientes, LoadPagamentos, LoadDepositos, ChangeCliente, SetColetaCarga, ChangeTipoVenda } from "../../global/actions/VendasAction";
-import Vender from "./Vender";
+import { ChangeCliente, ChangeTipoVenda, ClearCarrinho, DestroyStore, LoadClientes, LoadDepositos, LoadInsumos, LoadPagamentos, ResetarDetalhes, SetBuyQtt, SetCheckedProd, SetColetaCarga, UpdateCarrinho, UpdateProdutos } from "../../global/actions/VendasAction";
 import Pedidos from "./Pedidos";
+import Vender from "./Vender";
 
 function Vendas(props) {
   const [loaded, setLoaded] = useState(false);

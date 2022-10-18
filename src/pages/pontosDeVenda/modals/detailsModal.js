@@ -1,21 +1,21 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { api } from '../../../services/api'
+import React, { useEffect, useRef, useState } from 'react';
+import { api } from '../../../services/api';
 
-import { Button, Dialog, MobileStepper, DialogActions, DialogContent, DialogTitle as MuiDialogTitle, useMediaQuery, IconButton, Typography } from '@material-ui/core/';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle as MuiDialogTitle, IconButton, MobileStepper, Typography, useMediaQuery } from '@material-ui/core/';
 import { useTheme, withStyles } from '@material-ui/core/styles';
-import { Close as CloseIcon, Save as SaveIcon, ThumbDownAlt as ThumbDownAltIcon, ThumbUpAlt as ThumbUpAltIcon, Edit as EditIcon, KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
+import { Close as CloseIcon, Edit as EditIcon, KeyboardArrowLeft, KeyboardArrowRight, Save as SaveIcon, ThumbDownAlt as ThumbDownAltIcon, ThumbUpAlt as ThumbUpAltIcon } from '@material-ui/icons';
 
-import { Toast } from '../../../components/toasty'
+import { Toast } from '../../../components/toasty';
 
-import { Configuracao } from '../components/_configuracao'
-import { Dados } from '../components/_dados'
-import { Equipamento } from '../components/_equipamentos'
+import { Configuracao } from '../components/_configuracao';
+import { Dados } from '../components/_dados';
+import { Equipamento } from '../components/_equipamentos';
 
-export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDVsArray }) => {
+export const DetailsModal = ({ open, onClose, PdvId, AnxId, EquiCod, PdvStatus, updatePDVsArray }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const childRef = useRef();
-  
+
   const [activeStep, setActiveStep] = useState(0);
   const [allowEditing, setAllowEditing] = useState(true);
   const [wait, setWait] = useState(false);
@@ -35,7 +35,7 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
       setWait(true)
 
       try {
-        if(!await childRef.current.handleSubmit()){
+        if (!await childRef.current.handleSubmit()) {
           throw new Error()
         }
 
@@ -49,7 +49,7 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
     }
   }
 
-  const handleInativar = async ({ Status, PdvId, AnxId }) => {
+  const handleInativar = async ({ Status, PdvId, AnxId, EquiCod }) => {
     let toastId = null
 
     toastId = Toast(Status === 'A' ? 'Inativando...' : 'Ativando...', 'wait')
@@ -60,7 +60,8 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
       await api.put('/pontosdevenda/inativar', {
         PdvId: PdvId,
         AnxId: AnxId,
-        Status: Status === 'A' ? 'I' : 'A'
+        Status: Status === 'A' ? 'I' : 'A',
+        Eq: EquiCod,
       })
 
       Toast(Status === 'A' ? 'Ponto de venda inativado' : 'Ponto de venda ativado', 'update', toastId, 'success')
@@ -120,7 +121,7 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
           <Equipamento
             PdvId={PdvId}
             AnxId={AnxId}
-            onClose={handleClose} 
+            onClose={handleClose}
             updatePDVsArray={updatePDVsArray}
           />
         )
@@ -130,22 +131,25 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
   }
 
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep === 2 ? 0 : prevActiveStep + 1);
+    setActiveStep((prevActiveStep) => prevActiveStep === 1 ? 0 : prevActiveStep + 1);
+    // setActiveStep((prevActiveStep) => prevActiveStep === 2 ? 0 : prevActiveStep + 1);
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep === 0 ? 2 : prevActiveStep - 1);
+    setActiveStep((prevActiveStep) => prevActiveStep === 0 ? 1 : prevActiveStep - 1);
+    // setActiveStep((prevActiveStep) => prevActiveStep === 0 ? 2 : prevActiveStep - 1);
   };
 
   const handleClose = () => {
-    if(!wait){
+    if (!wait) {
       onClose()
       setAllowEditing(true)
     }
   }
 
   const handleMoveDirectToEquip = () => {
-    setActiveStep(2)
+    // setActiveStep(2)
+    setActiveStep(1)
     setAllowEditing(true)
     setWait(false)
   }
@@ -179,7 +183,7 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
         >
           {allowEditing ? (
             <MobileStepper
-              steps={3}
+              steps={2}
               position="static"
               variant="text"
               activeStep={activeStep}
@@ -206,7 +210,7 @@ export const DetailsModal = ({ open, onClose, PdvId, AnxId, PdvStatus, updatePDV
             {allowEditing ?
               <Button
                 disabled={wait}
-                onClick={() => handleInativar({ Status: PdvStatus, PdvId: PdvId, AnxId: AnxId })}
+                onClick={() => handleInativar({ Status: PdvStatus, PdvId: PdvId, AnxId: AnxId, EquiCod: EquiCod })}
                 color="primary"
                 startIcon={PdvStatus === 'A' ? <ThumbDownAltIcon /> : <ThumbUpAltIcon />}
               >

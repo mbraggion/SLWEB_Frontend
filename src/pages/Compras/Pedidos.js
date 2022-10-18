@@ -45,7 +45,7 @@ function Pedidos(props) {
         setPedidosAtendidos(response.data.PedidosFaturados);
         setLoaded(true);
       } catch (err) {
-        
+
       }
     }
     LoadData();
@@ -60,7 +60,7 @@ function Pedidos(props) {
       setPedidoDet(response.data);
     } catch (err) {
       setPedidoDet({});
-      
+
     }
   };
 
@@ -100,7 +100,7 @@ function Pedidos(props) {
         alignItems: "flex-start",
       }}
     >
-      <DetalhesModal 
+      <DetalhesModal
         open={open}
         Detalhes={pedidoDet}
         onClose={handleCloseDialog}
@@ -131,7 +131,10 @@ function Pedidos(props) {
                 <StyledTableCell>{pedido.Serie}</StyledTableCell>
                 <StyledTableCell>{pedido.QtItems}</StyledTableCell>
                 <StyledTableCell>
-                  {currencyFormat(pedido.Total)}
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                  }).format(pedido.Total)}
                 </StyledTableCell>
               </StyledTableRow>
             ))}
@@ -147,7 +150,10 @@ function Pedidos(props) {
                 <StyledTableCell>{pedido.Serie}</StyledTableCell>
                 <StyledTableCell>{pedido.QtItems}</StyledTableCell>
                 <StyledTableCell>
-                  {currencyFormat(pedido.Total)}
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                  }).format(pedido.Total)}
                 </StyledTableCell>
               </StyledTableRow>
             ))}
@@ -197,15 +203,3 @@ const StyledTableRow = withStyles((theme) => ({
     },
   },
 }))(TableRow);
-
-const currencyFormat = (currency) => {
-  if (
-    currency !== null &&
-    String(currency).trim() !== "" &&
-    typeof currency != "undefined"
-  ) {
-    return Number.parseFloat(currency).toFixed(2);
-  } else {
-    return "0.00";
-  }
-};

@@ -28,7 +28,10 @@ export const NewFranquiaModal = ({ open, onClose }) => {
 
     try {
       await api.post('/administrar/franquia', {
-        FormData: newFranquiaData
+        FormData: {
+          ...newFranquiaData,
+          CNPJss: maskCNPJ(newFranquiaData.CNPJ)
+        }
       })
 
       Toast('Filial criada!', 'update', toastId, 'success')
@@ -38,12 +41,6 @@ export const NewFranquiaModal = ({ open, onClose }) => {
       Toast('Falha ao criar filial', 'update', toastId, 'error')
       setWait(false)
     }
-
-    //fazer post aqui
-    console.log({
-      ...newFranquiaData,
-      CNPJss: maskCNPJ(newFranquiaData.CNPJ)
-    })
 
     setWait(false)
   }
