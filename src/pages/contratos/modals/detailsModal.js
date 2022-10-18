@@ -92,7 +92,7 @@ export const DetailsModal = ({ open, onClose, target, onUpdate, onUpdateContract
     setWait(true)
 
     try {
-      await api.put(`/contracts/${CNPJ}/${ConId}`, {
+      await api.put(`/contracts/${String(CNPJ).trim()}/${ConId}`, {
         action: currentStatus === 'A' ? 'inativar' : 'ativar'
       })
 

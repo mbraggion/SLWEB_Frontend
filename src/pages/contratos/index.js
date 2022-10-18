@@ -10,6 +10,7 @@ import { ContractsListOptions } from './options'
 
 const Contratos = () => {
   const [contracts, setContracts] = useState([])
+  const [clients, setClients] = useState([])
   const [loaded, setLoaded] = useState(false);
   const [filtro, setFiltro] = useState('');
   const [mostrarInativos, setMostrarInativos] = useState(false);
@@ -24,6 +25,7 @@ const Contratos = () => {
       const response = await api.get('/contracts')
 
       setContracts(response.data.contracts)
+      setClients(response.data.activeClientes)
       setLoaded(true);
     } catch (err) {
     }
@@ -73,6 +75,7 @@ const Contratos = () => {
         open={newContractModalOpen}
         onClose={handleCloseNewContractModal}
         onRefresh={LoadData}
+        Clientes={clients}
       />
       <DetailsModal
         open={detailsModalOpen}

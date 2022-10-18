@@ -19,7 +19,7 @@ export const Contrato = forwardRef(({ contract, allowEdit }, ref) => {
 
   const LoadData = async () => {
     try {
-      const response = await api.get(`/contracts/info/contrato/${contract.CNPJ}/${contract.ConId}`)
+      const response = await api.get(`/contracts/info/contrato/${String(contract.CNPJ).trim()}/${contract.ConId}`)
 
       setInfoContrato(response.data.Contract)
       setLoaded(true)
@@ -35,7 +35,7 @@ export const Contrato = forwardRef(({ contract, allowEdit }, ref) => {
   useImperativeHandle(ref, () => ({
     async handleSubmit() {
       try {
-        await api.put(`/contracts/info/contrato/${contract.CNPJ}/${contract.ConId}`, {
+        await api.put(`/contracts/info/contrato/${String(contract.CNPJ).trim()}/${contract.ConId}`, {
           payload: infoContrato
         })
 
@@ -74,7 +74,7 @@ export const Contrato = forwardRef(({ contract, allowEdit }, ref) => {
 
     formData.append('multiple', qtdArquivos > 1 ? "S" : "N")
     formData.append('fn', JSON.stringify(fn))
-    formData.append('CNPJ', contract.CNPJ)
+    formData.append('CNPJ', String(contract.CNPJ).trim())
     formData.append('ConId', contract.ConId)
 
     let toastId = null
@@ -106,7 +106,7 @@ export const Contrato = forwardRef(({ contract, allowEdit }, ref) => {
     toastId = Toast("Baixando...", "wait");
 
     try {
-      const response = await api.get(`/contracts/documents/${contract.CNPJ}/${contract.ConId}/${encodeURI(filename)}`, {
+      const response = await api.get(`/contracts/documents/${String(contract.CNPJ).trim()}/${contract.ConId}/${encodeURI(filename)}`, {
         responseType: "arraybuffer",
       })
 
