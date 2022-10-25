@@ -1,6 +1,9 @@
 export const PRIMARY_ORANGE = '#FAC090'
 
-export const COOL_BLUE = '#0056C7'
+export const BLUE_PRIMARY = '#0056C7'
+export const BLUE_SECONDARY = '#18a0fb'
+
+export const GREEN_PRIMARY = '#29ff8d'
 
 export const CONFIRM_BUTTON_COLOR = 'green'
 

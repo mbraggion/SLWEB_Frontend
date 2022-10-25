@@ -4,8 +4,8 @@ import { api } from '../../services/api';
 import { AppBar, Dialog, IconButton, makeStyles, Slide, Toolbar, Typography, useMediaQuery } from '@material-ui/core';
 import { Close as CloseIcon } from '@material-ui/icons';
 
-import { InventarioList } from './invList';
-import { InventarioOptions } from './invOptions';
+import { InventarioList } from './components/invList';
+import { InventarioOptions } from './components/invOptions';
 
 export const InventarioContainer = ({ selectedDepId, selectedDepName, onChangeSelectedDep }) => {
   const classes = useStyles();
@@ -28,9 +28,10 @@ export const InventarioContainer = ({ selectedDepId, selectedDepName, onChangeSe
 
   const loadInventory = async () => {
     setFetching(true)
+    setInventario(null)
 
     try {
-      const response = await api.get(`/inventario/${encodeURI(selectedRef)}`)
+      const response = await api.get(`/inventario/${selectedDepId}/${encodeURI(selectedRef)}`)
 
       setInventario(response.data.Inventario)
       setFetching(false)
@@ -46,6 +47,8 @@ export const InventarioContainer = ({ selectedDepId, selectedDepName, onChangeSe
   }, [])
 
   useEffect(() => {
+    setInventario(null)
+    
     if (selectedRef !== '') {
       loadInventory()
     }
@@ -71,11 +74,16 @@ export const InventarioContainer = ({ selectedDepId, selectedDepName, onChangeSe
         onUpdateRef={setSelectedRefs}
         isDepositSelected={selectedDepId !== null}
         Inventario={inventario}
+        updateInventory={loadInventory}
+        selectedDepId={selectedDepId} 
       />
       <InventarioList
         Inventario={inventario}
         isFetching={fetching}
+        updateInventory={loadInventory}
         isRefSelected={selectedDepId !== null}
+        selectedDepId={selectedDepId} 
+        selectedRef={selectedRef}
       />
     </div>
   )

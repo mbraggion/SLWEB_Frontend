@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 
-import { CircularProgress, makeStyles } from '@material-ui/core'
+import { CircularProgress, makeStyles, Typography } from '@material-ui/core'
 
 import { InvListItem } from './invListItem'
 
-export const InventarioList = ({ Inventario, isFetching, isRefSelected }) => {
+export const InventarioList = ({ Inventario, updateInventory, isFetching, selectedDepId, selectedRef, isRefSelected }) => {
   const [expandedProdId, setExpandedProdId] = useState(null)
   const classes = useStyles()
 
@@ -39,12 +39,26 @@ export const InventarioList = ({ Inventario, isFetching, isRefSelected }) => {
           {Inventario.InvDetalhes.map(inv =>
             <InvListItem
               InvItem={inv}
+              isInventoryClosed={Inventario.status === 'fechado'}
+              updateInventory={updateInventory}
               expandedId={expandedProdId}
               onExpandProd={handleExpandProd}
+              selectedDepId={selectedDepId}
+              selectedRef={selectedRef}
             />
           )}
         </section>
       )
+    } else if (isRefSelected && Inventario !== null && Inventario.InvDetalhes === null) {
+      return <section 
+      className={classes.root}
+      style={{
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+      >
+        <Typography variant='h6'>Inventário ainda não lançado.</Typography>
+      </section>
     } else {
       return null
     }
@@ -59,7 +73,8 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     height: '100%',
     width: '100%',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    background: 'rgba(0,0,0,0.08)'
   }
 }));
 

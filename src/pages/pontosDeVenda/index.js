@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 //Meio de comunicação
 import { api } from "../../services/api";
@@ -10,9 +10,9 @@ import Loading from "../../components/loading_screen";
 import { Panel } from "../../components/commom_in";
 // import { Toast } from "../../components/toasty";
 
-import { PdvList } from './pdvList'
-import { PdvListOptions } from './options'
-import { DetailsModal } from './modals/detailsModal'
+import { DetailsModal } from './modals/detailsModal';
+import { PdvListOptions } from './options';
+import { PdvList } from './pdvList';
 
 const PontosDeVenda = ({ match }) => {
   const [loaded, setLoaded] = useState(false);
@@ -68,7 +68,7 @@ const PontosDeVenda = ({ match }) => {
         AnxId={targetPDV.anx}
         EquiCod={
           returnPDVsFilter(PDVs, mostrarInativos, filtro).filter(pdv => pdv.PdvId === targetPDV.pdv && pdv.AnxId === targetPDV.anx).length > 0
-            ? returnPDVsFilter(PDVs, mostrarInativos, filtro).filter(pdv => pdv.PdvId === targetPDV.pdv && pdv.AnxId === targetPDV.anx)[0].PdvStatus
+            ? returnPDVsFilter(PDVs, mostrarInativos, filtro).filter(pdv => pdv.PdvId === targetPDV.pdv && pdv.AnxId === targetPDV.anx)[0].EquiCod
             : null
         }
         updatePDVsArray={setPDVs}
