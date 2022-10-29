@@ -96,9 +96,9 @@ const whichMovimento = (desc, e, s) => {
   if (desc === 'INVENTÁRIO INICIAL' || desc === 'INVENTÁRIO FINAL') {
     return ''
   } else if (e !== 0) {
-    return e
+    return <>+ {e}</>
   } else if (s !== 0) {
-    return s
+    return <>- {s}</>
   } else {
     return '???'
   }

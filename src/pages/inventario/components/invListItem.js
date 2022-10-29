@@ -5,6 +5,7 @@ import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button
 import { ExpandMore as ExpandMoreIcon, Save as Saveicon } from '@material-ui/icons'
 
 import { Toast } from '../../../components/toasty'
+import { RED_SECONDARY } from '../../../misc/colors'
 import { AjusteInput } from './ajusteInput'
 import { InvListMovItem } from './invListMovItem'
 import { InvListMovList } from './invListMovList'
@@ -51,7 +52,7 @@ export const InvListItem = ({ InvItem, isInventoryClosed, expandedId, updateInve
 
         <ListItemText
           primary={InvItem.Produto}
-          secondary={`Em estoque: ${InvItem.InvQtd}`}
+          secondary={<>Em estoque: <strong style={{ color: RED_SECONDARY }}>{InvItem.InvQtd}</strong></>}
         />
       </AccordionSummary>
       <AccordionDetails className={classes.details}>

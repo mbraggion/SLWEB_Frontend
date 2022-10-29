@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../../services/api";
 
+import { makeStyles } from '@material-ui/core';
 
 import { Panel } from "../../components/commom_in";
 import Loading from "../../components/loading_screen";
@@ -17,6 +18,8 @@ const FormsAcompanhamento = () => {
   const [filtro, setFiltro] = useState('');
   const [mostrarIncompletos, setMostrarIncompletos] = useState(false);
 
+  const classes = useStyles()
+
   useEffect(() => {
     async function loadData() {
       try {
@@ -32,10 +35,10 @@ const FormsAcompanhamento = () => {
   }, [])
 
   const handleOpenDetailsModal = (details) => {
-    if(details.FormOpen === true){
+    if (details.FormOpen === true) {
       Toast('Esse formulário ainda não foi concluído')
     }
-    
+
     setDetailsModalOpen(true)
     setTargetDetails(details)
   }
@@ -48,10 +51,10 @@ const FormsAcompanhamento = () => {
     <Loading />
   ) : (
     <Panel style={{ justifyContent: "flex-start", alignItems: "center" }}>
-      <FormsListOptions 
-      onChangeFiltro={setFiltro} 
-      mostrarIncompletos={mostrarIncompletos} 
-      switchIncompletos={setMostrarIncompletos} 
+      <FormsListOptions
+        onChangeFiltro={setFiltro}
+        mostrarIncompletos={mostrarIncompletos}
+        switchIncompletos={setMostrarIncompletos}
       />
       <DetailsModal
         Form={targetDetails}
@@ -59,9 +62,13 @@ const FormsAcompanhamento = () => {
         onClose={handleCloseDetailsModal}
         modalTitle={`Formulário ${targetDetails ? targetDetails.Cod : ''}`}
       />
-      {returnFormsFiltered(formularios, mostrarIncompletos, filtro).map(f => (
-        <Line key={f.Cod} Form={f} onOpenModal={handleOpenDetailsModal} />
-      ))}
+      <section
+        className={classes.container}
+      >
+        {returnFormsFiltered(formularios, mostrarIncompletos, filtro).map(f => (
+          <Line key={f.Cod} Form={f} onOpenModal={handleOpenDetailsModal} />
+        ))}
+      </section>
     </Panel>
   );
 }
@@ -83,7 +90,7 @@ const returnFormsFiltered = (forms, shouldShowIncomplete, filterString) => {
     if (filterString.trim() === '') {
       return true
     } else if (filterString.trim() !== '' && (
-      String(form.Email).trim().toLowerCase().match(re) || 
+      String(form.Email).trim().toLowerCase().match(re) ||
       String(form.Cod).trim().toLowerCase().match(re)
     )) {
       return true
@@ -92,3 +99,21 @@ const returnFormsFiltered = (forms, shouldShowIncomplete, filterString) => {
     }
   })
 }
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
+    width: '100%',
+    maxHeight: 'calc(100% - 100px)',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+
+    '@media (max-width: 800px)': {
+      maxHeight: 'calc(100% - 150px)',
+    }
+  }
+}))

@@ -15,6 +15,7 @@ export const InventarioContainer = ({ selectedDepId, selectedDepName, onChangeSe
   const [refs, setRefs] = useState([])
   const [inventario, setInventario] = useState(null)
   const [selectedRef, setSelectedRefs] = useState('')
+  const [zerados, setZerados] = useState(false)
 
   const loadRefs = async () => {
     try {
@@ -26,20 +27,28 @@ export const InventarioContainer = ({ selectedDepId, selectedDepName, onChangeSe
     }
   }
 
-  const loadInventory = async () => {
+  const loadInventory = async (z = null) => {
     setFetching(true)
+    let comeco = inventario === null || inventario.referencia !== selectedRef
     setInventario(null)
 
     try {
-      const response = await api.get(`/inventario/${selectedDepId}/${encodeURI(selectedRef)}`)
+      const response = await api.get(`/inventario/${selectedDepId}/${encodeURI(selectedRef)}/${comeco ? 'I' : z !== null ? z ? 'S' : 'N' : zerados ? 'S': 'N'}`)
 
       setInventario(response.data.Inventario)
+      setZerados(response.data.InvZerado === 'S')
+      
       setFetching(false)
     } catch (err) {
       setInventario(null)
       setFetching(false)
       setSelectedRefs('')
     }
+  }
+
+  const handleUpdateZerados = async (z) => {
+    setZerados(z)
+    await loadInventory(z)
   }
 
   useEffect(() => {
@@ -76,6 +85,8 @@ export const InventarioContainer = ({ selectedDepId, selectedDepName, onChangeSe
         Inventario={inventario}
         updateInventory={loadInventory}
         selectedDepId={selectedDepId} 
+        produtosZerados={zerados}
+        onUpdateZerados={handleUpdateZerados}
       />
       <InventarioList
         Inventario={inventario}
@@ -121,7 +132,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     width: '100%',
     margin: '0px 0px 0px 8px',
-    boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%)"
+    boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%)",
   },
   appBar: {
     position: 'relative',

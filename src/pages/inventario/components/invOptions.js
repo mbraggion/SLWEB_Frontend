@@ -1,51 +1,60 @@
 import moment from 'moment'
-import React from 'react'
+import React, { useState } from 'react'
 
 import {
-  FormControl, IconButton, InputLabel,
+  Checkbox, FormControl, FormControlLabel, IconButton, InputLabel,
   makeStyles,
   MenuItem,
   Select, Tooltip
 } from '@material-ui/core'
-import { Add as AddIcon, AssignmentTurnedIn as AssignmentTurnedInIcon, LayersClear as LayersClearIcon, Lock as LockIcon, LockOpen as LockOpenIcon } from '@material-ui/icons'
+import { Add as AddIcon, AlarmOn as AlarmOnIcon, LayersClear as LayersClearIcon, Lock as LockIcon, LockOpen as LockOpenIcon } from '@material-ui/icons'
 import { Toast } from '../../../components/toasty'
 import { GREEN_PRIMARY } from '../../../misc/colors'
 import { api } from '../../../services/api'
 
-export const InventarioOptions = ({ updateInventory, selectedRef, availableRefs, onUpdateRef, isDepositSelected, selectedDepId, Inventario }) => {
+export const InventarioOptions = ({ updateInventory, selectedRef, availableRefs, onUpdateRef, isDepositSelected, selectedDepId, Inventario, produtosZerados, onUpdateZerados }) => {
   const classes = useStyles()
+  const [wait, setWait] = useState(false)
 
-  const handleOnChangeRef = (value) => {
-    onUpdateRef(value)
+  const handleOnChangeRef = async (value) => {
+    setWait(true)
+    await onUpdateRef(value)
+    setWait(false)
   }
 
   const handleCreateNewInv = async () => {
     let toastId = null
-    
-    toastId = Toast('Aguarde...', 'wait')
 
-    try{
+    toastId = Toast('Aguarde...', 'wait')
+    setWait(true)
+
+    try {
       await api.post(`/inventario/${selectedDepId}/${encodeURI(selectedRef)}`)
 
-      updateInventory()
       Toast('Inventário gerado!', 'update', toastId, 'success')
-    }catch(err){
+      setWait(false)
+      await updateInventory(false)
+    } catch (err) {
       Toast('Falha ao gerar inventário', 'update', toastId, 'error')
+      setWait(false)
     }
   }
 
   const handleCloseInv = async () => {
     let toastId = null
-    
-    toastId = Toast('Aguarde...', 'wait')
 
-    try{
+    toastId = Toast('Aguarde...', 'wait')
+    setWait(true)
+
+    try {
       await api.put(`/inventario/${selectedDepId}/${encodeURI(selectedRef)}`)
 
-      updateInventory()
       Toast('Inventário fechado!', 'update', toastId, 'success')
-    }catch(err){
+      setWait(false)
+      await updateInventory()
+    } catch (err) {
       Toast('Falha ao fechar inventário', 'update', toastId, 'error')
+      setWait(false)
     }
   }
 
@@ -53,7 +62,7 @@ export const InventarioOptions = ({ updateInventory, selectedRef, availableRefs,
     <section className={classes.root}>
       <div className={classes.infoContainer}>
         <div>{whichStatus(Inventario ? Inventario.status : null)}</div>
-        <div>{whichActions(Inventario ? Inventario.status : null, handleCreateNewInv, handleCloseInv)}</div>
+        <div>{whichActions(Inventario ? Inventario.status : null, produtosZerados, wait, handleCreateNewInv, handleCloseInv, onUpdateZerados)}</div>
       </div>
 
       <FormControl variant="outlined" className={classes.formControl}>
@@ -64,7 +73,7 @@ export const InventarioOptions = ({ updateInventory, selectedRef, availableRefs,
           value={selectedRef}
           onChange={(e) => handleOnChangeRef(e.target.value)}
           label="Referencia"
-          disabled={!isDepositSelected}
+          disabled={!isDepositSelected || wait}
         >
           <MenuItem value=''>
             <em>Nenhuma</em>
@@ -167,51 +176,102 @@ const whichStatus = (status) => {
   }
 }
 
-const whichActions = (status, onCreateNewInventory, onCloseOpenInventory) => {
+const whichActions = (status, zerados, wait, onCreateNewInventory, onCloseOpenInventory, onUpdateZerados) => {
   switch (status) {
     case 'ausente':
       return (
-        <Tooltip
-          title={
-            <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
-              Lançar inventário do mes selecionado
-            </div>
-          }
-          placement="top"
-          arrow={true}
-        >
-          <IconButton
-            onClick={onCreateNewInventory}
-            disabled={false}
-            style={{
-              color: GREEN_PRIMARY,
-            }}
+        <>
+          <Tooltip
+            title={
+              <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
+                Lançar inventário do mes selecionado
+              </div>
+            }
+            placement="top"
+            arrow={true}
           >
-            <AddIcon />
-          </IconButton>
-        </Tooltip>
+            <IconButton
+              onClick={onCreateNewInventory}
+              disabled={wait}
+              style={{
+                color: GREEN_PRIMARY,
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip
+            title={
+              <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
+                Descarta do inventário todos os produtos que tenham saldo 0 e que não tenham sido movimentados no mes
+              </div>
+            }
+            placement="top"
+            arrow={true}
+          >
+            <FormControlLabel
+              control={
+                <Checkbox
+                  style={{
+                    transform: "scale(0.3)",
+                  }}
+                  checked={zerados}
+                  onChange={() => onUpdateZerados(oldState => !oldState)}
+                  color="primary"
+                  disabled={true}
+                />
+              }
+              label="Produtos zerado"
+            />
+          </Tooltip>
+        </>
       )
     case 'fechado':
       return null
     case 'aberto':
       return (
-        <Tooltip
-          title={
-            <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
-              Fechar inventário do mes
-            </div>
-          }
-          placement="top"
-          arrow={true}
-        >
-          <IconButton
-            onClick={onCloseOpenInventory}
-            disabled={false}
-            color='primary'
+        <>
+          <Tooltip
+            title={
+              <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
+                Fechar inventário do mes
+              </div>
+            }
+            placement="top"
+            arrow={true}
           >
-            <AssignmentTurnedInIcon />
-          </IconButton>
-        </Tooltip>
+            <IconButton
+              onClick={onCloseOpenInventory}
+              disabled={wait}
+              color='primary'
+            >
+              <AlarmOnIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip
+            title={
+              <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
+                Descarta do inventário todos os produtos que tenham saldo 0 e que não tenham sido movimentados no mes
+              </div>
+            }
+            placement="top"
+            arrow={true}
+          >
+            <FormControlLabel
+              control={
+                <Checkbox
+                  style={{
+                    transform: "scale(0.3)",
+                  }}
+                  checked={zerados}
+                  onChange={() => onUpdateZerados(!zerados)}
+                  color="primary"
+                />
+              }
+              label="Produtos zerado"
+            />
+          </Tooltip>
+        </>
       )
     default:
       return null
