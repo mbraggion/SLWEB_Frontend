@@ -14,13 +14,15 @@ export const ConsumoProvider = ({ children }) => {
   const [leituras, setLeituras] = useState([])
   const [leituraDet, setLeituraDet] = useState(null)
   const [leituraConsumo, setLeituraConsumo] = useState(null)
+  const [jaLancou, setJaLancou] = useState(false)
+  const [consumoJaLancado, setConsumoJaLancado] = useState([])
   const [receita, setReceita] = useState(null)
 
   const [selectedEquip, setSelectedEquip] = useState(null)
   const [selectedRef, setSelectedRef] = useState(null)
   const [selectedRefInit, setSelectedRefInit] = useState(null)
   const [selectedRefEnc, setSelectedRefEnc] = useState(null)
-  
+
 
   const [isLancamentoModalOpen, setIsLancamentoModalOpen] = useState(false)
   const [isReceitaModalOpen, setIsReceitaModalOpen] = useState(false)
@@ -60,11 +62,15 @@ export const ConsumoProvider = ({ children }) => {
     let toastId = null
     toastId = Toast('Calculando consumo...', 'wait')
 
+    let eq = equipList.filter(eq => eq.EquiCod === selectedEquip)[0]
+
     try {
-      const response = await api.get(`/consumo/${equipList.filter(eq => eq.EquiCod === selectedEquip)[0].AnxId}/${equipList.filter(eq => eq.EquiCod === selectedEquip)[0].PdvId}/${selectedRefInit}/${selectedRefEnc}`);
+      const response = await api.get(`/consumo/${eq.AnxId}/${eq.PdvId}/${eq.DepId}/${selectedRef}/${eq.EquiCod}/${selectedRefInit}/${selectedRefEnc}`);
 
       setLeituraDet(response.data.Produtos)
       setLeituraConsumo(response.data.Consumos)
+      setJaLancou(response.data.consumoGravado)
+      setConsumoJaLancado(response.data.consumoGravadoQtds)
       Toast('Consumo calculado!', 'update', toastId, 'success')
     } catch (err) {
       setSelectedRefInit(null)
@@ -108,6 +114,65 @@ export const ConsumoProvider = ({ children }) => {
     setIsLancamentoModalOpen(false)
   }
 
+  async function handleGravaConsumo(zerada) {
+    let toastId = null
+    toastId = Toast('Gravando consumo...', 'wait')
+
+    let eq = equipList.filter(eq => eq.EquiCod === selectedEquip)[0]
+      ? equipList.filter(eq => eq.EquiCod === selectedEquip)[0]
+      : null
+
+    if (eq === null) {
+      throw new Error('impossivel determinar o equipamento alvo')
+    }
+
+    if (Number(eq.DepId) === 1) {
+      Toast('Não é possível fazer o apontamento de consumo para o depósito central, atualize o depósito do cliente na tela Ponto de Venda', 'warn')
+      return
+    }
+
+    try {
+      const response = await api.post(`/consumo/gravar/${eq.DepId}/${selectedRef}`, {
+        Consumo: leituraConsumo,
+        Zerado: zerada,
+        IMEI: eq.IMEI,
+        EquiCod: eq.EquiCod,
+        ref1: leituras.filter(l => l.LeituraId === selectedRefInit)[0].DataLeitura,
+        ref2: leituras.filter(l => l.LeituraId === selectedRefEnc)[0].DataLeitura
+      });
+
+      setJaLancou(true)
+      setConsumoJaLancado(response.data.consumoGravadoQtds)
+      Toast('Consumo gravado com sucesso!', 'update', toastId, 'success')
+    } catch (err) {
+      setJaLancou(false)
+      Toast('Falha ao gravar consumo', 'update', toastId, 'error')
+    }
+  }
+
+  async function handleApagaConsumo() {
+    let toastId = null
+    toastId = Toast('Removendo consumo gravado...', 'wait')
+
+    let eq = equipList.filter(eq => eq.EquiCod === selectedEquip)[0]
+      ? equipList.filter(eq => eq.EquiCod === selectedEquip)[0]
+      : null
+
+    if (eq === null) {
+      throw new Error('impossivel determinar o equipamento alvo')
+    }
+
+    try {
+      await api.delete(`/consumo/apagar/${eq.DepId}/${selectedRef}/${eq.EquiCod}`)
+
+      setJaLancou(false)
+      Toast('Consumo gravado removido com sucesso!', 'update', toastId, 'success')
+    } catch (err) {
+      setJaLancou(true)
+      Toast('Falha ao remover consumo gravado', 'update', toastId, 'error')
+    }
+  }
+
   useEffect(() => {
     LoadData()
   }, [])
@@ -129,12 +194,14 @@ export const ConsumoProvider = ({ children }) => {
     if (selectedEquip !== null && selectedRef !== null) {
       LoadLeituras()
     }
-  }, [selectedEquip, selectedRef])
+    // eslint-disable-next-line
+  }, [selectedRef])
 
   useEffect(() => {
     if (selectedRefInit !== null && selectedRefEnc !== null) {
       LoadConsumo()
     }
+    // eslint-disable-next-line
   }, [selectedRefInit, selectedRefEnc])
 
   return (
@@ -143,7 +210,7 @@ export const ConsumoProvider = ({ children }) => {
         uiControl: {
           loaded,
           podeLancarInventario: leituraConsumo !== null && leituraDet !== null,
-          jaLancouInventario: true,
+          jaLancouInventario: jaLancou,
           isRecipeModalOpen: isReceitaModalOpen,
           isLaunchModalOpen: isLancamentoModalOpen,
         },
@@ -155,6 +222,7 @@ export const ConsumoProvider = ({ children }) => {
           Receita: receita,
           Detalhes: leituraDet,
           Consumo: leituraConsumo,
+          ConsumoJaLancado: consumoJaLancado,
 
           selectedEquip: selectedEquip,
           selectedRef: selectedRef,
@@ -170,7 +238,10 @@ export const ConsumoProvider = ({ children }) => {
           onOpenLancamentoModal: handleOpenLancamentoModal,
           onCloseLancamentoModal: handleCloseLancamentoModal,
           onOpenReceitaModal: handleOpenReceitasModal,
-          onCloseReceitaModal: handleCloseReceitasModal
+          onCloseReceitaModal: handleCloseReceitasModal,
+
+          onGravarConsumo: handleGravaConsumo,
+          onRetrocederConsumo: handleApagaConsumo,
         }
       }
     }>

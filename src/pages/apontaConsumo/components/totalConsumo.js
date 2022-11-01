@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { makeStyles } from '@material-ui/core'
+import { makeStyles, Typography } from '@material-ui/core'
 
 import { useConsumo } from '../../../hooks/useConsumo'
-import { RED_PRIMARY } from '../../../misc/colors'
+import { RED_PRIMARY, RED_SECONDARY } from '../../../misc/colors'
 
 export const ConsumoList = () => {
   const classes = useStyles()
@@ -11,6 +11,9 @@ export const ConsumoList = () => {
 
   return (
     <div className={classes.root}>
+      <Typography variant='h6' className={classes.tableTitle}>
+        Consumo
+      </Typography>
       <table className={classes.table}>
         <thead>
           <tr>
@@ -59,7 +62,14 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '0.5%',
     background: '#FFF',
     overflowY: 'auto',
-    boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%)"
+    boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%)",
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+
+    '@media (max-width: 1080px)': {
+      width: '100%',
+      margin: '8px 0px 0px 0px'
+    }
   },
   table: {
     width: '100%',
@@ -78,5 +88,13 @@ const useStyles = makeStyles((theme) => ({
     background: '#fff',
     color: '#969CB3',
     borderRadius: '0.25rem'
+  },
+  tableTitle: {
+    width: '100%',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    marginTop: '8px',
+    borderBottom: `1px dashed ${RED_SECONDARY}`,
+    color: RED_SECONDARY
   }
 }));

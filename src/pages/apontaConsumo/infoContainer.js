@@ -23,6 +23,10 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     height: 'calc(100% - 100px)',
     padding: '1% 0px 0px 0px',
-    background: 'rgba(0,0,0,0.08)'
+    background: 'rgba(0,0,0,0.08)',
+
+    '@media (max-width: 1080px)': {
+      flexDirection: 'column',
+    }
   }
 }));

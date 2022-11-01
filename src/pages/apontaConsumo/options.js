@@ -137,12 +137,24 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%)",
     padding: '0px 1%',
+
+    '@media (max-width: 1080px)': {
+      height: 'auto',
+    }
   },
   formControl: {
     margin: theme.spacing(1),
     minWidth: '150px',
+
+    '@media (max-width: 1080px)': {
+      width: '100%',
+    }
   },
   button: {
-    padding: '16px'
+    padding: '16px',
+
+    '@media (max-width: 1080px)': {
+      height: 'auto',
+    }
   }
 }));

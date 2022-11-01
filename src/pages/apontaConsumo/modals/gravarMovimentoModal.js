@@ -14,8 +14,8 @@ export const MovimentoModal = () => {
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const {
     uiControl: { isLaunchModalOpen, jaLancouInventario },
-    actions: { onCloseLancamentoModal },
-    data: { Consumo, EquipList, selectedEquip, selectedRef }
+    actions: { onCloseLancamentoModal, onGravarConsumo, onRetrocederConsumo },
+    data: { Consumo, EquipList, selectedEquip, selectedRef, ConsumoJaLancado }
   } = useConsumo()
 
   const [zerada, setZerada] = useState(false)
@@ -61,35 +61,51 @@ export const MovimentoModal = () => {
 
 
           </div>
-
-          {!jaLancouInventario ?
-            <table className={classes.table}>
-              <thead>
-                <tr>
-                  <th className={classes.header}>Código</th>
-                  <th>Produto</th>
-                  <th>Qtd.</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Array.isArray(Consumo)
-                  ? Consumo.map((C, i) => (
-                    <tr>
-                      <td className={classes.cell} style={{ padding: '1rem 2rem' }}>
-                        {C.ProdId}
-                      </td>
-                      <td className={classes.cell} style={{ color: '#000' }}>
-                        {C.Produto}
-                      </td>
-                      <td className={classes.cell} style={{ color: RED_PRIMARY, fontWeight: 'bold', textAlign: 'end' }}>
-                        -{zerada ? C.TotalConsumo : C.Con}
-                      </td>
-                    </tr>
-                  )) : null}
-              </tbody>
-            </table>
-            : null
-          }
+          <table className={classes.table}>
+            <thead>
+              <tr>
+                <th className={classes.header}>Código</th>
+                <th>Produto</th>
+                <th>Qtd.</th>
+              </tr>
+            </thead>
+            <tbody>
+              {!jaLancouInventario
+                ? (
+                  Array.isArray(Consumo)
+                    ? Consumo.map((C) => (
+                      <tr>
+                        <td className={classes.cell} style={{ padding: '1rem 2rem' }}>
+                          {C.ProdId}
+                        </td>
+                        <td className={classes.cell} style={{ color: '#000' }}>
+                          {C.Produto}
+                        </td>
+                        <td className={classes.cell} style={{ color: RED_PRIMARY, fontWeight: 'bold', textAlign: 'end' }}>
+                          -{zerada ? C.TotalConsumo : C.Con}
+                        </td>
+                      </tr>
+                    )) : null
+                )
+                : (
+                  Array.isArray(ConsumoJaLancado)
+                    ? ConsumoJaLancado.map((C) => (
+                      <tr>
+                        <td className={classes.cell} style={{ padding: '1rem 2rem' }}>
+                          {C.ProdId}
+                        </td>
+                        <td className={classes.cell} style={{ color: '#000' }}>
+                          {C.Produto}
+                        </td>
+                        <td className={classes.cell} style={{ color: RED_PRIMARY, fontWeight: 'bold', textAlign: 'end' }}>
+                          -{C.D_QUANT}
+                        </td>
+                      </tr>
+                    )) : null
+                )
+              }
+            </tbody>
+          </table>
         </div>
       </DialogContent>
 
@@ -99,7 +115,7 @@ export const MovimentoModal = () => {
             variant='outlined'
             color='primary'
             disabled={!jaLancouInventario}
-            onClick={() => { }}
+            onClick={onRetrocederConsumo}
             startIcon={<HistoryIcon />}
           >
             Reverter lançamento
@@ -108,7 +124,7 @@ export const MovimentoModal = () => {
             variant='contained'
             color='primary'
             disabled={jaLancouInventario}
-            onClick={() => { }}
+            onClick={() => onGravarConsumo(zerada ? 'S' : 'N')}
             startIcon={<SaveIcon />}
           >
             Gravar Consumo

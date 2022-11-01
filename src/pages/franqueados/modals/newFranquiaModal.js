@@ -254,6 +254,8 @@ export const NewFranquiaModal = ({ open, onClose }) => {
               >
                 <MenuItem value='ALESSANDRO'>Alessandro</MenuItem>
                 <MenuItem value='TATIANE'>Tatiane</MenuItem>
+                <MenuItem value='IRES'>Ires</MenuItem>
+                <MenuItem value='ANDREA'>Andrea</MenuItem>
               </Select>
             </FormControl>
           </div>
