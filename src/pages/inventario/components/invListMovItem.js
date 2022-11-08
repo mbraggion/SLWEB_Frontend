@@ -88,7 +88,7 @@ const whichDoc = (desc, e, s, doc) => {
       </div>
     )
   } else {
-    return '???'
+    return 0
   }
 }
 
@@ -100,7 +100,7 @@ const whichMovimento = (desc, e, s) => {
   } else if (s !== 0) {
     return <>- {s}</>
   } else {
-    return '???'
+    return 0
   }
 }
 

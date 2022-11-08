@@ -7,7 +7,7 @@ import { RED_PRIMARY, RED_SECONDARY } from '../../../misc/colors'
 
 export const ConsumoList = () => {
   const classes = useStyles()
-  const { data: { Consumo } } = useConsumo()
+  const { data: { Consumo, Zerada } } = useConsumo()
 
   return (
     <div className={classes.root}>
@@ -39,7 +39,7 @@ export const ConsumoList = () => {
                   {d.GprdUn}
                 </td>
                 <td className={classes.cell} style={{ color: RED_PRIMARY, fontWeight: 'bold' }}>
-                  {d.Con}
+                  {Zerada ? d.TotalConsumo : d.Con}
                 </td>
               </tr>
             ))

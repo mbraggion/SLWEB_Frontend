@@ -14,15 +14,14 @@ export const ConsumoProvider = ({ children }) => {
   const [leituras, setLeituras] = useState([])
   const [leituraDet, setLeituraDet] = useState(null)
   const [leituraConsumo, setLeituraConsumo] = useState(null)
-  const [jaLancou, setJaLancou] = useState(false)
-  const [consumoJaLancado, setConsumoJaLancado] = useState([])
+  const [lancamentosPassados, setLancamentosPassados] = useState(null)
   const [receita, setReceita] = useState(null)
+  const [zerada, setZerada] = useState(false)
 
   const [selectedEquip, setSelectedEquip] = useState(null)
   const [selectedRef, setSelectedRef] = useState(null)
   const [selectedRefInit, setSelectedRefInit] = useState(null)
   const [selectedRefEnc, setSelectedRefEnc] = useState(null)
-
 
   const [isLancamentoModalOpen, setIsLancamentoModalOpen] = useState(false)
   const [isReceitaModalOpen, setIsReceitaModalOpen] = useState(false)
@@ -61,6 +60,8 @@ export const ConsumoProvider = ({ children }) => {
   async function LoadConsumo() {
     let toastId = null
     toastId = Toast('Calculando consumo...', 'wait')
+    setLeituraDet(null)
+    setLeituraConsumo(null)
 
     let eq = equipList.filter(eq => eq.EquiCod === selectedEquip)[0]
 
@@ -69,8 +70,8 @@ export const ConsumoProvider = ({ children }) => {
 
       setLeituraDet(response.data.Produtos)
       setLeituraConsumo(response.data.Consumos)
-      setJaLancou(response.data.consumoGravado)
-      setConsumoJaLancado(response.data.consumoGravadoQtds)
+      setLancamentosPassados(response.data.consumoHistory)
+
       Toast('Consumo calculado!', 'update', toastId, 'success')
     } catch (err) {
       setSelectedRefInit(null)
@@ -114,7 +115,7 @@ export const ConsumoProvider = ({ children }) => {
     setIsLancamentoModalOpen(false)
   }
 
-  async function handleGravaConsumo(zerada) {
+  async function handleGravaConsumo() {
     let toastId = null
     toastId = Toast('Gravando consumo...', 'wait')
 
@@ -134,23 +135,29 @@ export const ConsumoProvider = ({ children }) => {
     try {
       const response = await api.post(`/consumo/gravar/${eq.DepId}/${selectedRef}`, {
         Consumo: leituraConsumo,
-        Zerado: zerada,
+        Zerado: zerada ? 'S' : 'N',
         IMEI: eq.IMEI,
         EquiCod: eq.EquiCod,
         ref1: leituras.filter(l => l.LeituraId === selectedRefInit)[0].DataLeitura,
-        ref2: leituras.filter(l => l.LeituraId === selectedRefEnc)[0].DataLeitura
+        ref2: leituras.filter(l => l.LeituraId === selectedRefEnc)[0].DataLeitura,
+        QtdCon: leituraDet.reduce((acc, item) => {
+          if (zerada) {
+            return acc + item.QtdF
+          } else {
+            return acc + (item.QtdF - item.QtdI)
+          }
+        }, 0)
       });
 
-      setJaLancou(true)
-      setConsumoJaLancado(response.data.consumoGravadoQtds)
+      setLancamentosPassados(response.data.consumoHistory)
       Toast('Consumo gravado com sucesso!', 'update', toastId, 'success')
     } catch (err) {
-      setJaLancou(false)
+      setLancamentosPassados(null)
       Toast('Falha ao gravar consumo', 'update', toastId, 'error')
     }
   }
 
-  async function handleApagaConsumo() {
+  async function handleApagaConsumo(DOC) {
     let toastId = null
     toastId = Toast('Removendo consumo gravado...', 'wait')
 
@@ -163,12 +170,12 @@ export const ConsumoProvider = ({ children }) => {
     }
 
     try {
-      await api.delete(`/consumo/apagar/${eq.DepId}/${selectedRef}/${eq.EquiCod}`)
+      const response = await api.delete(`/consumo/apagar/${eq.DepId}/${selectedRef}/${eq.EquiCod}/${DOC}`)
 
-      setJaLancou(false)
+      setLancamentosPassados(response.data.consumoHistory)
       Toast('Consumo gravado removido com sucesso!', 'update', toastId, 'success')
     } catch (err) {
-      setJaLancou(true)
+      setLancamentosPassados(null)
       Toast('Falha ao remover consumo gravado', 'update', toastId, 'error')
     }
   }
@@ -210,9 +217,13 @@ export const ConsumoProvider = ({ children }) => {
         uiControl: {
           loaded,
           podeLancarInventario: leituraConsumo !== null && leituraDet !== null,
-          jaLancouInventario: jaLancou,
+          jaLancouInventario: leitDentroDeLancamentos(
+            selectedRefInit !== null ? leituras.filter(l => l.LeituraId === selectedRefInit)[0].DataLeitura : null,
+            selectedRefEnc !== null ? leituras.filter(l => l.LeituraId === selectedRefEnc)[0].DataLeitura : null,
+            lancamentosPassados
+          ),
           isRecipeModalOpen: isReceitaModalOpen,
-          isLaunchModalOpen: isLancamentoModalOpen,
+          isLaunchModalOpen: isLancamentoModalOpen
         },
         data: {
           EquipList: equipList,
@@ -222,18 +233,21 @@ export const ConsumoProvider = ({ children }) => {
           Receita: receita,
           Detalhes: leituraDet,
           Consumo: leituraConsumo,
-          ConsumoJaLancado: consumoJaLancado,
+          ConsumoJaLancado: lancamentosPassados,
+          leituras: leituras,
 
           selectedEquip: selectedEquip,
           selectedRef: selectedRef,
           selectedL1: selectedRefInit,
           selectedL2: selectedRefEnc,
+          Zerada: zerada
         },
         actions: {
           onChangeEquip: setSelectedEquip,
           onChangeRef: setSelectedRef,
           onChangeL1: setSelectedRefInit,
           onChangeL2: setSelectedRefEnc,
+          onZerarMaquina: setZerada,
 
           onOpenLancamentoModal: handleOpenLancamentoModal,
           onCloseLancamentoModal: handleCloseLancamentoModal,
@@ -254,4 +268,29 @@ export const useConsumo = () => {
   const context = useContext(Consumo)
 
   return context
+}
+
+const leitDentroDeLancamentos = (leit1, leit2, hist) => {
+  if (leit1 === null || leit2 === null || hist === null) {
+    return true
+  } else {
+    let valido = true
+
+    hist.forEach(h => {
+      let leitura1 = moment(leit1)
+      let leitura2 = moment(leit2)
+      let periodoInicio = moment(h.DtIni, 'DD/MM/YYYY hh:mm:ss')
+      let periodoFinal = moment(h.DtFim, 'DD/MM/YYYY hh:mm:ss')
+
+      if (
+        leitura1.isBetween(periodoInicio, periodoFinal) ||
+        leitura2.isBetween(periodoInicio, periodoFinal) ||
+        (leitura1.isBefore(periodoInicio) && leitura2.isAfter(periodoFinal))
+      ) {
+        valido = false
+      }
+    })
+
+    return !valido
+  }
 }

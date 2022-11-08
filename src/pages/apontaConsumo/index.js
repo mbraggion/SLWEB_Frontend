@@ -17,7 +17,7 @@ function ApontaConsumo() {
   return !loaded ? (
     <Loading />
   ) : (
-    <Panel>
+    <Panel style={{ flexWrap: 'nowrap' }}>
       <ReceitaModal />
       <MovimentoModal />
       <Options />

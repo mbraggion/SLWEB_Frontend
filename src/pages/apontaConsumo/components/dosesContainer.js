@@ -7,7 +7,7 @@ import { RED_PRIMARY, RED_SECONDARY } from '../../../misc/colors';
 
 export const DosesList = () => {
   const classes = useStyles()
-  const { data: { Detalhes }, actions: { onOpenReceitaModal } } = useConsumo()
+  const { data: { Detalhes, Zerada }, actions: { onOpenReceitaModal } } = useConsumo()
 
   return (
     <div className={classes.root}>
@@ -56,7 +56,7 @@ export const DosesList = () => {
                   <label className={classes.cellLink} onClick={() => onOpenReceitaModal(d.RecId)}>"{d.RecDesc}"</label>
                 </td>
                 <td className={classes.cell} >
-                  {d.QtdI}
+                  {Zerada ? 0 : d.QtdI}
                 </td>
                 <td className={classes.cell} >
                   {d.QtdF}
@@ -76,11 +76,11 @@ export const DosesList = () => {
                   arrow={true}
                 >
                   <td className={classes.cell} style={{ color: RED_PRIMARY, fontWeight: 'bold' }}>
-                    {d.QtdF - d.QtdI}
+                    {Zerada ? d.QtdF : d.QtdF - d.QtdI}
                   </td>
                 </Tooltip>
                 <td className={classes.cell} >
-                  {d.TstI}
+                  {Zerada ? 0 : d.TstI}
                 </td>
                 <td className={classes.cell} >
                   {d.TstF}
@@ -100,7 +100,7 @@ export const DosesList = () => {
                   arrow={true}
                 >
                   <td className={classes.cell} style={{ color: RED_PRIMARY, fontWeight: 'bold' }}>
-                    {d.TstF - d.TstI}
+                    {Zerada ? d.TstF : d.TstF - d.TstI}
                   </td>
                 </Tooltip>
               </tr>
@@ -118,7 +118,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    width: '50%',
+    width: '100%',
     height: '100%',
     padding: '0px 1rem',
     marginRight: '0.5%',

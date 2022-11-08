@@ -1,12 +1,13 @@
 import moment from 'moment';
-import React, { useState } from 'react';
+import React from 'react';
 
-import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle as MuiDialogTitle, FormControlLabel, IconButton, Typography, useMediaQuery } from '@material-ui/core/';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Dialog, DialogActions, DialogContent, DialogTitle as MuiDialogTitle, IconButton, Typography, useMediaQuery } from '@material-ui/core/';
 import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
-import { Close as CloseIcon, History as HistoryIcon, Save as SaveIcon } from '@material-ui/icons';
+import { Close as CloseIcon, ExpandMore as ExpandMoreIcon, Save as SaveIcon } from '@material-ui/icons';
 
 import { useConsumo } from '../../../hooks/useConsumo';
-import { RED_PRIMARY } from '../../../misc/colors';
+import { ConsumoALancar } from '../components/consumoALancar';
+import { ConsumoLancado } from '../components/consumoLancado';
 
 export const MovimentoModal = () => {
   const theme = useTheme();
@@ -15,10 +16,8 @@ export const MovimentoModal = () => {
   const {
     uiControl: { isLaunchModalOpen, jaLancouInventario },
     actions: { onCloseLancamentoModal, onGravarConsumo, onRetrocederConsumo },
-    data: { Consumo, EquipList, selectedEquip, selectedRef, ConsumoJaLancado }
+    data: { Consumo, EquipList, selectedEquip, selectedRef, ConsumoJaLancado, Zerada, selectedL1, selectedL2, leituras }
   } = useConsumo()
-
-  const [zerada, setZerada] = useState(false)
 
   const handleClose = () => {
     onCloseLancamentoModal()
@@ -40,91 +39,57 @@ export const MovimentoModal = () => {
 
       <DialogContent dividers>
         <div className={classes.root}>
-          <Typography gutterBottom variant='body1'>{jaLancouInventario ? 'A movimentação deste despósito nesta referencia já foi feita.' : 'A movimentação dos insumos abaixo será lançada em inventário.'}</Typography>
+          <Typography gutterBottom variant='body1'>{jaLancouInventario ? 'Uma movimentação deste despósito dentro deste período já foi feita.' : 'A movimentação dos insumos abaixo será lançada em inventário.'}</Typography>
           <Typography variant='subtitle1'>Depósito: <strong>{EquipList.filter(eq => eq.EquiCod === selectedEquip)[0] ? EquipList.filter(eq => eq.EquiCod === selectedEquip)[0].DepNome : 'Indefinido'}</strong></Typography>
           <Typography variant='subtitle1'>Referencia: <strong>{moment(selectedRef).add(3, 'hours').format('MM/YYYY')}</strong></Typography>
-
-          <div className={classes.line}>
-            {jaLancouInventario
-              ? <div />
-              : <FormControlLabel
-                control={
-                  <Checkbox
-                    className={classes.checkbox}
-                    checked={zerada}
-                    onChange={() => setZerada(!zerada)}
-                    name="zerada"
-                  />
-                }
-                label="Lançar como zerada"
-              />}
+          <Typography variant='subtitle1'>Período: <strong>{selectedL1 !== null ? moment(leituras.filter(l => l.LeituraId === selectedL1)[0].DataLeitura).format('DD/MM/YYYY hh:mm:ss') : null}</strong> &#x2192; <strong>{selectedL2 !== null ? moment(leituras.filter(l => l.LeituraId === selectedL2)[0].DataLeitura).format('DD/MM/YYYY hh:mm:ss') : null}</strong></Typography>
 
 
-          </div>
-          <table className={classes.table}>
-            <thead>
-              <tr>
-                <th className={classes.header}>Código</th>
-                <th>Produto</th>
-                <th>Qtd.</th>
-              </tr>
-            </thead>
-            <tbody>
-              {!jaLancouInventario
-                ? (
-                  Array.isArray(Consumo)
-                    ? Consumo.map((C) => (
-                      <tr>
-                        <td className={classes.cell} style={{ padding: '1rem 2rem' }}>
-                          {C.ProdId}
-                        </td>
-                        <td className={classes.cell} style={{ color: '#000' }}>
-                          {C.Produto}
-                        </td>
-                        <td className={classes.cell} style={{ color: RED_PRIMARY, fontWeight: 'bold', textAlign: 'end' }}>
-                          -{zerada ? C.TotalConsumo : C.Con}
-                        </td>
-                      </tr>
-                    )) : null
-                )
-                : (
-                  Array.isArray(ConsumoJaLancado)
-                    ? ConsumoJaLancado.map((C) => (
-                      <tr>
-                        <td className={classes.cell} style={{ padding: '1rem 2rem' }}>
-                          {C.ProdId}
-                        </td>
-                        <td className={classes.cell} style={{ color: '#000' }}>
-                          {C.Produto}
-                        </td>
-                        <td className={classes.cell} style={{ color: RED_PRIMARY, fontWeight: 'bold', textAlign: 'end' }}>
-                          -{C.D_QUANT}
-                        </td>
-                      </tr>
-                    )) : null
-                )
-              }
-            </tbody>
-          </table>
+          {!jaLancouInventario
+            ? (
+              <ConsumoALancar
+                Consumo={Consumo}
+                Zerada={Zerada}
+              />
+            )
+            : null}
+
+          {
+            Array.isArray(ConsumoJaLancado)
+              ? <Accordion defaultExpanded={false}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+
+                >
+                  <Typography variant='caption'>Lançamentos anteriores</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <div className='YAlign'>
+                    {ConsumoJaLancado.length > 0
+                      ? ConsumoJaLancado.map(C =>
+                        <ConsumoLancado
+                          Consumo={C}
+                          onDeleteLancamento={onRetrocederConsumo}
+                        />
+                      )
+                      : <Typography variant='h6'>Nenhum lançamento de consumo anterior gravado.</Typography>
+                    }
+                  </div>
+                </AccordionDetails>
+              </Accordion>
+              : null
+          }
         </div>
       </DialogContent>
 
       <DialogActions>
         {jaLancouInventario
-          ? <Button
-            variant='outlined'
-            color='primary'
-            disabled={!jaLancouInventario}
-            onClick={onRetrocederConsumo}
-            startIcon={<HistoryIcon />}
-          >
-            Reverter lançamento
-          </Button>
+          ? null
           : <Button
             variant='contained'
             color='primary'
             disabled={jaLancouInventario}
-            onClick={() => onGravarConsumo(zerada ? 'S' : 'N')}
+            onClick={() => onGravarConsumo()}
             startIcon={<SaveIcon />}
           >
             Gravar Consumo
@@ -141,7 +106,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-start',
-    alignItem: 'center'
+    alignItems: 'center'
   },
   table: {
     width: '100%',
@@ -169,6 +134,11 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItem: 'center'
+  },
+  historyBox: {
+    marignBottom: '8px',
+    borderBottom: '1px dashed #CCC',
+    fontSize: '0.5rem'
   }
 }))
 

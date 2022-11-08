@@ -1,19 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { api } from "../../services/api";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { api } from "../../services/api";
 
+import { Input, LockOutlined, Work } from "@material-ui/icons/";
 import Image from "../../assets/logo_sl.png";
 import {
-  Container,
-  Box,
-  Logo,
+  Box, Container, Logo
 } from "../../components/commom_out";
-import { Input, LockOutlined, Work } from "@material-ui/icons/";
-import { Toast } from "../../components/toasty";
 import Button from "../../components/materialComponents/Button";
 import InputUnderline from "../../components/materialComponents/InputUnderline";
-import { RED_PRIMARY } from '../../misc/colors'
-import { navigateTo } from '../../misc/commom_functions'
+import { Toast } from "../../components/toasty";
+import { RED_PRIMARY } from '../../misc/colors';
+import { navigateTo } from '../../misc/commom_functions';
 
 function Login() {
   const [user_code, setUser] = useState("");
