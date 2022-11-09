@@ -73,8 +73,8 @@ const useStyles = makeStyles((theme) => ({
     // margin: '8px 0px 0px 8px',
   },
   heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
+    fontSize: theme.typography.pxToRem(16),
+    fontWeight: 'bold',
   },
   button: {
     margin: '0px',

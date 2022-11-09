@@ -154,16 +154,22 @@ function DraggableDialog(props) {
               ) : null}
 
               {Req.OSCDtFechamento !== null && Req.OSCStatus === "Concluido" ? (
-                <Typography variant="subtitle1" gutterBottom>
-                  <strong>{convertData(Req.OSCDtFechamento)}: </strong>
-                  Franqueado confirmou ter recebido a máquina
-                </Typography>
+                <>
+                  <Divider />
+                  <Typography variant="subtitle1" gutterBottom>
+                    <strong>{convertData(Req.OSCDtFechamento)}: </strong>
+                    Franqueado confirmou ter recebido a máquina
+                  </Typography>
+                </>
               ) : null}
               {Req.OSCDtFechamento !== null && Req.OSCStatus === "Cancelado" ? (
-                <Typography variant="subtitle1" gutterBottom>
-                  <strong>{convertData(Req.OSCDtFechamento)}: </strong>
-                  Solicitação cancelada
-                </Typography>
+                <>
+                  <Divider />
+                  <Typography variant="subtitle1" gutterBottom>
+                    <strong>{convertData(Req.OSCDtFechamento)}: </strong>
+                    Solicitação cancelada
+                  </Typography>
+                </>
               ) : null}
             </Campo>
           </>

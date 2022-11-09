@@ -4,8 +4,8 @@ import { api } from '../../services/api';
 import { AppBar, Dialog, IconButton, makeStyles, Slide, Toolbar, Typography, useMediaQuery } from '@material-ui/core';
 import { Close as CloseIcon } from '@material-ui/icons';
 
-import { InventarioList } from './invList';
-import { InventarioOptions } from './invOptions';
+import { InventarioList } from './components/invList';
+import { InventarioOptions } from './components/invOptions';
 
 export const InventarioContainer = ({ selectedDepId, selectedDepName, onChangeSelectedDep }) => {
   const classes = useStyles();
@@ -15,6 +15,7 @@ export const InventarioContainer = ({ selectedDepId, selectedDepName, onChangeSe
   const [refs, setRefs] = useState([])
   const [inventario, setInventario] = useState(null)
   const [selectedRef, setSelectedRefs] = useState('')
+  const [zerados, setZerados] = useState(false)
 
   const loadRefs = async () => {
     try {
@@ -26,13 +27,17 @@ export const InventarioContainer = ({ selectedDepId, selectedDepName, onChangeSe
     }
   }
 
-  const loadInventory = async () => {
+  const loadInventory = async (z = null) => {
     setFetching(true)
+    let comeco = inventario === null || inventario.referencia !== selectedRef
+    setInventario(null)
 
     try {
-      const response = await api.get(`/inventario/${encodeURI(selectedRef)}`)
+      const response = await api.get(`/inventario/${selectedDepId}/${encodeURI(selectedRef)}/${comeco ? 'I' : z !== null ? z ? 'S' : 'N' : zerados ? 'S': 'N'}`)
 
       setInventario(response.data.Inventario)
+      setZerados(response.data.InvZerado === 'S')
+      
       setFetching(false)
     } catch (err) {
       setInventario(null)
@@ -41,11 +46,18 @@ export const InventarioContainer = ({ selectedDepId, selectedDepName, onChangeSe
     }
   }
 
+  const handleUpdateZerados = async (z) => {
+    setZerados(z)
+    await loadInventory(z)
+  }
+
   useEffect(() => {
     loadRefs()
   }, [])
 
   useEffect(() => {
+    setInventario(null)
+    
     if (selectedRef !== '') {
       loadInventory()
     }
@@ -71,11 +83,18 @@ export const InventarioContainer = ({ selectedDepId, selectedDepName, onChangeSe
         onUpdateRef={setSelectedRefs}
         isDepositSelected={selectedDepId !== null}
         Inventario={inventario}
+        updateInventory={loadInventory}
+        selectedDepId={selectedDepId} 
+        produtosZerados={zerados}
+        onUpdateZerados={handleUpdateZerados}
       />
       <InventarioList
         Inventario={inventario}
         isFetching={fetching}
+        updateInventory={loadInventory}
         isRefSelected={selectedDepId !== null}
+        selectedDepId={selectedDepId} 
+        selectedRef={selectedRef}
       />
     </div>
   )
@@ -113,7 +132,7 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
     width: '100%',
     margin: '0px 0px 0px 8px',
-    boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%)"
+    boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%)",
   },
   appBar: {
     position: 'relative',

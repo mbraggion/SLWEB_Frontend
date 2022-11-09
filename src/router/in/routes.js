@@ -7,6 +7,7 @@ import Sidebar from '../../components/sidebar/sidebar';
 //import de telas
 import notFound from "../../pages/1_NOT_FOUND/index";
 import Ajuda from "../../pages/ajuda/index";
+import ApontaConsumo from '../../pages/apontaConsumo/index';
 import Arquivos from '../../pages/arquivos/index';
 import Clientes from '../../pages/clientes';
 import Compras from '../../pages/compras/index';
@@ -30,6 +31,7 @@ import Perfil from "../../pages/perfil/index";
 import PDV from '../../pages/pontosDeVenda/index';
 import Vendas from '../../pages/vendas/index';
 
+import { ConsumoProvider } from '../../hooks/useConsumo';
 import { FilesProvider } from '../../hooks/useFiles';
 
 function Dashboard(props) {
@@ -60,6 +62,7 @@ function Dashboard(props) {
             <Route exact path={validateRouteAccess("/solicitacao")} component={AddEquipamentos} />
             <Route exact path={validateRouteAccess("/leituras/:ativo")} component={Coletas} />
             <Route exact path={validateRouteAccess("/leituras")} component={Coletas} />
+            <Route exact path={validateRouteAccess("/consumo")} component={() => ( <ConsumoProvider> <ApontaConsumo /> </ConsumoProvider> )} />
             <Route exact path={validateRouteAccess("/pontodevenda")} component={PDV} />
             <Route exact path={validateRouteAccess("/pontodevenda/:ativo")} component={PDV} />
             <Route exact path={validateRouteAccess("/clientes")} component={Clientes} />
@@ -67,7 +70,7 @@ function Dashboard(props) {
             <Route exact path={validateRouteAccess("/monitor")} component={Monitor} />
             <Route exact path={validateRouteAccess("/dre")} component={DRE} />
             <Route exact path={validateRouteAccess("/inventario")} component={Inventario} />
-            <Route exact path={validateRouteAccess("/arquivos")} component={ () => <FilesProvider> <Arquivos /> </FilesProvider> } />
+            <Route exact path={validateRouteAccess("/arquivos")} component={ () => ( <FilesProvider> <Arquivos /> </FilesProvider> ) } />
 
             <Route exact path={validateRouteAccess("/administracao/solicitacao/management")} component={GerenciarEquip} />
             <Route exact path={validateRouteAccess("/administracao/formularios")} component={FormsAcompanhamento} />

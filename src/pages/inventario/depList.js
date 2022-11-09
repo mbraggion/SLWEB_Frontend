@@ -29,7 +29,7 @@ export const DepositosList = ({ Depositos, onSelectDeposito, SelectedDepId }) =>
         {Depositos.map((dep, i) => (
           <ListItem
             style={{
-              borderRight: `4px solid ${SelectedDepId === dep.DepId ? RED_PRIMARY :  GREY_PRIMARY}`
+              borderLeft: `4px solid ${SelectedDepId === dep.DepId ? RED_PRIMARY :  GREY_PRIMARY}`
             }}
             divider
             key={dep.DepId}

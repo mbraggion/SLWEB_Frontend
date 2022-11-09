@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { makeStyles } from '@material-ui/styles'
-import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@material-ui/core'
-import { ExpandMore as ExpandMoreIcon } from '@material-ui/icons'
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@material-ui/core';
+import { ExpandMore as ExpandMoreIcon } from '@material-ui/icons';
+import { makeStyles } from '@material-ui/styles';
 
-import { LinhaFixa } from './linhaFixa'
+import { LinhaFixa } from './linhaFixa';
 
 export const Resumo = ({ Res }) => {
   const classes = useStyles()
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
   },
   heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
+    fontSize: theme.typography.pxToRem(16),
+    fontWeight: 'bold',
   },
 }))
