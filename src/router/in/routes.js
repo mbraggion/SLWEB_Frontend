@@ -23,6 +23,7 @@ import FormsAcompanhamento from "../../pages/formulários_cadastrados";
 import Franqueados from '../../pages/franqueados';
 import GerenciarEquip from "../../pages/gerenciarSolicitacoes/index";
 import GerirLeads from '../../pages/gerirLeads/index';
+import Receitas from '../../pages/receitas/index';
 import Inventario from '../../pages/inventario/index';
 import Leads from "../../pages/leads/index";
 import Monitor from "../../pages/monitor/index";
@@ -64,6 +65,7 @@ function Dashboard(props) {
             <Route exact path={validateRouteAccess("/leituras")} component={Coletas} />
             <Route exact path={validateRouteAccess("/consumo")} component={() => ( <ConsumoProvider> <ApontaConsumo /> </ConsumoProvider> )} />
             <Route exact path={validateRouteAccess("/pontodevenda")} component={PDV} />
+            <Route exact path={validateRouteAccess("/receitas")} component={Receitas} />
             <Route exact path={validateRouteAccess("/pontodevenda/:ativo")} component={PDV} />
             <Route exact path={validateRouteAccess("/clientes")} component={Clientes} />
             <Route exact path={validateRouteAccess("/contratos")} component={Contratos} />
