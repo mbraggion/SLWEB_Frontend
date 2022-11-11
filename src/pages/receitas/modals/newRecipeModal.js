@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import NumberFormat from 'react-number-format'
 import { api } from '../../../services/api'
 
@@ -25,6 +25,8 @@ import {
 import {
   Close as CloseIcon,
   Save as SaveIcon,
+  Add as AddIcon,
+  Delete as DeleteIcon
 } from '@material-ui/icons';
 
 import { Toast } from '../../../components/toasty'
@@ -49,16 +51,29 @@ export const NewRecipeModal = ({ open, onClose, onUpdateRecipesArray, GrupoInsum
   }
 
   const handleSave = async () => {
+    if (newRecipeName.trim() === '') {
+      Toast('De um nome para a receita', 'warn')
+      return
+    }
+
+    let filteredRec = newRecipe.filter(d => d.GrupoProduto !== null && d.Qtd > 0)
+
+    if (filteredRec.length === 0) { 
+      Toast('A receita deve ter pelo menos um insumo na fórmula', 'warn')
+      return
+    }
+
     setWait(true)
+    setNewRecipe(filteredRec)
 
     let toastId = null
 
     toastId = Toast('Criando receita...', 'wait')
 
     try {
-      const response = await api.post('', {
+      const response = await api.post('/receita', {
         recipeName: newRecipeName,
-        recipeDetails: newRecipe
+        recipeDetails: filteredRec
       })
 
       Toast('Receita criada com sucesso', 'update', toastId, 'success')
@@ -80,6 +95,32 @@ export const NewRecipeModal = ({ open, onClose, onUpdateRecipesArray, GrupoInsum
     }
   }
 
+  const handleAddInsumo = () => {
+    setNewRecipe(oldState => (
+      [
+        ...oldState,
+        {
+          GrupoProduto: null,
+          Qtd: 0
+        }
+      ]
+    ))
+  }
+
+  const handleRemoveInsumo = (index) => {
+    if (newRecipe.length <= 1) {
+      Toast('A receita precisa ter pelo menos um item!', 'info')
+      return
+    }
+
+    setNewRecipe(oldState => {
+      let aux = [...oldState]
+
+      aux.splice(index, 1)
+
+      return aux
+    })
+  }
 
   return (
     <Dialog
@@ -87,9 +128,7 @@ export const NewRecipeModal = ({ open, onClose, onUpdateRecipesArray, GrupoInsum
       open={open}
       onClose={handleClose}
     >
-      <DialogTitle
-        onClose={handleClose}
-      >
+      <DialogTitle onClose={handleClose} >
         Cadastrar nova receita
       </DialogTitle>
 
@@ -106,8 +145,14 @@ export const NewRecipeModal = ({ open, onClose, onUpdateRecipesArray, GrupoInsum
 
           {newRecipe.map((det, i) => (
             <div className={classes.detLine}>
-              <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel id={`demo-simple-select-outlined-label-${det.RecId}`}>Produto</InputLabel>
+              <IconButton
+                className={classes.delIcon}
+                onClick={() => handleRemoveInsumo(i)}
+              >
+                <DeleteIcon />
+              </IconButton>
+              <FormControl variant="standard" className={classes.formControl}>
+                <InputLabel id={`demo-simple-select-outlined-label-${det.RecId}`}>Insumo</InputLabel>
                 <Select
                   labelId={`demo-simple-select-outlined-label-${det.RecId}`}
                   id={`demo-simple-select-outlined-${det.RecId}`}
@@ -119,7 +164,7 @@ export const NewRecipeModal = ({ open, onClose, onUpdateRecipesArray, GrupoInsum
 
                     return aux
                   })}
-                  label="Produto"
+                  label="Insumo"
                   disabled={wait}
                 >
                   <MenuItem value={null}>
@@ -133,17 +178,19 @@ export const NewRecipeModal = ({ open, onClose, onUpdateRecipesArray, GrupoInsum
               <NumberFormat
                 className={classes.qtdInput}
                 value={det.Qtd}
-                placeholder='Qtd.'
+                placeholder='Qtd'
                 type='text'
-                prefix={GrupoInsumo.filter(GI => GI.GprdId === det.GrupoProduto).length > 0 ? 'R$' : ''}
+                prefix={GrupoInsumo.filter(GI => GI.GprdId === det.GrupoProduto).length > 0 ? String(GrupoInsumo.filter(GI => GI.GprdId === det.GrupoProduto)[0].GprdUn).trim() + ' ' : ''}
                 isNumericString
                 allowNegative={false}
                 allowLeadingZeros={true}
                 decimalScale={4}
+                decimalSeparator=','
+                thousandSeparator='.'
                 onValueChange={e => setNewRecipe(oldState => {
                   let aux = [...oldState]
 
-                  aux[i].Qtd = e.target.value
+                  aux[i].Qtd = e.value
 
                   return aux
                 })}
@@ -155,6 +202,16 @@ export const NewRecipeModal = ({ open, onClose, onUpdateRecipesArray, GrupoInsum
             </div>
           ))}
         </section>
+        <Button
+          className={classes.addButton}
+          disabled={wait}
+          onClick={handleAddInsumo}
+          color="primary"
+          variant='contained'
+          startIcon={<AddIcon />}
+        >
+          Adicionar insumo
+        </Button>
       </DialogContent>
 
       <DialogActions>
@@ -200,21 +257,30 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottom: '1px solid #CCC'
+    alignItems: 'flex-end',
+    borderBottom: '1px solid #CCC',
+    padding: '0px 0px 8px 0px',
+    margin: '8px 0px 0px 0px'
   },
   formControl: {
-    margin: '8px 0px',
     minWidth: '200px',
   },
   select: {
 
   },
   qtdInput: {
-    width: '70px !important',
+    width: '80px !important',
     height: '25px !important',
     textAlign: 'end',
-    fontSize: '16px !important'
+    fontSize: '16px !important',
+    marginLeft: '8px !important',
+    borderBottom: '1px solid #333 !important',
+  },
+  addButton: {
+    width: '100%'
+  },
+  delIcon: {
+    margin: '0px 8px 0px 0px'
   }
 }))
 

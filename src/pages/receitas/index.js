@@ -11,6 +11,7 @@ import { Toast } from "../../components/toasty";
 import { ReceitasListOptions } from './options'
 import { RecipeList } from './recipeList'
 import { NewRecipeModal } from './modals/newRecipeModal'
+import { RecipeDetailsModal } from './modals/recipeDetailsModal'
 
 function Receitas() {
   const [loaded, setLoaded] = useState(false);
@@ -18,6 +19,7 @@ function Receitas() {
   const [mostrarInativos, setMostrarInativos] = useState(false);
   const [newRecipeModalOpen, setNewRecipeModalOpen] = useState(false);
   const [recipeDetailsModalOpen, setRecipeDetailsModal] = useState(false);
+  const [targetRecipeId, setTargetRecipeId] = useState(null)
   const [receitas, setReceitas] = useState([])
   const [grpInsumos, setGrpInsumos] = useState([])
 
@@ -46,18 +48,27 @@ function Receitas() {
     setNewRecipeModalOpen(false)
   }
 
-  const handleOpenRecipeDetailsModal = () => {
+  const handleOpenRecipeDetailsModal = (id) => {
     setRecipeDetailsModal(true)
+    setTargetRecipeId(id)
   }
 
   const handleCloseRecipeDetailsModal = () => {
     setRecipeDetailsModal(false)
+    setTargetRecipeId(null)
   }
 
   return !loaded ? (
     <Loading />
   ) : (
     <Panel>
+      <RecipeDetailsModal
+        open={recipeDetailsModalOpen}
+        onClose={handleCloseRecipeDetailsModal}
+        onUpdateRecipesArray={setReceitas}
+        GrupoInsumo={grpInsumos}
+        RecId={targetRecipeId}
+      />
       <NewRecipeModal
         open={newRecipeModalOpen}
         onClose={handleCloseNewRecipeModal}

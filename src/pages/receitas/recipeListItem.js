@@ -18,7 +18,7 @@ export const RecipeListItem = ({ Recipe, onOpenModal }) => {
   return (
     <div
       className={classes.box}
-      onClick={() => onOpenModal()}
+      onClick={() => onOpenModal(Recipe.RecId)}
     >
       <LocalCafeIcon fontSize='large' />
       <div className={classes.infoContainer}>

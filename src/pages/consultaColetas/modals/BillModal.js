@@ -21,7 +21,7 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
   const history = useHistory()
   const { SetColetaCarga } = props;
 
-  const handleBill = (dadosMinimo, coleta) => {
+  const calcBill = (dadosMinimo, coleta) => {
     let diferenca = null
 
     if ( Number(dadosMinimo.CalcFatId) < 255 && (String(dadosMinimo.AnxFatMinimo).trim() === 'S' || String(dadosMinimo.PdvConsMin).trim() === 'S') ) {
@@ -129,6 +129,14 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
 
     carga.Items = carga.Items.filter(item => item.QVenda > 0)
 
+    return carga
+  }
+
+  const handleBill = (dadosMinimo, coleta) => {
+    const carga = calcBill(dadosMinimo, coleta)
+
+    console.log(carga)
+
     SetColetaCarga(carga)
     history.push('/vendas')
   }
@@ -141,7 +149,10 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
         keepMounted={false}
         onClose={onClose}
       >
-        <DialogTitle>Configurações de Faturamento</DialogTitle>
+        <DialogTitle>
+          Configurações de Faturamento
+          </DialogTitle>
+
         <DialogContent>
           <p>Faturamento: <strong>{displayFatTipo(BillingConfig.Minimo?.CalcFatId)}</strong></p>
           <p>Máquina tem mínimo? <strong>{String(BillingConfig.Minimo?.AnxFatMinimo).trim() === 'S' || String(BillingConfig.Minimo?.PdvConsMin).trim() === 'S' ? 'Sim' : 'Não'}</strong></p>
@@ -227,6 +238,7 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
           ))}
 
         </DialogContent>
+
         <DialogActions>
           <Button onClick={onClose} color="secondary">
             Fechar
@@ -235,6 +247,7 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
             Faturar
           </Button>
         </DialogActions>
+
       </Dialog>
     </div>
   );
