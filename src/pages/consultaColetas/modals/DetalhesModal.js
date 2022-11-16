@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { api } from '../../../services/api'
 import moment from 'moment';
+import { saveAs } from 'file-saver'
 
 import { DataGrid } from "@material-ui/data-grid";
-import { Close as CloseIcon, ShoppingCart as ShoppingCartIcon, Menu as MenuIcon, Delete as DeleteIcon } from '@material-ui/icons';
+import { Close as CloseIcon, ShoppingCart as ShoppingCartIcon, Menu as MenuIcon, Delete as DeleteIcon, PictureAsPdf as PictureAsPdfIcon } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import { Dialog, AppBar, Toolbar, IconButton, Slide, Typography, Grow, Fab } from '@material-ui/core';
 
 import { Toast } from '../../../components/toasty'
 import { RED_PRIMARY } from '../../../misc/colors'
-import { BillingModalWithRedux } from './BillModal'
+import { BillingModalWithRedux, calcBill } from './BillModal'
 
 export const DetalhesModal = (props) => {
   const classes = useStyles()
@@ -21,6 +22,16 @@ export const DetalhesModal = (props) => {
   const DetalhesFormatado = fromProps2Datagrid(props.detalhes.Detalhes);
 
   const handleLoadVendas = async (coleta) => {
+    const res = await fetchAnxData(coleta)
+
+    if (res) {
+      setBillingModal(true)
+    } else {
+      setBillingModal(false)
+    }
+  }
+
+  const fetchAnxData = async (coleta) => {
     let toastId = null;
 
     toastId = Toast("Processando...", "wait");
@@ -28,17 +39,16 @@ export const DetalhesModal = (props) => {
     try {
       const response = await api.get(`/coletas/detalhes/minimo/${coleta.EquiCod}`)
 
-      setBillingModal(true)
       setBillingDetails({
         Minimo: response.data.DadosParaCalculoDeMinimo,
         FaixaDeConsumo: response.data.FaixaDeConsumo
       })
       Toast("Cálculo de doses concluído", "update", toastId, "success");
+      return true
     } catch (err) {
-      setBillingModal(false)
       setBillingDetails({ Minimo: null, FaixaDeConsumo: null })
       Toast('Falha ao calcular doses', "update", toastId, "error");
-      return
+      return false
     }
   }
 
@@ -57,6 +67,48 @@ export const DetalhesModal = (props) => {
       handleClose()
     } catch (err) {
       Toast('Falha excluir coleta de doses', "update", toastId, "error");
+    }
+  }
+
+  const handleGenReport = async (coleta) => {
+    let Minimo = null
+    let FaixaDeConsumo = null
+
+    try {
+      const response = await api.get(`/coletas/detalhes/minimo/${coleta.EquiCod}`)
+
+      Minimo = response.data.DadosParaCalculoDeMinimo
+      FaixaDeConsumo = response.data.FaixaDeConsumo
+    } catch (err) {
+      Minimo = null
+      FaixaDeConsumo = null
+    }
+
+    if (Minimo === null || FaixaDeConsumo === null) {
+      Toast("Erro", "warn")
+      return
+    }
+
+    const carga = calcBill(Minimo, props.detalhes, FaixaDeConsumo)
+
+    let toastId = null;
+
+    toastId = Toast("Gerando relatório...", "wait");
+
+    try {
+      const response = await api.post(`/coletas/pdf/${coleta.AnxId}/${coleta.PdvId}/${coleta.FfmSeq}`, {
+        faturar: carga.Items.filter(i => i.VVenda > 0 && i.QVenda > 0)
+      }, {
+        responseType: "arraybuffer",
+      })
+
+      Toast("Relatório gerado com sucesso!", "update", toastId, "success");
+
+      const blob = new Blob([response.data], { type: response.headers['content-type'] });
+
+      saveAs(blob, `RELATÓRIO_${coleta.EquiCod}_${coleta.FfmSeq}.pdf`);
+    } catch (err) {
+      Toast('Falha ao gerar relatório', "update", toastId, "error");
     }
   }
 
@@ -87,14 +139,9 @@ export const DetalhesModal = (props) => {
             <Typography variant="h6" className={classes.title}>
               {props.title}
             </Typography>
-            {/* <Button
-              color="inherit"
-              onClick={() => handleLoadVendas(props.detalhes)}
-            >
-              Faturar
-            </Button> */}
           </Toolbar>
         </AppBar>
+
         <div className={classes.container}>
           <section className={classes.sectionColumn}>
             <div
@@ -193,6 +240,7 @@ export const DetalhesModal = (props) => {
             hideFooter={true}
           />
         </div>
+
         <div
           className="YAlign"
           style={{
@@ -203,6 +251,27 @@ export const DetalhesModal = (props) => {
             zIndex: "999"
           }}
         >
+          <Grow
+            in={expandedOptions}
+            style={{ transformOrigin: '0 0 0' }}
+            {...(expandedOptions ? { timeout: 1500 } : {})}
+          >
+            <Fab
+              onClick={() => handleGenReport(props.detalhes)}
+              variant="extended"
+              style={{
+                backgroundColor: '#FFF',
+                margin: '0px 0px 8px 0px',
+                color: '#18a0fb',
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'flex-start',
+              }}
+            >
+              <PictureAsPdfIcon />
+              Gerar relatório
+            </Fab>
+          </Grow>
           <Grow
             in={expandedOptions}
             style={{ transformOrigin: '0 0 0' }}
@@ -254,6 +323,7 @@ export const DetalhesModal = (props) => {
             </Fab>
           ) : null}
         </div>
+
       </Dialog>
     </>
   );

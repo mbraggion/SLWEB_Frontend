@@ -21,121 +21,10 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
   const history = useHistory()
   const { SetColetaCarga } = props;
 
-  const calcBill = (dadosMinimo, coleta) => {
-    let diferenca = null
+  
 
-    if ( Number(dadosMinimo.CalcFatId) < 255 && (String(dadosMinimo.AnxFatMinimo).trim() === 'S' || String(dadosMinimo.PdvConsMin).trim() === 'S') ) {
-      let minimoColeta = 0
-
-      if (String(dadosMinimo.AnxTipMin) === 'D') {
-        //calculo de doses na coleta
-        coleta.Detalhes.forEach((item) => {
-          minimoColeta = minimoColeta + Number(item.FfdQtdFaturar)
-        })
-      } else {
-        //calculo de R$ na coleta
-        coleta.Detalhes.forEach((item) => {
-          minimoColeta = minimoColeta + (Number(item.FfdQtdFaturar) * Number(item.PvpVvn1))
-        })
-      }
-
-      if (String(dadosMinimo.AnxTipMin) === 'D' && Number(dadosMinimo.PdvConsDose) > minimoColeta) {
-        //se o minimo por dose não for atingido
-        if (dadosMinimo.AnxMinMoeda === 'S') {
-          //considerar já pago para calculo do minimo
-          diferenca = {
-            ProdId: 12708,
-            VVenda: dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor),
-            QVenda: Number(dadosMinimo.PdvConsDose) - minimoColeta,
-            DVenda: 0
-          }
-        } else {
-          //desconsiderar já pago para calculo do minimo
-          diferenca = {
-            ProdId: 12708,
-            VVenda: dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor),
-            QVenda: Number(dadosMinimo.PdvConsDose),
-            DVenda: 0
-          }
-        }
-      } else if (String(dadosMinimo.AnxTipMin) === 'R' && (Number(dadosMinimo.PdvConsDose) * (dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor))) > minimoColeta) {
-        //se o minimo em R$ não for atingido
-        if (dadosMinimo.AnxMinMoeda === 'S') {
-          //considerar já pago para calculo do minimo
-          diferenca = {
-            ProdId: 12708,
-            VVenda: (Number(dadosMinimo.PdvConsDose) * (dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor))) - minimoColeta,
-            QVenda: 1,
-            DVenda: 0
-          }
-        } else {
-          //desconsiderar já pago para calculo do minimo
-          diferenca = {
-            ProdId: 12708,
-            VVenda: Number(dadosMinimo.PdvConsDose) * (dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor)),
-            QVenda: 1,
-            DVenda: 0
-          }
-        }
-      }
-    }
-
-    let carga = {
-      Cliente: coleta.CNPJ,
-      Items: []
-    }
-
-    let totalDoses = 0
-    let descontoPorFaixaDeConsumo = 0
-
-    totalDoses = BillingDetails.Detalhes?.reduce((oldValue, item) => {
-      return oldValue + Number(item.FfdQtdFaturar)
-    }, 0)
-
-    BillingConfig.FaixaDeConsumo.forEach(f => {
-      if(totalDoses >= f.Inicio && totalDoses <= f.Fim) {
-        descontoPorFaixaDeConsumo = f.Porcentagem
-      }
-    })
-
-    coleta.Detalhes.forEach((item) => {
-      let repetido = false
-
-      //verifico se tem um mesmo produto em mais de uma posição, e se tiver eu somo as QTDs com o que já tem
-      carga.Items.forEach((cargaItem, index) => {
-        if (cargaItem.ProdId === item.ProdId) {
-          repetido = true
-          carga.Items[index] = {
-            ...cargaItem,
-            QVenda: cargaItem.QVenda + item.FfdQtdFaturar,
-          }
-        }
-      })
-
-      //se não for um produto repetido adiciono ele a carga
-      if (!repetido) {
-        carga.Items.push({
-          ProdId: item.ProdId,
-          VVenda: item.PvpVvn1,
-          QVenda: item.FfdQtdFaturar,
-          DVenda: Number.isNaN(Number(item.PvpVvn1 * descontoPorFaixaDeConsumo)) ? 0 : Number(item.PvpVvn1 * descontoPorFaixaDeConsumo).toFixed(4)
-        })
-      }
-    })
-
-    if (diferenca !== null) {
-      carga.Items.push(diferenca)
-    }
-
-    carga.Items = carga.Items.filter(item => item.QVenda > 0)
-
-    return carga
-  }
-
-  const handleBill = (dadosMinimo, coleta) => {
-    const carga = calcBill(dadosMinimo, coleta)
-
-    console.log(carga)
+  const handleBill = (dadosMinimo, coleta, fx) => {
+    const carga = calcBill(dadosMinimo, coleta, fx)
 
     SetColetaCarga(carga)
     history.push('/vendas')
@@ -243,7 +132,7 @@ const BillingModal = ({ open, onClose, BillingDetails, BillingConfig, ...props }
           <Button onClick={onClose} color="secondary">
             Fechar
           </Button>
-          <Button onClick={() => handleBill(BillingConfig.Minimo, BillingDetails)} color="primary">
+          <Button onClick={() => handleBill(BillingConfig.Minimo, BillingDetails, BillingConfig.FaixaDeConsumo)} color="primary">
             Faturar
           </Button>
         </DialogActions>
@@ -271,6 +160,117 @@ export const BillingModalWithRedux = connect(mapStateToProps, mapDispatchToProps
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
+
+export const calcBill = (dadosMinimo, coleta, faixaDeConsumo) => {
+  let diferenca = null
+
+  if ( Number(dadosMinimo.CalcFatId) < 255 && (String(dadosMinimo.AnxFatMinimo).trim() === 'S' || String(dadosMinimo.PdvConsMin).trim() === 'S') ) {
+    let minimoColeta = 0
+
+    if (String(dadosMinimo.AnxTipMin) === 'D') {
+      //calculo de doses na coleta
+      coleta.Detalhes.forEach((item) => {
+        minimoColeta = minimoColeta + Number(item.FfdQtdFaturar)
+      })
+    } else {
+      //calculo de R$ na coleta
+      coleta.Detalhes.forEach((item) => {
+        minimoColeta = minimoColeta + (Number(item.FfdQtdFaturar) * Number(item.PvpVvn1))
+      })
+    }
+
+    if (String(dadosMinimo.AnxTipMin) === 'D' && Number(dadosMinimo.PdvConsDose) > minimoColeta) {
+      //se o minimo por dose não for atingido
+      if (dadosMinimo.AnxMinMoeda === 'S') {
+        //considerar já pago para calculo do minimo
+        diferenca = {
+          ProdId: 12708,
+          VVenda: dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor),
+          QVenda: Number(dadosMinimo.PdvConsDose) - minimoColeta,
+          DVenda: 0
+        }
+      } else {
+        //desconsiderar já pago para calculo do minimo
+        diferenca = {
+          ProdId: 12708,
+          VVenda: dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor),
+          QVenda: Number(dadosMinimo.PdvConsDose),
+          DVenda: 0
+        }
+      }
+    } else if (String(dadosMinimo.AnxTipMin) === 'R' && (Number(dadosMinimo.PdvConsDose) * (dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor))) > minimoColeta) {
+      //se o minimo em R$ não for atingido
+      if (dadosMinimo.AnxMinMoeda === 'S') {
+        //considerar já pago para calculo do minimo
+        diferenca = {
+          ProdId: 12708,
+          VVenda: (Number(dadosMinimo.PdvConsDose) * (dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor))) - minimoColeta,
+          QVenda: 1,
+          DVenda: 0
+        }
+      } else {
+        //desconsiderar já pago para calculo do minimo
+        diferenca = {
+          ProdId: 12708,
+          VVenda: Number(dadosMinimo.PdvConsDose) * (dadosMinimo.AnxCalcMinPor === 'A' ? Number(dadosMinimo.AnxVlrUnitMin) : Number(dadosMinimo.PdvConsValor)),
+          QVenda: 1,
+          DVenda: 0
+        }
+      }
+    }
+  }
+
+  let carga = {
+    Cliente: coleta.CNPJ,
+    Items: []
+  }
+
+  let totalDoses = 0
+  let descontoPorFaixaDeConsumo = 0
+
+  totalDoses = coleta.Detalhes?.reduce((oldValue, item) => {
+    return oldValue + Number(item.FfdQtdFaturar)
+  }, 0)
+
+  faixaDeConsumo.forEach(f => {
+    if(totalDoses >= f.Inicio && totalDoses <= f.Fim) {
+      descontoPorFaixaDeConsumo = f.Porcentagem
+    }
+  })
+
+  coleta.Detalhes.forEach((item) => {
+    let repetido = false
+
+    //verifico se tem um mesmo produto em mais de uma posição, e se tiver eu somo as QTDs com o que já tem
+    carga.Items.forEach((cargaItem, index) => {
+      if (cargaItem.ProdId === item.ProdId) {
+        repetido = true
+        carga.Items[index] = {
+          ...cargaItem,
+          QVenda: cargaItem.QVenda + item.FfdQtdFaturar,
+        }
+      }
+    })
+
+    //se não for um produto repetido adiciono ele a carga
+    if (!repetido) {
+      carga.Items.push({
+        ProdId: item.ProdId,
+        VVenda: item.PvpVvn1,
+        QVenda: item.FfdQtdFaturar,
+        DVenda: Number.isNaN(Number(item.PvpVvn1 * descontoPorFaixaDeConsumo)) ? 0 : Number(item.PvpVvn1 * descontoPorFaixaDeConsumo).toFixed(4)
+      })
+    }
+  })
+
+  if (diferenca !== null) {
+    carga.Items.push(diferenca)
+  }
+
+  carga.Items = carga.Items.filter(item => item.QVenda > 0)
+
+  return carga
+}
 
 const displayFatTipo = (fat) => {
   switch (fat) {

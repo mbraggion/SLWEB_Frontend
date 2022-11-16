@@ -1,5 +1,6 @@
 import moment from 'moment'
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { saveAs } from 'file-saver';
 import { api } from '../services/api'
 
 import { Toast } from '../components/toasty'
@@ -180,6 +181,29 @@ export const ConsumoProvider = ({ children }) => {
     }
   }
 
+  async function handleExportToExcel() {
+    let toastId = null
+    toastId = Toast('Gerando Excel...', 'wait')
+
+    let eq = equipList.filter(eq => eq.EquiCod === selectedEquip)[0]
+
+    try {
+      const response = await api.get(`/consumo/excel/${eq.AnxId}/${eq.PdvId}/${selectedRefInit}/${selectedRefEnc}`, {
+        responseType: 'arraybuffer'
+      });
+
+      Toast('Excel criado com sucesso!', 'update', toastId, 'success')
+
+      //Converto a String do PDF para BLOB (Necessario pra salvar em pdf)
+      const blob = new Blob([response.data], { type: "application/octet-stream" });
+
+      //Salvo em PDF junto com a data atual, só pra não sobreescrever nada
+      saveAs(blob, `Consumo [${eq.EquiCod}] - ${moment(selectedRef).format('DD_MM_YYYY')}.xlsx`);
+    } catch (err) {
+      Toast('Falha ao criar Excel', 'update', toastId, 'error')
+    }
+  }
+
   useEffect(() => {
     LoadData()
   }, [])
@@ -256,6 +280,7 @@ export const ConsumoProvider = ({ children }) => {
 
           onGravarConsumo: handleGravaConsumo,
           onRetrocederConsumo: handleApagaConsumo,
+          onRequestExcel: handleExportToExcel
         }
       }
     }>
