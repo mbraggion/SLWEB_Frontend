@@ -48,7 +48,7 @@ const Contas = (props) => {
         setResumo(response.data.Geral);
         setDuplicatas(response.data.Duplicatas);
         setTotalDuplicatas(DefineTotalDuplicatas(response.data.Duplicatas));
-        setTotalAno(response.data.ComprasAno[0]);
+        setTotalAno(response.data.ComprasAno);
         setAFaturar(response.data.AFaturar[0].Total);
         setConfiavel(response.data.Confiavel);
         setNaoCompensavel(response.data.NaoCompensavel);
@@ -186,12 +186,13 @@ const Contas = (props) => {
         naoCompensavel={naoCompensavel}
       />
       <Typography variant="h5" gutterBottom>
-        Total Mensal
+        Resumo anual de {moment().year()}
       </Typography>
       <TableContainer component={Paper}>
         <Table size="small">
           <TableHead>
             <TableRow>
+              <StyledTableCell>Tipo</StyledTableCell>
               <StyledTableCell>Jan</StyledTableCell>
               <StyledTableCell>Fev</StyledTableCell>
               <StyledTableCell>Mar</StyledTableCell>
@@ -207,52 +208,49 @@ const Contas = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            <StyledTableRowWithoutHighlight>
-              <StyledTableCell
-                style={{
-                  "&:hover": {
-                    transition: "150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-                    backgroundColor: "#CCC",
-                    cursor: "default",
-                  },
-                }}
-              >
-                {TotalAno && currencyFormat(TotalAno["1"])}
-              </StyledTableCell>
-              <StyledTableCell>
-                {TotalAno && currencyFormat(TotalAno["2"])}
-              </StyledTableCell>
-              <StyledTableCell>
-                {TotalAno && currencyFormat(TotalAno["3"])}
-              </StyledTableCell>
-              <StyledTableCell>
-                {TotalAno && currencyFormat(TotalAno["4"])}
-              </StyledTableCell>
-              <StyledTableCell>
-                {TotalAno && currencyFormat(TotalAno["5"])}
-              </StyledTableCell>
-              <StyledTableCell>
-                {TotalAno && currencyFormat(TotalAno["6"])}
-              </StyledTableCell>
-              <StyledTableCell>
-                {TotalAno && currencyFormat(TotalAno["7"])}
-              </StyledTableCell>
-              <StyledTableCell>
-                {TotalAno && currencyFormat(TotalAno["8"])}
-              </StyledTableCell>
-              <StyledTableCell>
-                {TotalAno && currencyFormat(TotalAno["9"])}
-              </StyledTableCell>
-              <StyledTableCell>
-                {TotalAno && currencyFormat(TotalAno["10"])}
-              </StyledTableCell>
-              <StyledTableCell>
-                {TotalAno && currencyFormat(TotalAno["11"])}
-              </StyledTableCell>
-              <StyledTableCell>
-                {TotalAno && currencyFormat(TotalAno["12"])}
-              </StyledTableCell>
-            </StyledTableRowWithoutHighlight>
+            {TotalAno.map(ta => (
+              <StyledTableRowWithoutHighlight>
+                <StyledTableCell>
+                  <strong>{ta.Tipo}</strong>
+                </StyledTableCell>
+                <StyledTableCell>
+                  {currencyFormat(ta["1"])}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {currencyFormat(ta["2"])}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {currencyFormat(ta["3"])}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {currencyFormat(ta["4"])}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {currencyFormat(ta["5"])}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {currencyFormat(ta["6"])}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {currencyFormat(ta["7"])}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {currencyFormat(ta["8"])}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {currencyFormat(ta["9"])}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {currencyFormat(ta["10"])}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {currencyFormat(ta["11"])}
+                </StyledTableCell>
+                <StyledTableCell>
+                  {currencyFormat(ta["12"])}
+                </StyledTableCell>
+              </StyledTableRowWithoutHighlight>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
@@ -268,7 +266,7 @@ const Contas = (props) => {
       >
         <div style={{ marginTop: "16px" }}>
           <Typography variant="h5" gutterBottom>
-            Duplicatas
+            Títulos em aberto
           </Typography>
           <TableContainer component={Paper}>
             <Table size="small">
@@ -392,7 +390,7 @@ const Contas = (props) => {
           {TotalDuplicatas.length > 0 || aFaturar ? (
             <>
               <Typography variant="h5" gutterBottom>
-                Resumo
+                Resumo dos títulos
               </Typography>
               <TableContainer component={Paper}>
                 <Table size="small">

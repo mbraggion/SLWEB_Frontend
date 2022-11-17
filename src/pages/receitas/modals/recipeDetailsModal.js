@@ -1,37 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import NumberFormat from 'react-number-format'
-import { api } from '../../../services/api'
+import React, { useEffect, useState } from 'react';
+import NumberFormat from 'react-number-format';
+import { api } from '../../../services/api';
 
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle as MuiDialogTitle,
-  useMediaQuery,
-  IconButton,
-  Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField
+  DialogTitle as MuiDialogTitle, FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Typography, useMediaQuery
 } from '@material-ui/core/';
 import {
-  useTheme,
-  withStyles,
-  makeStyles
+  makeStyles, useTheme,
+  withStyles
 } from '@material-ui/core/styles';
 import {
-  Close as CloseIcon,
-  Save as SaveIcon,
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  ThumbDownAlt as ThumbDownAltIcon,
-  ThumbUpAlt as ThumbUpAltIcon,
+  Add as AddIcon, Close as CloseIcon, Delete as DeleteIcon, Save as SaveIcon, ThumbDownAlt as ThumbDownAltIcon,
+  ThumbUpAlt as ThumbUpAltIcon
 } from '@material-ui/icons';
 
-import { Toast } from '../../../components/toasty'
+import { Toast } from '../../../components/toasty';
 
 export const RecipeDetailsModal = ({ open, onClose, onUpdateRecipesArray, GrupoInsumo, RecId }) => {
   const classes = useStyles()
@@ -47,6 +34,7 @@ export const RecipeDetailsModal = ({ open, onClose, onUpdateRecipesArray, GrupoI
     if (RecId !== null) {
       loadReceita()
     }
+    // eslint-disable-next-line
   }, [RecId])
 
   const loadReceita = async () => {

@@ -4,6 +4,7 @@ export const BLUE_PRIMARY = '#0056C7'
 export const BLUE_SECONDARY = '#18a0fb'
 
 export const GREEN_PRIMARY = '#29ff8d'
+export const GREEN_SECONDARY = '#0C4C2A'
 
 export const CONFIRM_BUTTON_COLOR = 'green'
 

@@ -1,10 +1,9 @@
 import React from 'react';
-import moment from 'moment';
 
-import { makeStyles, Typography } from '@material-ui/core'
-import { LocalCafe as LocalCafeIcon } from '@material-ui/icons'
+import { makeStyles, Typography } from '@material-ui/core';
+import { LocalCafe as LocalCafeIcon } from '@material-ui/icons';
 
-import { RED_PRIMARY, GREY_SECONDARY } from '../../misc/colors'
+import { GREY_SECONDARY, RED_PRIMARY } from '../../misc/colors';
 
 export const RecipeListItem = ({ Recipe, onOpenModal }) => {
   const classes = useStyles(

@@ -4,7 +4,7 @@ import React from 'react';
 
 import { makeStyles } from '@material-ui/core';
 import { AddShoppingCart as AddShoppingCartIcon, ShoppingCart as ShoppingCartIcon } from '@material-ui/icons';
-import { BLUE_SECONDARY, GREEN_PRIMARY, RED_PRIMARY } from '../../../misc/colors';
+import { BLUE_SECONDARY, GREEN_SECONDARY, RED_PRIMARY } from '../../../misc/colors';
 
 export const InvListMovItem = ({ Mov }) => {
   const classes = useStyles()
@@ -14,13 +14,13 @@ export const InvListMovItem = ({ Mov }) => {
       <td className={classes.line}>
         {moment(Mov.DtMov).format('L')}
       </td>
-      <td className={clsx(classes.lineDoc, Mov.A1_NOME === 'INVENTÁRIO INICIAL' || Mov.A1_NOME === 'INVENTÁRIO FINAL' ? classes.blue : classes.black)}>
+      <td className={clsx(classes.lineDoc, Mov.A1_NOME === 'INVENTÁRIO INICIAL' || Mov.A1_NOME === 'INVENTÁRIO FINAL' ? classes.black : Mov.E !== 0 ? classes.green : Mov.S !== 0 ? classes.blue : classes.black)}>
         {whichDoc(Mov.A1_NOME, Mov.E, Mov.S, Mov.DOC)}
       </td>
-      <td className={clsx(classes.line, Mov.A1_NOME === 'INVENTÁRIO INICIAL' || Mov.A1_NOME === 'INVENTÁRIO FINAL' ? classes.blue : Mov.E !== 0 ? classes.green : Mov.S !== 0 ? classes.red : classes.black)}>
+      <td className={clsx(classes.line, Mov.A1_NOME === 'INVENTÁRIO INICIAL' || Mov.A1_NOME === 'INVENTÁRIO FINAL' ? classes.black : Mov.E !== 0 ? classes.green : Mov.S !== 0 ? classes.blue : classes.black)}>
         {whichMovimento(Mov.A1_NOME, Mov.E, Mov.S)}
       </td>
-      <td className={clsx(classes.lineDoc, classes.blue)}>
+      <td className={clsx(classes.lineDoc, Number(whichSaldo(Mov.A1_NOME, Mov.SldAnt, Mov.SldAtu)) >= 0 ? classes.black : classes.red)}>
         {whichSaldo(Mov.A1_NOME, Mov.SldAnt, Mov.SldAtu)}
       </td>
       <td className={clsx(classes.lineDoc, classes.line)}>
@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '0.25rem'
   },
   green: {
-    color: GREEN_PRIMARY,
+    color: GREEN_SECONDARY,
     fontWeight: 'bold'
   },
   red: {
@@ -59,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
   },
   black: {
     color: '#000',
+    fontWeight: 'bold'
   }
 }));
 

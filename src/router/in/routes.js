@@ -23,13 +23,14 @@ import FormsAcompanhamento from "../../pages/formulários_cadastrados";
 import Franqueados from '../../pages/franqueados';
 import GerenciarEquip from "../../pages/gerenciarSolicitacoes/index";
 import GerirLeads from '../../pages/gerirLeads/index';
-import Receitas from '../../pages/receitas/index';
 import Inventario from '../../pages/inventario/index';
 import Leads from "../../pages/leads/index";
 import Monitor from "../../pages/monitor/index";
 import PedidosCompra from '../../pages/pedidosDeCompra/index';
+import PedidosVenda from '../../pages/pedidosDeVenda/index';
 import Perfil from "../../pages/perfil/index";
 import PDV from '../../pages/pontosDeVenda/index';
+import Receitas from '../../pages/receitas/index';
 import Vendas from '../../pages/vendas/index';
 
 import { ConsumoProvider } from '../../hooks/useConsumo';
@@ -79,6 +80,7 @@ function Dashboard(props) {
             <Route exact path={validateRouteAccess("/administracao/leads")} component={GerirLeads} />
             <Route exact path={validateRouteAccess("/administracao/emails")} component={CentralEmails} />
             <Route exact path={validateRouteAccess("/administracao/pedidos/compra")} component={PedidosCompra} />
+            <Route exact path={validateRouteAccess("/administracao/pedidos/venda")} component={PedidosVenda} />
             <Route exact path={validateRouteAccess("/administracao/franqueados")} component={Franqueados} />
 
             <Route path="*" component={notFound} />

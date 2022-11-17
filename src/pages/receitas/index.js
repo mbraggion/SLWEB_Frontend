@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 //Meio de comunicação
 import { api } from "../../services/api";
@@ -6,12 +6,11 @@ import { api } from "../../services/api";
 import Loading from "../../components/loading_screen";
 
 //import de elementos visuais
-import { Panel, Container } from "../../components/commom_in";
-import { Toast } from "../../components/toasty";
-import { ReceitasListOptions } from './options'
-import { RecipeList } from './recipeList'
-import { NewRecipeModal } from './modals/newRecipeModal'
-import { RecipeDetailsModal } from './modals/recipeDetailsModal'
+import { Panel } from "../../components/commom_in";
+import { NewRecipeModal } from './modals/newRecipeModal';
+import { RecipeDetailsModal } from './modals/recipeDetailsModal';
+import { ReceitasListOptions } from './options';
+import { RecipeList } from './recipeList';
 
 function Receitas() {
   const [loaded, setLoaded] = useState(false);

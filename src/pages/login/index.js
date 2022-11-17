@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../services/api";
 
+import { Typography } from "@material-ui/core/";
 import { Input, LockOutlined, Work } from "@material-ui/icons/";
 import Image from "../../assets/logo_sl.png";
 import {
@@ -17,10 +18,13 @@ function Login() {
   const [user_code, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [fetching, setFetching] = useState(false);
+  const [available, setAvailable] = useState(true)
 
   useEffect(() => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("usuario");
+
+    checkIfSiteIsAvailable()
   }, []);
 
   const handleLogin = async (e) => {
@@ -60,11 +64,22 @@ function Login() {
     }
   };
 
+  const checkIfSiteIsAvailable = async () => {
+    try {
+      await api.get("/");
+
+      setAvailable(true)
+    } catch (err) {
+      setAvailable(false)
+    }
+  }
+
   return (
     <Container style={{ backgroundColor: RED_PRIMARY }}>
       <Box onSubmit={(e) => handleLogin(e)}>
         <Logo src={Image} alt="Pilão professional" />
         <InputUnderline
+          disabled={fetching || !available}
           label="Filial"
           onChange={(e) => {
             e = e.toUpperCase();
@@ -72,6 +87,7 @@ function Login() {
           }}
         />
         <InputUnderline
+          disabled={fetching || !available}
           type="password"
           label="Senha"
           onChange={(e) => {
@@ -81,32 +97,42 @@ function Login() {
             marginBottom: "8px",
           }}
         />
-        <Button
-          style={{
-            minWidth: "60%",
-            marginBottom: "8px",
-            backgroundColor: RED_PRIMARY,
-            color: '#FFFFFF'
-          }}
-          disabled={fetching}
-          icon={<Input />}
-          onClick={(e) => handleLogin(e)}
-        >
-          Acessar
-        </Button>
-        <Link to="/forgot">
-          <Button
-            style={{ minWidth: "60%", marginBottom: "8px", backgroundColor: '#FFFFFF', boxShadow: 'none' }}
-            icon={<LockOutlined />}
-          >
-            Recuperar senha
-          </Button>
-        </Link>
-      </Box>
+        {!available
+          ? (
+            <Typography variant="caption">O SLWEB está indisponivel no momento.</Typography>
+          )
+          : (
+            <>
+              <Button
+                style={{
+                  minWidth: "60%",
+                  marginBottom: "8px",
+                  backgroundColor: RED_PRIMARY,
+                  color: '#FFFFFF'
+                }}
+                disabled={fetching || !available}
+                icon={<Input />}
+                onClick={(e) => handleLogin(e)}
+              >
+                Acessar
+              </Button>
+              <Link to="/forgot">
+                <Button
+                  style={{ minWidth: "60%", marginBottom: "8px", backgroundColor: '#FFFFFF', boxShadow: 'none' }}
+                  icon={<LockOutlined />}
+                >
+                  Recuperar senha
+                </Button>
+              </Link>
+            </>
+          )
+        }
+
+      </Box >
       <Link to="/PILAO">
         <Button icon={<Work />}>Colaboradores</Button>
       </Link>
-    </Container>
+    </Container >
   );
 }
 
