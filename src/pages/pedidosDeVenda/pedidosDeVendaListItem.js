@@ -11,7 +11,7 @@ export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpande
     <Accordion
       expanded={ExpandedID === pedido.PedidoID}
       style={{
-        borderLeft: `4px solid #4f9eff`
+        borderLeft: `4px solid ${returnBorderColor(pedido)}`
       }}
       onChange={() => handleChangeExpandedAccordion(ExpandedID === pedido.PedidoID ? null : pedido.PedidoID)}>
       <AccordionSummary
@@ -273,3 +273,11 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }))
+
+const returnBorderColor = (pedido) => {
+  return '#4f9eff'
+  // azul se nem tiver subido para o PG
+  // amarelo se tiver status 0
+  // vermelho se tiver status 2
+  // verde se tiver status 1
+}
