@@ -1,12 +1,14 @@
 import moment from 'moment'
 import React from 'react'
+import clsx from "clsx";
 
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Divider, makeStyles, Typography } from '@material-ui/core'
 import { ExpandMore as ExpandMoreIcon } from '@material-ui/icons'
+import { BLUE_SECONDARY, PRIMARY_ORANGE, GREY_SECONDARY, RED_PRIMARY, PRIMARY_YELLOW, GREEN_PRIMARY } from '../../misc/colors'
 
 export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpandedAccordion }) => {
   const classes = useStyles()
-  
+
   return (
     <Accordion
       expanded={ExpandedID === pedido.PedidoID}
@@ -18,24 +20,26 @@ export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpande
         expandIcon={<ExpandMoreIcon />}
       >
         <div className={classes.column}>
-          <Typography className={classes.heading}>Pedido de venda <strong>{pedido.PedidoID}</strong></Typography>
-          <Typography className={classes.secondaryHeading}><strong>{moment(pedido.DataCriacao).format('L')}</strong></Typography>
+          <Typography className={classes.heading}>Pedido <strong>{pedido.PedidoID}</strong></Typography>
+          <Typography className={classes.secondaryHeading}>Tipo: <strong>{String(pedido.PvTipo).trim() === 'V' ? 'Venda' : String(pedido.PvTipo).trim() === 'R' ? 'Remessa' : String(pedido.PvTipo).trim() === 'B' ? 'Bonificação' : '???'}</strong></Typography>
+          <Typography className={classes.secondaryHeading}>status: <strong>{returnStatusDescription(pedido)}</strong></Typography>
         </div>
         <div className={classes.column}>
-          <Typography className={classes.heading}>Valor do Pedido: <strong>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pedido.ValorTotal)}</strong></Typography>
-          <Typography className={classes.secondaryHeading}>Items: <strong>{pedido.ItensNoPedido}</strong></Typography>
+          <Typography className={classes.heading}>Filial: <strong>{pedido.Filial}</strong></Typography>
+          <Typography className={classes.secondaryHeading}>Solicitado: <strong>{moment(pedido.DataCriacao).format('L')}</strong></Typography>
         </div>
         <div className={classes.column}>
-          <Typography className={classes.heading}>{pedido.Cliente}</Typography>
+          <Typography className={classes.heading}>Cliente: {pedido.Cliente}</Typography>
+          <Typography className={classes.secondaryHeading}>CNPJ: <strong>{pedido.CNPJi}</strong></Typography>
           <Typography className={classes.secondaryHeading}>Código <strong>{pedido.CodigoCliente}[{String(pedido.LojaCliente).trim()}]</strong></Typography>
         </div>
       </AccordionSummary>
       <Divider />
       <AccordionDetails className={classes.details}>
-        {/* <div className={clsx(classes.column_1, classes.helper)}>
-          {Pedido.Detalhes.map(item => (
+        <div className={clsx(classes.column_1, classes.helper)}>
+          {pedido.Itens.map(item => (
             <div
-              key={item.PedidoItemID}
+              key={item.PedidoID}
               className={classes.prodLine}
             >
               <div>
@@ -44,146 +48,32 @@ export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpande
               </div>
               <div>
                 <Typography className={classes.heading}>Qtd: <strong>{item.QtdeVendida}</strong></Typography>
+                <Typography variant='caption'>(Desc. Un.<strong>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.VlrDesconto)}</strong>)</Typography>
               </div>
               <div>
                 <Typography className={classes.heading}>Total: <strong>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.PrecoTotal)}</strong></Typography>
-                <Typography variant='caption'>(Un. <strong>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.PrecoUnitarioLiquido)}</strong>)</Typography>
+                <Typography variant='caption'>(Vlr. Un. <strong>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.PrecoUnitarioLiquido)}</strong>)</Typography>
               </div>
             </div>
           ))}
         </div>
         <div className={clsx(classes.column_2, classes.helper)}>
-          <div className={classes.align} style={{ alignItems: 'flex-end' }}>
-            <FormControl
-              variant="outlined"
-              className={classes.formControl}
-            >
-              <InputLabel id="demo-simple-select-outlined-label">Embalagem</InputLabel>
-              <Select
-                labelId="demo-simple-select-outlined-label"
-                value={String(tipoVolume).trim()}
-                onChange={(e) => setTipoVolume(e.target.value)}
-                label="Embalagem"
-                disabled={wait}
-              >
-                <MenuItem value={null} disabled>Selecione...</MenuItem>
-                <MenuItem value='CX'>Caixa</MenuItem>
-              </Select>
-            </FormControl>
-            <CaixaInput
-              Qtd={qtd}
-              onChangeQtd={value => setQtd(value)}
-              disabled={wait}
-            />
-          </div>
-          <FormControl
-            variant="outlined"
-            className={classes.formControl}
-          >
-            <InputLabel id="demo-simple-select-outlined-label-1">Emissão</InputLabel>
-            <Select
-              labelId="demo-simple-select-outlined-label-1"
-              value={emissao}
-              onChange={e => setEmissao(e.target.value)}
-              label="Emissão"
-              disabled={wait}
-            >
-              <MenuItem value='01'>Não transmite nota, gera boleto</MenuItem>
-              <MenuItem value='11'>Transmite nota, gera boleto</MenuItem>
-              <MenuItem value='10'>Transmite nota, não gera boleto</MenuItem>
-              <MenuItem value='00'>Não transmite nota, não gera boleto</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl
-            variant="outlined"
-            className={classes.formControl}
-          >
-            <InputLabel id="demo-simple-select-outlined-label-2">Transportadora</InputLabel>
-            <Select
-              labelId="demo-simple-select-outlined-label-2"
-              value={transp}
-              onChange={(e) => setTransp(e.target.value)}
-              label="Transportadora"
-              disabled={wait}
-            >
-              <MenuItem value={null} disabled>Selecione...</MenuItem>
-              {Transportadoras.map(tr => (
-                <MenuItem key={tr.A4_COD} value={tr.A4_COD}>{tr.A4_NREDUZ}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <div className={classes.align} style={{ alignItems: 'baseline' }}>
-            <MuiPickersUtilsProvider utils={MomentUtils}>
-              <KeyboardDatePicker
-                style={{ width: "170px", marginTop: '0px' }}
-                disabled={wait}
-                disableToolbar
-                disablePast={true}
-                autoOk
-                invalidDateMessage="Data inválida"
-                minDateMessage={"Data anteior ao dia de hoje"}
-                minDate={moment().startOf('day').toDate()}
-                variant="inline"
-                format="DD/MM/YYYY"
-                margin="normal"
-                id="date-picker-inline"
-                label='Faturamento'
-                value={dtFaturamento}
-                onChange={value => {
-                  if (value !== null && !value.startOf('day').isBefore(moment().startOf('day').toDate()) && value.startOf('day').isValid()) {
-                    setDtFaturamento(value.startOf('day')._d)
-                  } else {
-                    setDtFaturamento(null)
-                  }
-                }}
-                KeyboardButtonProps={{
-                  "aria-label": "change date",
-                }}
-              />
-            </MuiPickersUtilsProvider>
-            <PesoInput
-              Peso={peso}
-              onChangePeso={setPeso}
-              disablde={wait}
-            />
-          </div>
-          <TextField
-            label="Mensagem Franqueado"
-            style={{
-              width: '100%',
-              marginBottom: '8px'
-            }}
-            multiline
-            maxRows={4}
-            value={Pedido.MsgBO}
-            variant="outlined"
-            disabled={true}
-          />
-          <TextField
-            label="Mensagem NFe"
-            style={{ width: '100%' }}
-            multiline
-            maxRows={4}
-            value={msgNF}
-            onChange={e => setMsgNF(e.target.value)}
-            variant="outlined"
-            disabled={wait}
-          />
-        </div> */}
+
+        </div>
       </AccordionDetails>
       <Divider />
       <AccordionActions>
         <Button
           size="small"
           color='secondary'
-          onClick={() => {}}
+          onClick={() => { }}
         >
           SECONDARY
         </Button>
         <Button
           size="small"
           color="primary"
-          onClick={() => {}}
+          onClick={() => { }}
         >
           PRIMARY
         </Button>
@@ -275,9 +165,47 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const returnBorderColor = (pedido) => {
-  return '#4f9eff'
-  // azul se nem tiver subido para o PG
-  // amarelo se tiver status 0
-  // vermelho se tiver status 2
-  // verde se tiver status 1
+  if (pedido.emitenteNoNasajon === false || pedido.destinatarioNoNasajon === false) {
+    return GREY_SECONDARY
+  }
+
+  if (pedido.pedidoNoNasajon === true) {
+    switch (pedido.pedido[0].status) {
+      case 0:
+        return BLUE_SECONDARY
+      case 1:
+        return GREEN_PRIMARY
+      case 2:
+        return RED_PRIMARY
+      case 3:
+        return PRIMARY_ORANGE
+      default:
+        return '#FFF'
+    }
+  } else {
+    return PRIMARY_YELLOW
+  }
+}
+
+const returnStatusDescription = (pedido) => {
+  if (pedido.emitenteNoNasajon === false || pedido.destinatarioNoNasajon === false) {
+    return 'Entidade(s) desconhecidas'
+  }
+
+  if (pedido.pedidoNoNasajon === true) {
+    switch (pedido.pedido[0].status) {
+      case 0:
+        return 'Não processado'
+      case 1:
+        return 'Emitido com sucesso'
+      case 2:
+        return 'Erro na emissão'
+      case 3:
+        return 'Reemissão'
+      default:
+        return '??'
+    }
+  } else {
+    return 'Não integrado'
+  }
 }

@@ -12,6 +12,7 @@ export const PedidosDeVendaList = ({ pedidos }) => {
       {pedidos.length > 0 ?
         pedidos.map(p => (
           <PedidosDeVendaListItem
+          key={p.PedidoID}
             pedido={p}
             ExpandedID={expanded}
             handleChangeExpandedAccordion={setExpanded}

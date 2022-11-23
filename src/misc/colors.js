@@ -1,5 +1,7 @@
 export const PRIMARY_ORANGE = '#FAC090'
 
+export const PRIMARY_YELLOW = '#f5e942'
+
 export const BLUE_PRIMARY = '#0056C7'
 export const BLUE_SECONDARY = '#18a0fb'
 

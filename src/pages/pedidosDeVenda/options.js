@@ -82,6 +82,7 @@ export const PedidosListOptions = ({ onChangeFiltro, onRequestIntegration }) => 
         size="large"
         onClick={onRequestIntegration}
         startIcon={<TrendingUpIcon />}
+        disabled
       >
         Integrar Pedidos
       </Button>

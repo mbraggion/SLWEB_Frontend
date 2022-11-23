@@ -12,7 +12,7 @@ export const InvListMovItem = ({ Mov }) => {
   return (
     <tr>
       <td className={classes.line}>
-        {moment(Mov.DtMov).format('L')}
+        {moment(Mov.DtMov).add(3, 'hours').format('L')}
       </td>
       <td className={clsx(classes.lineDoc, Mov.A1_NOME === 'INVENTÁRIO INICIAL' || Mov.A1_NOME === 'INVENTÁRIO FINAL' ? classes.black : Mov.E !== 0 ? classes.green : Mov.S !== 0 ? classes.blue : classes.black)}>
         {whichDoc(Mov.A1_NOME, Mov.E, Mov.S, Mov.DOC)}
