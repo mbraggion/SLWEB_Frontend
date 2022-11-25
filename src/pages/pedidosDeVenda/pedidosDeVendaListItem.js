@@ -3,7 +3,7 @@ import React from 'react'
 import clsx from "clsx";
 
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Divider, makeStyles, Typography } from '@material-ui/core'
-import { ExpandMore as ExpandMoreIcon } from '@material-ui/icons'
+import { ExpandMore as ExpandMoreIcon, RecordVoiceOver as RecordVoiceOverIcon, NaturePeople as NaturePeopleIcon } from '@material-ui/icons'
 import { BLUE_SECONDARY, PRIMARY_ORANGE, GREY_SECONDARY, RED_PRIMARY, PRIMARY_YELLOW, GREEN_PRIMARY } from '../../misc/colors'
 
 export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpandedAccordion }) => {
@@ -58,7 +58,24 @@ export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpande
           ))}
         </div>
         <div className={clsx(classes.column_2, classes.helper)}>
+          <div className={classes.partes}>
+            <Button
+              disabled={!pedido.emitenteNoNasajon}
+              startIcon={<RecordVoiceOverIcon color='primary' />}
+              variant='outlined'
+            >
+              Emitente
+            </Button>
 
+            <Button
+              disabled={!pedido.destinatarioNoNasajon}
+              startIcon={<NaturePeopleIcon color='primary' />}
+              variant='outlined'
+            >
+
+              Destinatário
+            </Button>
+          </div>
         </div>
       </AccordionDetails>
       <Divider />
@@ -162,6 +179,13 @@ const useStyles = makeStyles((theme) => ({
       textDecoration: 'underline',
     },
   },
+  partes: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%'
+  }
 }))
 
 const returnBorderColor = (pedido) => {

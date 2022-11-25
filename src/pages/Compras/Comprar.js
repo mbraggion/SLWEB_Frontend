@@ -49,9 +49,8 @@ function TransferList(props) {
         className={classes.cardHeader}
         avatar={<ViewList />}
         title={title}
-        subheader={`${ProdutosMarcados(Produtos, Checked)}/${
-          items.length
-        } selecionados`}
+        subheader={`${ProdutosMarcados(Produtos, Checked)}/${items.length
+          } selecionados`}
       />
       <Divider />
       <TableContainer component={Paper}>
@@ -71,7 +70,16 @@ function TransferList(props) {
               const labelId = `transfer-list-all-item-${prod.Cód}-label`;
 
               return (
-                <StyledTableRow key={prod.Cód} onClick={handleToggle(prod)}>
+                <StyledTableRow
+                  key={prod.Cód}
+                  onClick={handleToggle(prod)}
+                  style={prod.Cód === 251122
+                    ? {
+                      background: '#1b1b1b'
+                    }
+                    : undefined
+                  }
+                >
                   <StyledTableCell style={{ textAlign: "center" }}>
                     <input
                       style={{ margin: "0px" }}
@@ -84,22 +92,22 @@ function TransferList(props) {
                     />
                   </StyledTableCell>
 
-                  <StyledTableCell>{prod.Cód}</StyledTableCell>
+                  <StyledTableCell style={{ color: prod.Cód === 251122 ? '#FFF000' : '#000', fontWeight: 'bolder', fontSize: '1.1rem' }}>{prod.Cód}</StyledTableCell>
 
-                  <StyledTableCell>
+                  <StyledTableCell style={{ color: prod.Cód === 251122 ? '#FFF000' : '#000', fontWeight: 'bolder', fontSize: '1.1rem' }}>
                     <ListItemText primary={String(prod.Produto).trim()} />
                   </StyledTableCell>
-                  <StyledTableCell>
+                  <StyledTableCell style={{ color: prod.Cód === 251122 ? '#FFF000' : '#000', fontWeight: 'bolder', fontSize: '1.1rem' }}>
                     <ListItemText primary={prod.QtMin} />
                   </StyledTableCell>
-                  <StyledTableCell>
+                  <StyledTableCell style={{ color: prod.Cód === 251122 ? '#FFF000' : '#000', fontWeight: 'bolder', fontSize: '1.1rem' }}>
                     <ListItemText
                       primary={String(
                         Number.parseFloat(prod.VlrUn).toFixed(4)
                       ).replace(".", ",")}
                     />
                   </StyledTableCell>
-                  <StyledTableCell>
+                  <StyledTableCell style={{ color: prod.Cód === 251122 ? '#FFF000' : '#000', fontWeight: 'bolder', fontSize: '1.1rem' }}>
                     <ListItemText
                       primary={String(
                         Number.parseFloat(prod.Vlr).toFixed(4)

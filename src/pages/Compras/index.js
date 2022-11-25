@@ -57,7 +57,16 @@ function Compras(props) {
       try {
         const response = await api.get("/compras/produtos");
         
-        LoadInsumos(response.data.Produtos);
+        LoadInsumos([{
+          Cód: 251122,
+          Produto: "KIT BLACK FRIDAY (6xCafé,2xCappuccino,3xCafé com Leite,4xAchocolatado)",
+          QtMin: 1.00,
+          VlrUn: 632.16,
+          Vlr: 632.16,
+          FatConversao: 1.00,
+          ProdRoy: 0,
+          QCompra: 0
+      }, ...response.data.Produtos]);
         LoadMultiplicador(1 - response.data.Desconto);
       } catch (err) {
 
