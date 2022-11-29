@@ -51,22 +51,34 @@ function Compras(props) {
   } =
     props.State;
 
+  // const promo = [{
+  //   Cód: 251122,
+  //   Produto: "KIT BLACK FRIDAY M (6xCafé,2xCappuccino,3xCafé com Leite,4xAchocolatado)",
+  //   QtMin: 1.00,
+  //   VlrUn: 632.16,
+  //   Vlr: 632.16,
+  //   FatConversao: 1.00,
+  //   ProdRoy: 0,
+  //   QCompra: 0
+  // },
+  // {
+  //   Cód: 221125,
+  //   Produto: "KIT BLACK FRIDAY P (6xCafé,4xCappuccino,5xAchocolatado)",
+  //   QtMin: 1.00,
+  //   VlrUn: 616.07,
+  //   Vlr: 616.07,
+  //   FatConversao: 1.00,
+  //   ProdRoy: 0,
+  //   QCompra: 0
+  // }]
+
   //component did mount
   useEffect(() => {
     async function loadProdutos() {
       try {
         const response = await api.get("/compras/produtos");
-        
-        LoadInsumos([{
-          Cód: 251122,
-          Produto: "KIT BLACK FRIDAY (6xCafé,2xCappuccino,3xCafé com Leite,4xAchocolatado)",
-          QtMin: 1.00,
-          VlrUn: 632.16,
-          Vlr: 632.16,
-          FatConversao: 1.00,
-          ProdRoy: 0,
-          QCompra: 0
-      }, ...response.data.Produtos]);
+
+        LoadInsumos(response.data.Produtos);
         LoadMultiplicador(1 - response.data.Desconto);
       } catch (err) {
 

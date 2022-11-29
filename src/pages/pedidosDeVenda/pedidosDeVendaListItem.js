@@ -76,10 +76,42 @@ export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpande
               Destinatário
             </Button>
           </div>
+          <Button
+            className={classes.button}
+            disabled={false}
+            startIcon={<NaturePeopleIcon color='primary' />}
+            variant='outlined'
+          >
+            Cancelar solicitação
+          </Button>
+          <Button
+            className={classes.button}
+            disabled={false}
+            startIcon={<NaturePeopleIcon color='primary' />}
+            variant='outlined'
+          >
+            Cancelar venda
+          </Button>
+          <Button
+            className={classes.button}
+            disabled={false}
+            startIcon={<NaturePeopleIcon color='primary' />}
+            variant='outlined'
+          >
+            Reprocessar pedido
+          </Button>
+          <Button
+            className={classes.button}
+            disabled={false}
+            startIcon={<NaturePeopleIcon color='primary' />}
+            variant='outlined'
+          >
+            Reemitir pedido
+          </Button>
         </div>
       </AccordionDetails>
       <Divider />
-      <AccordionActions>
+      {/* <AccordionActions>
         <Button
           size="small"
           color='secondary'
@@ -94,7 +126,7 @@ export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpande
         >
           PRIMARY
         </Button>
-      </AccordionActions>
+      </AccordionActions> */}
     </Accordion>
   )
 }
@@ -185,6 +217,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%'
+  },
+  button: {
+    width: '100%',
+    justifyContent: 'space-between',
+    marginTop: '8px'
   }
 }))
 

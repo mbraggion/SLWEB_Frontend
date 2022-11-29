@@ -334,7 +334,7 @@ export const PedidoItem = ({ Pedido, ExpandedID, handleChangeExpandedAccordion, 
           color='secondary'
           onClick={handleDiscard}
         >
-          Discartar
+          Descartar
         </Button>
         <Button
           size="small"
