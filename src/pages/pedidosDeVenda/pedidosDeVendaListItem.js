@@ -3,8 +3,8 @@ import React from 'react'
 import clsx from "clsx";
 
 import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Divider, makeStyles, Typography } from '@material-ui/core'
-import { ExpandMore as ExpandMoreIcon, RecordVoiceOver as RecordVoiceOverIcon, NaturePeople as NaturePeopleIcon } from '@material-ui/icons'
-import { BLUE_SECONDARY, PRIMARY_ORANGE, GREY_SECONDARY, RED_PRIMARY, PRIMARY_YELLOW, GREEN_PRIMARY } from '../../misc/colors'
+import { ExpandMore as ExpandMoreIcon, RecordVoiceOver as RecordVoiceOverIcon, NaturePeople as NaturePeopleIcon, Close as CloseIcon, Delete as DeleteIcon, Replay as ReplayIcon, Sync as SyncIcon, PhotoFilter as PhotoFilterIcon } from '@material-ui/icons'
+import { BLUE_SECONDARY, PRIMARY_ORANGE, GREY_SECONDARY, RED_PRIMARY, PRIMARY_YELLOW, GREEN_PRIMARY, RED_SECONDARY } from '../../misc/colors'
 
 export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpandedAccordion }) => {
   const classes = useStyles()
@@ -79,7 +79,7 @@ export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpande
           <Button
             className={classes.button}
             disabled={false}
-            startIcon={<NaturePeopleIcon color='primary' />}
+            startIcon={<CloseIcon style={{ color: RED_SECONDARY }} />}
             variant='outlined'
           >
             Cancelar solicitação
@@ -87,7 +87,7 @@ export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpande
           <Button
             className={classes.button}
             disabled={false}
-            startIcon={<NaturePeopleIcon color='primary' />}
+            startIcon={<DeleteIcon style={{ color: GREY_SECONDARY }} />}
             variant='outlined'
           >
             Cancelar venda
@@ -95,18 +95,26 @@ export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpande
           <Button
             className={classes.button}
             disabled={false}
-            startIcon={<NaturePeopleIcon color='primary' />}
+            startIcon={<ReplayIcon style={{ color: BLUE_SECONDARY }}/>}
             variant='outlined'
           >
-            Reprocessar pedido
+            Desprocessar pedido
           </Button>
           <Button
             className={classes.button}
             disabled={false}
-            startIcon={<NaturePeopleIcon color='primary' />}
+            startIcon={<SyncIcon style={{ color: PRIMARY_YELLOW }} />}
             variant='outlined'
           >
             Reemitir pedido
+          </Button>
+          <Button
+            className={classes.button}
+            disabled={false}
+            startIcon={<PhotoFilterIcon style={{ color: PRIMARY_ORANGE }} />}
+            variant='outlined'
+          >
+            Converter para devolução
           </Button>
         </div>
       </AccordionDetails>
