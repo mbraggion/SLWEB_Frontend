@@ -15,7 +15,7 @@ import TextField from '../../../components/materialComponents/InputUnderline'
 import InputPhone from '../../../components/materialComponents/inputPhoneNumber'
 import { RED_PRIMARY } from '../../../misc/colors'
 
-function ModalPersonalizado(props) {
+export const AbrirChamadoModal = (props) => {
   return (
     <Dialog
       open={props.open}
@@ -193,8 +193,6 @@ function ModalPersonalizado(props) {
     </Dialog>
   );
 }
-
-export default ModalPersonalizado;
 
 function PaperComponent(props) {
   return (

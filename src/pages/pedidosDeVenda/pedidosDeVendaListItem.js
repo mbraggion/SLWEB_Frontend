@@ -1,13 +1,96 @@
 import moment from 'moment'
-import React from 'react'
+import React, { useState } from 'react'
 import clsx from "clsx";
+import { api } from '../../services/api'
 
-import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Button, Divider, makeStyles, Typography } from '@material-ui/core'
+import { Accordion, ButtonGroup, AccordionDetails, AccordionSummary, Button, Divider, makeStyles, Typography } from '@material-ui/core'
 import { ExpandMore as ExpandMoreIcon, RecordVoiceOver as RecordVoiceOverIcon, NaturePeople as NaturePeopleIcon, Close as CloseIcon, Delete as DeleteIcon, Replay as ReplayIcon, Sync as SyncIcon, PhotoFilter as PhotoFilterIcon } from '@material-ui/icons'
 import { BLUE_SECONDARY, PRIMARY_ORANGE, GREY_SECONDARY, RED_PRIMARY, PRIMARY_YELLOW, GREEN_PRIMARY, RED_SECONDARY } from '../../misc/colors'
+import { Toast } from '../../components/toasty'
 
-export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpandedAccordion }) => {
+export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpandedAccordion, refresh }) => {
   const classes = useStyles()
+  const [wait, setWait] = useState(false)
+
+  const handleCancelRequest = async () => {
+    let toastId = null
+
+    toastId = Toast('Cancelando solicitação', 'wait')
+    setWait(true)
+
+    try {
+      await api.put('/pedidos/venda/cancelar', {
+        PedidoID: pedido.PedidoID
+      })
+
+      Toast("Solicitação cancelada!", "update", toastId, "success");
+      await refresh()
+      setWait(false)
+    } catch (err) {
+      Toast("Falha ao cancelar solicitação!", "update", toastId, "error");
+      setWait(false)
+    }
+  }
+
+  const handleDeprocessRequest = async () => {
+    let toastId = null
+
+    toastId = Toast('Desprocessando pedido', 'wait')
+    setWait(true)
+
+    try {
+      await api.put('/pedidos/venda/desprocessar', {
+        PedidoID: pedido.PedidoID
+      })
+
+      Toast("Pedido desprocessado!", "update", toastId, "success");
+      await refresh()
+      setWait(false)
+    } catch (err) {
+      Toast("Falha ao desprocessar pedido!", "update", toastId, "error");
+      setWait(false)
+    }
+  }
+
+  const handleReprocessRequest = async () => {
+    let toastId = null
+
+    toastId = Toast('Reprocessando pedido', 'wait')
+    setWait(true)
+
+    try {
+      await api.put('/pedidos/venda/reprocessar', {
+        PedidoID: pedido.PedidoID
+      })
+
+      Toast("Pedido reprocessado!", "update", toastId, "success");
+      await refresh()
+      setWait(false)
+    } catch (err) {
+      Toast("Falha ao reprocessar pedido!", "update", toastId, "error");
+      setWait(false)
+    }
+  }
+
+  const handleDiscardSale = async () => {
+    let toastId = null
+
+    toastId = Toast('Descartando venda', 'wait')
+    setWait(true)
+
+    try {
+      await api.put('/pedidos/venda/descartar', {
+        PedidoID: pedido.PedidoID
+      })
+
+      Toast("Venda descartada!", "update", toastId, "success");
+      await refresh()
+      setWait(false)
+    } catch (err) {
+      Toast("Falha ao descartar venda", "update", toastId, "error");
+      setWait(false)
+    }
+  }
 
   return (
     <Accordion
@@ -22,15 +105,16 @@ export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpande
         <div className={classes.column}>
           <Typography className={classes.heading}>Pedido <strong>{pedido.PedidoID}</strong></Typography>
           <Typography className={classes.secondaryHeading}>Tipo: <strong>{String(pedido.PvTipo).trim() === 'V' ? 'Venda' : String(pedido.PvTipo).trim() === 'R' ? 'Remessa' : String(pedido.PvTipo).trim() === 'B' ? 'Bonificação' : '???'}</strong></Typography>
-          <Typography className={classes.secondaryHeading}>status: <strong>{returnStatusDescription(pedido)}</strong></Typography>
+          <Typography className={classes.secondaryHeading}>Status: <strong>{returnStatusDescription(pedido)}</strong></Typography>
         </div>
         <div className={classes.column}>
           <Typography className={classes.heading}>Filial: <strong>{pedido.Filial}</strong></Typography>
+          <Typography className={classes.secondaryHeading}>Franqueado: <strong>{pedido.GrupoVenda}</strong></Typography>
           <Typography className={classes.secondaryHeading}>Solicitado: <strong>{moment(pedido.DataCriacao).format('L')}</strong></Typography>
         </div>
         <div className={classes.column}>
           <Typography className={classes.heading}>Cliente: {pedido.Cliente}</Typography>
-          <Typography className={classes.secondaryHeading}>CNPJ: <strong>{pedido.CNPJi}</strong></Typography>
+          <Typography className={classes.secondaryHeading}>CNPJ: <strong>{pedido.CNPJ}</strong></Typography>
           <Typography className={classes.secondaryHeading}>Código <strong>{pedido.CodigoCliente}[{String(pedido.LojaCliente).trim()}]</strong></Typography>
         </div>
       </AccordionSummary>
@@ -58,83 +142,101 @@ export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpande
           ))}
         </div>
         <div className={clsx(classes.column_2, classes.helper)}>
-          <div className={classes.partes}>
+          <ButtonGroup
+            disableElevation
+            color='primary'
+            variant='contained'
+            size="medium"
+            style={{ width: '100%' }}
+          >
             <Button
+              style={{ width: '100%' }}
               disabled={!pedido.emitenteNoNasajon}
-              startIcon={<RecordVoiceOverIcon color='primary' />}
-              variant='outlined'
+              startIcon={<RecordVoiceOverIcon />}
             >
               Emitente
             </Button>
 
             <Button
+              style={{ width: '100%' }}
               disabled={!pedido.destinatarioNoNasajon}
-              startIcon={<NaturePeopleIcon color='primary' />}
-              variant='outlined'
+              startIcon={<NaturePeopleIcon />}
             >
-
               Destinatário
             </Button>
-          </div>
+          </ButtonGroup>
           <Button
             className={classes.button}
-            disabled={false}
+            disabled={wait}
             startIcon={<CloseIcon style={{ color: RED_SECONDARY }} />}
             variant='outlined'
+            onClick={handleCancelRequest}
           >
             Cancelar solicitação
           </Button>
           <Button
             className={classes.button}
-            disabled={false}
+            disabled={true}
             startIcon={<DeleteIcon style={{ color: GREY_SECONDARY }} />}
             variant='outlined'
+            onClick={handleDiscardSale}
           >
-            Cancelar venda
+            Descartar venda
           </Button>
           <Button
             className={classes.button}
-            disabled={false}
-            startIcon={<ReplayIcon style={{ color: BLUE_SECONDARY }}/>}
+            disabled={wait}
+            startIcon={<ReplayIcon style={{ color: BLUE_SECONDARY }} />}
             variant='outlined'
+            onClick={handleDeprocessRequest}
           >
             Desprocessar pedido
           </Button>
           <Button
             className={classes.button}
-            disabled={false}
+            disabled={wait}
             startIcon={<SyncIcon style={{ color: PRIMARY_YELLOW }} />}
             variant='outlined'
+            onClick={handleReprocessRequest}
           >
             Reemitir pedido
           </Button>
           <Button
             className={classes.button}
-            disabled={false}
+            disabled={true}
             startIcon={<PhotoFilterIcon style={{ color: PRIMARY_ORANGE }} />}
             variant='outlined'
           >
             Converter para devolução
           </Button>
+          <Accordion style={{ width: '100%', marginTop: '1rem' }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              Log de emissão
+            </AccordionSummary>
+            <AccordionDetails
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start'
+              }}
+            >
+              <ul style={{ padding: '0 0 0 8px' }}>
+                {
+                  pedido.logDoPedidoNoNasajon.length > 0
+                    ? pedido.logDoPedidoNoNasajon.map(log =>
+                      <li style={{ listStyleType: 'disc' }}>
+                        {log.mensagem}
+                      </li>
+                    )
+                    : <p>Nenhum log disponível.</p>
+                }
+              </ul>
+            </AccordionDetails>
+          </Accordion>
         </div>
       </AccordionDetails>
       <Divider />
-      {/* <AccordionActions>
-        <Button
-          size="small"
-          color='secondary'
-          onClick={() => { }}
-        >
-          SECONDARY
-        </Button>
-        <Button
-          size="small"
-          color="primary"
-          onClick={() => { }}
-        >
-          PRIMARY
-        </Button>
-      </AccordionActions> */}
     </Accordion>
   )
 }

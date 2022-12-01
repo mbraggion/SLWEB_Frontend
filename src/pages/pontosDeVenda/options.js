@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import {
-  makeStyles,
-  FormControlLabel,
-  Checkbox,
-  Paper,
-  InputBase,
-  IconButton,
-  Divider,
-  Tooltip
-} from '@material-ui/core';
-
+import { makeStyles, Typography, FormControlLabel, Checkbox, Paper, InputBase, IconButton, Divider, Tooltip } from '@material-ui/core';
 import { Search as SearchIcon, Close as CloseIcon } from '@material-ui/icons'
 
 export const PdvListOptions = ({ onChangeFiltro, mostrarInativos, switchInativos, defaultTarget }) => {
@@ -25,91 +15,99 @@ export const PdvListOptions = ({ onChangeFiltro, mostrarInativos, switchInativos
   }, [])
 
   return (
-    <div>
-      <Paper component="form" className={classes.root}>
-        <InputBase
-          className={classes.input}
-          placeholder="Buscar PDV"
-          inputProps={{ 'aria-label': 'buscar PDV' }}
-          onChange={e => {
-            onChangeFiltro('')
-            setFilterWord(e.target.value)
-          }}
-          value={filterWord}
-          disabled={false}
-        />
-        <Tooltip
-          title={
-            <label
-              style={{
-                fontSize: "14px",
-                color: "#FFF",
-                lineHeight: "20px"
-              }}
-            >
-              Buscar
-            </label>
-          }
-          placement="top"
-          arrow={true}
-        >
-          <IconButton
-            type='submit'
-            className={classes.iconButton}
-            aria-label="buscar"
-            onClick={(e) => {
-              e.preventDefault()
-              onChangeFiltro(filterWord)
-            }}
-          >
-            <SearchIcon />
-          </IconButton>
-        </Tooltip>
-        <Divider
-          className={classes.divider}
-          orientation="vertical"
-        />
-        <Tooltip
-          title={
-            <label
-              style={{
-                fontSize: "14px",
-                color: "#FFF",
-                lineHeight: "20px"
-              }}
-            >
-              Limpar busca
-            </label>
-          }
-          placement="right"
-          arrow={true}
-        >
-          <IconButton
-            className={classes.iconButton}
-            aria-label="directions"
-            color="primary"
-            onClick={() => {
+    <div className={classes.container}>
+      <div style={{ width: '171.55px' }}>
+        <Typography variant='h4' className={classes.title}>
+          Pontos de Venda
+        </Typography>
+      </div>
+      <div>
+        <Paper component="form" className={classes.root}>
+          <InputBase
+            className={classes.input}
+            placeholder="Buscar PDV"
+            inputProps={{ 'aria-label': 'buscar PDV' }}
+            onChange={e => {
               onChangeFiltro('')
-              setFilterWord('')
+              setFilterWord(e.target.value)
             }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </Tooltip>
-      </Paper>
-      <FormControlLabel
-        control={
-          <Checkbox
-            className={classes.checkbox}
-            checked={mostrarInativos}
-            onChange={(e) => {
-              switchInativos(e.target.checked)
-            }}
-            style={{ marginLeft: '8px' }}
+            value={filterWord}
+            disabled={false}
           />
-        }
-        label="Mostrar PDV's inativos"
-      />
+          <Tooltip
+            title={
+              <label
+                style={{
+                  fontSize: "14px",
+                  color: "#FFF",
+                  lineHeight: "20px"
+                }}
+              >
+                Buscar
+              </label>
+            }
+            placement="top"
+            arrow={true}
+          >
+            <IconButton
+              type='submit'
+              className={classes.iconButton}
+              aria-label="buscar"
+              onClick={(e) => {
+                e.preventDefault()
+                onChangeFiltro(filterWord)
+              }}
+            >
+              <SearchIcon />
+            </IconButton>
+          </Tooltip>
+          <Divider
+            className={classes.divider}
+            orientation="vertical"
+          />
+          <Tooltip
+            title={
+              <label
+                style={{
+                  fontSize: "14px",
+                  color: "#FFF",
+                  lineHeight: "20px"
+                }}
+              >
+                Limpar busca
+              </label>
+            }
+            placement="right"
+            arrow={true}
+          >
+            <IconButton
+              className={classes.iconButton}
+              aria-label="directions"
+              color="primary"
+              onClick={() => {
+                onChangeFiltro('')
+                setFilterWord('')
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Tooltip>
+        </Paper>
+        <FormControlLabel
+          control={
+            <Checkbox
+              className={classes.checkbox}
+              checked={mostrarInativos}
+              onChange={(e) => {
+                switchInativos(e.target.checked)
+              }}
+              style={{ marginLeft: '8px' }}
+            />
+          }
+          label="Mostrar PDV's inativos"
+        />
+      </div>
+      <div style={{ width: '171.55px' }}/>
     </div>
   )
 }
@@ -120,6 +118,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     width: 400,
+
+    '@media (max-width: 400px)': {
+      width: '100%',
+    }
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -135,7 +137,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     width: '100%',
     height: '100px',
     background: 'unset',
@@ -157,6 +159,16 @@ const useStyles = makeStyles((theme) => ({
 
     '@media (max-width: 800px)': {
       width: '400px',
+    },
+
+    '@media (max-width: 400px)': {
+      width: '100%',
     }
+  },
+  title: {
+    textAlign: 'center',
+    borderBottom: '2px solid #333',
+    borderRadius: '8px',
+    fontWeight: 'bold',
   }
 }))

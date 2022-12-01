@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Checkbox, Divider, FormControlLabel, IconButton, InputBase, makeStyles, Paper, Tooltip } from '@material-ui/core';
+import { Checkbox, Divider, Typography, FormControlLabel, IconButton, InputBase, makeStyles, Paper, Tooltip } from '@material-ui/core';
 
 import { Close as CloseIcon, Search as SearchIcon } from '@material-ui/icons';
 
@@ -10,7 +10,11 @@ export const FormsListOptions = ({ onChangeFiltro, mostrarIncompletos, switchInc
 
   return (
     <div className={classes.container}>
-      <div style={{ width: '171.55px' }} />
+      <div>
+        <Typography variant='h4' className={classes.title}>
+          Formulários
+        </Typography>
+      </div>
       <div>
         <Paper component="form" className={classes.root}>
           <InputBase
@@ -106,6 +110,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     width: 400,
+
+    '@media (max-width: 400px)': {
+      width: '100%',
+    }
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -121,7 +129,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     width: '100%',
     height: '100px',
     background: 'unset',
@@ -143,6 +151,16 @@ const useStyles = makeStyles((theme) => ({
 
     '@media (max-width: 800px)': {
       width: '400px',
+    },
+
+    '@media (max-width: 400px)': {
+      width: '100%',
     }
+  },
+  title: {
+    textAlign: 'center',
+    borderBottom: '2px solid #333',
+    borderRadius: '8px',
+    fontWeight: 'bold',
   }
 }))

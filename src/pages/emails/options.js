@@ -1,26 +1,25 @@
 import React, { useState } from 'react';
 
-import { makeStyles, Typography, Button, FormControlLabel, Checkbox, Paper, InputBase, IconButton, Divider, Tooltip } from '@material-ui/core';
+import { makeStyles, Paper, InputBase, IconButton, Divider, Tooltip, Button, Typography } from '@material-ui/core';
+import { Search as SearchIcon, MarkunreadMailbox as MarkunreadMailboxIcon, Close as CloseIcon } from '@material-ui/icons'
 
-import { Add as AddIcon, Search as SearchIcon, Close as CloseIcon } from '@material-ui/icons'
-
-export const ClienteListOptions = ({ onChangeFiltro, onOpenNewClientesModal, mostrarInativos, switchInativos }) => {
+export const EmailsListOptions = ({ onChangeFiltro, onOpenEmailsModal }) => {
   const classes = useStyles()
   const [filterWord, setFilterWord] = useState('')
 
   return (
     <div className={classes.container}>
-      <div style={{ width: '171.55px' }}>
+      <div>
         <Typography variant='h4' className={classes.title}>
-          Clientes
+          Emails
         </Typography>
       </div>
       <div>
         <Paper component="form" className={classes.root}>
           <InputBase
             className={classes.input}
-            placeholder="Buscar cliente"
-            inputProps={{ 'aria-label': 'buscar cliente' }}
+            placeholder="Buscar franqueado"
+            inputProps={{ 'aria-label': 'buscar franqueado' }}
             onChange={e => {
               onChangeFiltro('')
               setFilterWord(e.target.value)
@@ -30,13 +29,7 @@ export const ClienteListOptions = ({ onChangeFiltro, onOpenNewClientesModal, mos
           />
           <Tooltip
             title={
-              <label
-                style={{
-                  fontSize: "14px",
-                  color: "#FFF",
-                  lineHeight: "20px"
-                }}
-              >
+              <label style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }} >
                 Buscar
               </label>
             }
@@ -61,13 +54,7 @@ export const ClienteListOptions = ({ onChangeFiltro, onOpenNewClientesModal, mos
           />
           <Tooltip
             title={
-              <label
-                style={{
-                  fontSize: "14px",
-                  color: "#FFF",
-                  lineHeight: "20px"
-                }}
-              >
+              <label style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
                 Limpar busca
               </label>
             }
@@ -87,27 +74,16 @@ export const ClienteListOptions = ({ onChangeFiltro, onOpenNewClientesModal, mos
             </IconButton>
           </Tooltip>
         </Paper>
-        <FormControlLabel
-          control={
-            <Checkbox
-              className={classes.checkbox}
-              checked={mostrarInativos}
-              onChange={(e) => switchInativos(e.target.checked)}
-              style={{ marginLeft: '8px' }}
-            />
-          }
-          label="Mostrar clientes inativos"
-        />
       </div>
       <Button
         className={classes.button}
         variant="contained"
         color="primary"
         size="large"
-        onClick={onOpenNewClientesModal}
-        startIcon={<AddIcon />}
+        onClick={onOpenEmailsModal}
+        startIcon={<MarkunreadMailboxIcon />}
       >
-        Novo Cliente
+        Disparar emails
       </Button>
     </div>
   )

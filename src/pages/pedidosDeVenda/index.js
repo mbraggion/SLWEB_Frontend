@@ -38,7 +38,10 @@ function PedidosDeVenda() {
           onChangeFiltro={setFiltro}
           onRequestIntegration={handleForceCarga}
         />
-        <PedidosDeVendaList pedidos={returnPedidosFiltrados(pedidos, filtro)}/>
+        <PedidosDeVendaList 
+        pedidos={returnPedidosFiltrados(pedidos, filtro)}
+        refresh={LoadData}
+        />
       </Panel>
     );
 }
@@ -46,26 +49,20 @@ function PedidosDeVenda() {
 export default PedidosDeVenda;
 
 const returnPedidosFiltrados = (pedidos, filterString) => {
-  return pedidos
-  // var re = new RegExp(filterString.trim().toLowerCase())
+  var re = new RegExp(filterString.trim().toLowerCase())
 
-  // return pedidos.filter(ped => {
-  //   if (shouldShowBilled) {
-  //     return true
-  //   } else if (!shouldShowBilled && ped.Status === 'Aguardando') {
-  //     return true
-  //   } else {
-  //     return false
-  //   }
-  // }).filter(ped => {
-  //   if (filterString.trim() === '') {
-  //     return true
-  //   } else if (filterString.trim() !== '' && (
-  //     String(ped.PedidoID).trim().toLowerCase().match(re) || String(ped.CodigoCliente).trim().toLowerCase().match(re)
-  //   )) {
-  //     return true
-  //   } else {
-  //     return false
-  //   }
-  // })
+  return pedidos.filter(ped => {
+    if (filterString.trim() === '') {
+      return true
+    } else if (filterString.trim() !== '' && (
+      String(ped.PedidoID).trim().toLowerCase().match(re) || 
+      String(ped.CNPJ).trim().toLowerCase().match(re) || 
+      String(ped.CodigoCliente).trim().toLowerCase().match(re) || 
+      String(ped.Filial).trim().toLowerCase().match(re)
+    )) {
+      return true
+    } else {
+      return false
+    }
+  })
 }

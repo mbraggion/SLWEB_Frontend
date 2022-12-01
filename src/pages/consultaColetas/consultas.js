@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { capitalizeMonthFirstLetter } from '../../misc/commom_functions';
 
 
-export const Consultas = (props) => {
+export const Consultas = ({ Coletas, onOpenColetaDetails, selectedEquip }) => {
   const classes = useStyles();
 
   return (
@@ -26,17 +26,28 @@ export const Consultas = (props) => {
               overflowY: 'auto'
             }}
           >
-            {props.Coletas.length === 0 ?
+            {Coletas.length === 0 ?
               <div className='XAlign'>
                 <Typography>
                   Nenhuma coleta gravada
                 </Typography>
               </div>
               :
-              props.Coletas.map(coleta =>
+              Coletas.filter(coleta => {
+                console.log(selectedEquip)
+                if (typeof selectedEquip != 'undefined') {
+                  if (String(coleta.EquiCod).trim() === String(selectedEquip).trim()) {
+                    return true
+                  } else {
+                    return false
+                  }
+                } else {
+                  return true
+                }
+              }).map(coleta =>
                 <>
                   <AccordionDetails
-                    onClick={() => props.onOpenColetaDetails(coleta.AnxId, coleta.PdvId, coleta.FfmSeq, coleta)}
+                    onClick={() => onOpenColetaDetails(coleta.AnxId, coleta.PdvId, coleta.FfmSeq, coleta)}
                     button
                     className={classes.details}
                   >

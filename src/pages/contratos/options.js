@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Button, Checkbox, Divider, FormControlLabel, IconButton, InputBase, makeStyles, Paper, Tooltip } from '@material-ui/core';
+import { Button, Checkbox, Typography, Divider, FormControlLabel, IconButton, InputBase, makeStyles, Paper, Tooltip } from '@material-ui/core';
 
 import { Add as AddIcon, Close as CloseIcon, Search as SearchIcon } from '@material-ui/icons';
 
@@ -10,7 +10,11 @@ export const ContractsListOptions = ({ onChangeFiltro, mostrarInativos, switchIn
 
   return (
     <div className={classes.container}>
-      <div style={{ width: '171.55px' }} />
+      <div style={{ width: '171.55px' }}>
+        <Typography variant='h4' className={classes.title}>
+          Contratos
+        </Typography>
+      </div>
       <div>
         <Paper component="form" className={classes.root}>
           <InputBase
@@ -115,6 +119,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     width: 400,
+
+    '@media (max-width: 400px)': {
+      width: '100%',
+    }
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -130,7 +138,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     width: '100%',
     height: '100px',
     background: 'unset',
@@ -152,6 +160,16 @@ const useStyles = makeStyles((theme) => ({
 
     '@media (max-width: 800px)': {
       width: '400px',
+    },
+
+    '@media (max-width: 400px)': {
+      width: '100%',
     }
+  },
+  title: {
+    textAlign: 'center',
+    borderBottom: '2px solid #333',
+    borderRadius: '8px',
+    fontWeight: 'bold',
   }
 }))

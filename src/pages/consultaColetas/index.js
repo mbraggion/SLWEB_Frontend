@@ -77,6 +77,7 @@ const ConsultaColetas = ({ match }) => {
         <Consultas
           Coletas={coletas}
           onOpenColetaDetails={(a, p, f, c) => handleOpenColetaDetailsModal(a, p, f, c)}
+          selectedEquip={match.params.ativo}
         />
         <NovaColeta
           Equipamentos={equipamentos}

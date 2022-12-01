@@ -150,10 +150,10 @@ function Perfil() {
 
               <div className={classes.infoContainer}>
                 <h5 className={classes.titleBox}>
-                  CERTIFICADO DIGITAL VÁLIDO ATÉ
+                  CERTIFICADO DIGITAL CADASTRADO
                 </h5>
                 <p className={classes.Relevant}>
-                  {vencCert === null ? '------' : vencCert}
+                  {vencCert === null || vencCert === "Desconhecido" ? 'Não' : 'Sim'}
                 </p>
               </div>
 

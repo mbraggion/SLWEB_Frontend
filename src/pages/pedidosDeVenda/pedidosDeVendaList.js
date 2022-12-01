@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { PedidosDeVendaListItem } from './pedidosDeVendaListItem';
 
-export const PedidosDeVendaList = ({ pedidos }) => {
+export const PedidosDeVendaList = ({ pedidos, refresh }) => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(null)
 
@@ -12,10 +12,11 @@ export const PedidosDeVendaList = ({ pedidos }) => {
       {pedidos.length > 0 ?
         pedidos.map(p => (
           <PedidosDeVendaListItem
-          key={p.PedidoID}
+            key={p.PedidoID}
             pedido={p}
             ExpandedID={expanded}
             handleChangeExpandedAccordion={setExpanded}
+            refresh={refresh}
           />
         ))
         :

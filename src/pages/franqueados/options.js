@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { makeStyles, Button, FormControlLabel, Checkbox, Paper, InputBase, IconButton, Divider, Tooltip } from '@material-ui/core';
+import { makeStyles, Typography, Button, FormControlLabel, Checkbox, Paper, InputBase, IconButton, Divider, Tooltip } from '@material-ui/core';
 
 import { Search as SearchIcon, Close as CloseIcon, Add as AddIcon } from '@material-ui/icons'
 
@@ -10,7 +10,11 @@ export const Options = ({ onChangeFiltro, mostrarInativos, switchInativos, onOpe
 
   return (
     <div className={classes.container}>
-      <div style={{ width: '171.55px' }} />
+      <div>
+        <Typography variant='h4' className={classes.title}>
+          Franqueados
+        </Typography>
+      </div>
       <div>
         <Paper component="form" className={classes.root}>
           <InputBase
@@ -117,6 +121,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     width: 400,
+
+    '@media (max-width: 400px)': {
+      width: '100%',
+    }
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -132,7 +140,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     width: '100%',
     height: '100px',
     background: 'unset',
@@ -154,6 +162,16 @@ const useStyles = makeStyles((theme) => ({
 
     '@media (max-width: 800px)': {
       width: '400px',
+    },
+
+    '@media (max-width: 400px)': {
+      width: '100%',
     }
+  },
+  title: {
+    textAlign: 'center',
+    borderBottom: '2px solid #333',
+    borderRadius: '8px',
+    fontWeight: 'bold',
   }
 }))
