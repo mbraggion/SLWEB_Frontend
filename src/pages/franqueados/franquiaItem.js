@@ -47,7 +47,7 @@ export const FranquiaItem = ({ Franquia, onOpenDetailsModal }) => {
         <Button
           size="small"
           endIcon={<LaunchIcon />}
-          onClick={onOpenDetailsModal}
+          onClick={() => onOpenDetailsModal(Franquia.A1_GRPVEN)}
         >
           Ver mais
         </Button>

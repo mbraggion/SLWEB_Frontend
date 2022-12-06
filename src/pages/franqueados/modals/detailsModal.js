@@ -4,7 +4,9 @@ import { Button, Dialog, MobileStepper, DialogActions, DialogContent, DialogTitl
 import { useTheme, withStyles } from '@material-ui/core/styles';
 import { Close as CloseIcon, Save as SaveIcon, Edit as EditIcon, KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
 
-export const DetailsModal = ({ open, onClose, FranquiaStatus }) => {
+import { Dados } from './_dados'
+
+export const DetailsModal = ({ open, onClose, FranquiaStatus, GrpVen }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   //   const childRef = useRef();
@@ -68,7 +70,7 @@ export const DetailsModal = ({ open, onClose, FranquiaStatus }) => {
     switch (stage) {
       case 0:
         return (
-          <h6>Dados</h6>
+          <Dados grpven={GrpVen} />
         )
       case 1:
         return (

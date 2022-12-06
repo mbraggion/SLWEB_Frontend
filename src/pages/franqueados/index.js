@@ -16,6 +16,7 @@ const Franqueados = () => {
   const [franqueados, setFranqueados] = useState([])
   const [filtro, setFiltro] = useState('');
   const [mostrarInativos, setMostrarInativos] = useState(false);
+  const [targetGrpVen, setTargetGrpVen] = useState(null)
 
   useEffect(() => {
     LoadData()
@@ -41,12 +42,14 @@ const Franqueados = () => {
     setNewFranquiaModal(false)
   }
 
-  const handleOpenDetailsModal = () => {
+  const handleOpenDetailsModal = (grpven) => {
     setDetailsModal(true)
+    setTargetGrpVen(grpven)
   }
 
   const handleCloseDetailsModal = () => {
     setDetailsModal(false)
+    setTargetGrpVen(null)
   }
 
   return !loaded ?
@@ -61,6 +64,8 @@ const Franqueados = () => {
         <DetailsModal
           open={detailsModal}
           onClose={handleCloseDetailsModal}
+          FranquiaStatus={'A'}
+          GrpVen={targetGrpVen}
         />
         <Options
           onChangeFiltro={setFiltro}
