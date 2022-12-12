@@ -16,6 +16,7 @@ export const NovaColeta = (props) => {
   const isMdUp = useMediaQuery('@media (min-width: 1080px)');
   const { handleCloseModal, handleOpenModal } = props;
 
+  const [fetching, setFetching] = useState(false)
   const [leiturasDisponiveis, setLeiturasDisponiveis] = useState([]);
   const [leituraDoses, setLeituraDoses] = useState([]);
   const [zerou, setZerou] = useState('N');
@@ -115,12 +116,23 @@ export const NovaColeta = (props) => {
 
   useEffect(() => {
     async function getQtd() {
-      if (margemLeitura.de !== null && margemLeitura.ate !== null) {
-        const response = await api.get(`/coletas/novacoleta/${margemLeitura.deID}/${margemLeitura.ateID}/${detalhes.AnxId}/${detalhes.PdvId}`)
+      try {
 
-        setLeituraDoses(response.data.Coleta)
+        if (margemLeitura.de !== null && margemLeitura.ate !== null) {
+          setFetching(true)
+
+          const response = await api.get(`/coletas/novacoleta/${margemLeitura.deID}/${margemLeitura.ateID}/${detalhes.AnxId}/${detalhes.PdvId}`)
+
+          setLeituraDoses(response.data.Coleta)
+          setFetching(false)
+        }
+
+      } catch (err) {
+        setFetching(false)
       }
+
     }
+
     getQtd()
     // eslint-disable-next-line
   }, [margemLeitura])
@@ -145,6 +157,7 @@ export const NovaColeta = (props) => {
           zerou={zerou}
           referencia={referencia}
           defaultSelected={props.selectedEquip}
+          fetchingDoses={fetching}
 
           handleLookForPastData={handleRequestDetails}
           setMargem={setMargemLeitura}
@@ -190,6 +203,7 @@ export const NovaColeta = (props) => {
           zerou={zerou}
           referencia={referencia}
           defaultSelected={props.selectedEquip}
+          fetchingDoses={fetching}
 
           handleLookForPastData={handleRequestDetails}
           setMargem={setMargemLeitura}

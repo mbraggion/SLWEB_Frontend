@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React, { useEffect } from 'react';
 
-import { Button, Divider, MenuItem, Typography } from '@material-ui/core';
+import { Button, Divider, MenuItem, Typography, CircularProgress } from '@material-ui/core';
 import { FilterList } from '@material-ui/icons';
 
 import Select from '../../components/materialComponents/Select';
@@ -24,7 +24,8 @@ export const NovaColetaContent = (props) => {
     handleChangeZerou,
     referencia,
     handleChangeReferencia,
-    defaultSelected
+    defaultSelected,
+    fetchingDoses
   } = props
 
   useEffect(() => {
@@ -248,49 +249,64 @@ export const NovaColetaContent = (props) => {
           flexWrap: 'nowrap'
         }}
       >
-        {leituraDoses.map(leit => (
-          <div
+        {fetchingDoses
+          ? <div
             className='XAlign'
             style={{
               width: '100%',
-              justifyContent: 'space-between',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
               padding: '0px 8px 1px 8px',
               borderBottom: '1px solid #CCC',
               flexWrap: 'nowrap'
             }}
-            key={leit.LeituraId}
           >
-            <div
-              className='YAlign'
-            >
-              <Typography variant='subtitle1'>
-                <strong
-                  style={{
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}>
-                  {leit.Produto}
-                </strong>
-              </Typography>
-              <Typography variant='subtitle2'>(Seleção {leit.Selecao})</Typography>
-            </div>
-            <div
-              className='YAlign'
-              style={{
-                alignItems: 'flex-end',
-                flexWrap: 'nowrap',
-              }}
-            >
-              <Typography variant='subtitle1'>
-                Pagas: <strong>{zerou === 'N' ? leit.Consumo.Real : leit.Real.Agr}</strong>
-              </Typography>
-              <Typography variant='subtitle2'>
-                Teste: <strong>{zerou === 'N' ? leit.Consumo.Teste : leit.Teste.Agr}</strong>
-              </Typography>
-            </div>
+            <CircularProgress />
           </div>
-        ))}
+          : leituraDoses.map(leit => (
+            <div
+              className='XAlign'
+              style={{
+                width: '100%',
+                justifyContent: 'space-between',
+                padding: '0px 8px 1px 8px',
+                borderBottom: '1px solid #CCC',
+                flexWrap: 'nowrap'
+              }}
+              key={leit.LeituraId}
+            >
+              <div
+                className='YAlign'
+              >
+                <Typography variant='subtitle1'>
+                  <strong
+                    style={{
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}>
+                    {leit.Produto}
+                  </strong>
+                </Typography>
+                <Typography variant='subtitle2'>(Seleção {leit.Selecao})</Typography>
+              </div>
+              <div
+                className='YAlign'
+                style={{
+                  alignItems: 'flex-end',
+                  flexWrap: 'nowrap',
+                }}
+              >
+                <Typography variant='subtitle1'>
+                  Pagas: <strong>{zerou === 'N' ? leit.Consumo.Real : leit.Real.Agr}</strong>
+                </Typography>
+                <Typography variant='subtitle2'>
+                  Teste: <strong>{zerou === 'N' ? leit.Consumo.Teste : leit.Teste.Agr}</strong>
+                </Typography>
+              </div>
+            </div>
+          ))}
       </section>
       <Divider />
       <Button
@@ -301,7 +317,7 @@ export const NovaColetaContent = (props) => {
           borderRadius: '0px 0px 4px 4px',
         }}
         // disabled={leituraDoses.length === 0 || referencia === ''}
-        disabled={margem.de === null || margem.ate === null || referencia === ''}
+        disabled={margem.de === null || margem.ate === null || referencia === '' || fetchingDoses === true}
         onClick={() => handleGravaColeta()}
       >
         GRAVAR COLETA

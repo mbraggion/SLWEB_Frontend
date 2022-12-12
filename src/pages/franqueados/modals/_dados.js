@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import moment from 'moment'
 
 import { TextField, Divider, Tooltip, Typography, makeStyles } from '@material-ui/core'
 
@@ -155,6 +156,7 @@ export const Dados = ({ grpven }) => {
 
                 <div>
                     <Tooltip
+                        classes={{ tooltip: classes.noMaxWidth }}
                         title={
                             <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }} >
                                 {franquia.CAR.AtivosStatus.filter(AS => AS.LeitOk.trim() === 'OK').map(AS => (
@@ -170,6 +172,7 @@ export const Dados = ({ grpven }) => {
                 </div>
                 <div>
                     <Tooltip
+                        classes={{ tooltip: classes.noMaxWidth }}
                         title={
                             <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }} >
                                 {franquia.CAR.AtivosStatus.filter(AS => AS.LeitOk.trim() === 'KO').map(AS => (
@@ -199,6 +202,44 @@ export const Dados = ({ grpven }) => {
                         Faturamento
                     </Typography>
                 </li>
+
+                <Typography>
+                    Pode emitir nota: <strong>{franquia.FIN.EmiteNF === 'S' ? 'Sim' : 'Não'}</strong>
+                </Typography>
+
+                <Typography>
+                    Limite de compra: <strong>{new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    }).format(franquia.FIN.Limite)}</strong>
+                </Typography>
+
+                <Typography>
+                    Limite extra de: <strong>{new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    }).format(franquia.FIN.LimiteExtra)}</strong> [válido em {moment(franquia.FIN.DtExtraConcedido).format('L')}]
+                </Typography>
+
+                <Typography>
+                    Mínimo de compra: <strong>{franquia.FIN.MinCompra}</strong>
+                </Typography>
+
+                <Typography>
+                    Confiável: <strong>{franquia.FIN.Confiavel === true ? 'Sim' : 'Não'}</strong>
+                </Typography>
+
+                <Typography>
+                    Pode retirar: <strong>{franquia.FIN.PodeRetirar === 'S' ? 'Sim' : 'Não'}</strong>
+                </Typography>
+
+                <Typography>
+                    Bloqueado: <strong>{franquia.FIN.Bloqueado === 'S' ? 'Sim' : 'Não'}</strong>
+                </Typography>
+
+                <Typography>
+                    Condição de pagamento: <strong>{franquia.FIN.CondicaoPagPadrao}</strong>
+                </Typography>
             </div>
         )
 }
@@ -212,6 +253,9 @@ const useStyles = makeStyles((theme) => ({
     dividerInset: {
         margin: `5px 0 8px ${theme.spacing(2)}px`,
     },
+    noMaxWidth: {
+        maxWidth: 'none',
+    }
 }));
 
 const montaEndereco = (cli) => {
