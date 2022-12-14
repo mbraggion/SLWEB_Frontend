@@ -29,7 +29,7 @@ function NumberFormatCustom(props) {
       decimalSeparator=","
       fixedDecimalScale={true}
       isNumericString
-      prefix=""
+      prefix=''
       allowNegative={false}
     />
   );
@@ -72,7 +72,6 @@ function InputAdornments(props) {
         onChange={handleChange}
         InputProps={{
           inputComponent: NumberFormatCustom,
-
         }}
         variant="outlined"
         value={

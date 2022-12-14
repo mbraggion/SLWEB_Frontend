@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 
 import { TextField, Divider, Tooltip, Typography, makeStyles } from '@material-ui/core'
+import { RED_SECONDARY, GREEN_SECONDARY } from '../../../misc/colors'
 
 import { api } from '../../../services/api'
 
@@ -19,7 +20,7 @@ export const Dados = ({ grpven }) => {
         setLoading(true)
 
         try {
-            const response = await api.get(`/administrar/franquia/${grpven}`)
+            const response = await api.get(`/administrar/franquia/${grpven}/dados`)
 
             setFranquia(response.data)
             setLoading(false)
@@ -49,87 +50,102 @@ export const Dados = ({ grpven }) => {
                     </Typography>
                 </li>
 
-                {franquia.PF.map(pf => (
-                    <div>
-                        <TextField
-                            variant="outlined"
-                            label='Franqueado'
-                            disabled={true}
-                            value={pf.Nome}
-                            onChange={() => { }}
-                        />
-                        <TextField
-                            variant="outlined"
-                            label='CPF'
-                            disabled={true}
-                            value={pf.CPF}
-                            onChange={() => { }}
-                        />
-                        <TextField
-                            variant="outlined"
-                            label='Email'
-                            disabled={true}
-                            value={pf.Email}
-                            onChange={() => { }}
-                        />
-                        <TextField
-                            variant="outlined"
-                            label='Telefone'
-                            disabled={true}
-                            value={pf.Telefone}
-                            onChange={() => { }}
-                        />
-                        <TextField
-                            variant="outlined"
-                            multiline
-                            label='Endereço'
-                            disabled={true}
-                            value={montaEndereco(pf)}
-                            onChange={() => { }}
-                        />
-                    </div>
-                ))}
+                <div className={classes.dadosContainer}>
+                    {franquia.PF.map((pf, i) => (
+                        <>
+                            <TextField
+                                className={classes.letItBeWideWithMargin}
+                                variant="outlined"
+                                label={`Franqueado (${i + 1})`}
+                                disabled={true}
+                                value={pf.Nome}
+                                onChange={() => { }}
+                            />
+                            <TextField
+                                className={classes.letItBeWideWithMargin}
+                                variant="outlined"
+                                label={`CPF (${i + 1})`}
+                                disabled={true}
+                                value={pf.CPF}
+                                onChange={() => { }}
+                            />
+                            <TextField
+                                className={classes.letItBeWideWithMargin}
+                                variant="outlined"
+                                label={`Email (${i + 1})`}
+                                disabled={true}
+                                value={pf.Email}
+                                onChange={() => { }}
+                            />
+                            <TextField
+                                className={classes.letItBeWideWithMargin}
+                                variant="outlined"
+                                label={`Telefone (${i + 1})`}
+                                disabled={true}
+                                value={pf.Telefone}
+                                onChange={() => { }}
+                            />
+                            <TextField
+                                className={classes.letItBeWide}
+                                variant="outlined"
+                                multiline
+                                label={`Endereço (${i + 1})`}
+                                disabled={true}
+                                value={montaEndereco(pf)}
+                                onChange={() => { }}
+                            />
+                        </>
+                    ))}
+                </div>
 
-                {franquia.PJ.map(pj => (
-                    <>
-                        <TextField
-                            variant="outlined"
-                            label='Empresa'
-                            disabled={true}
-                            value={pj.RazaoSocial}
-                            onChange={() => { }}
-                        />
-                        <TextField
-                            variant="outlined"
-                            label='CNPJ'
-                            disabled={true}
-                            value={pj.CNPJ}
-                            onChange={() => { }}
-                        />
-                        <TextField
-                            variant="outlined"
-                            label='Email'
-                            disabled={true}
-                            value={pj.Email}
-                            onChange={() => { }}
-                        />
-                        <TextField
-                            variant="outlined"
-                            label='Telefone'
-                            disabled={true}
-                            value={pj.Telefone}
-                            onChange={() => { }}
-                        />
-                        <TextField
-                            variant="outlined"
-                            multiline
-                            label='Endereço'
-                            disabled={true}
-                            value={montaEndereco(pj)}
-                            onChange={() => { }}
-                        />
-                    </>
-                ))}
+                <div className={classes.dadosContainer}>
+                    {franquia.PJ.map(pj => (
+                        <>
+                            <TextField
+                                className={classes.letItBeWideWithMargin}
+                                variant="outlined"
+                                label='Empresa'
+                                disabled={true}
+                                value={pj.RazaoSocial}
+                                onChange={() => { }}
+                            />
+                            <TextField
+                                className={classes.letItBeWideWithMargin}
+                                variant="outlined"
+                                label='CNPJ'
+                                disabled={true}
+                                value={pj.CNPJ}
+                                onChange={() => { }}
+                            />
+                            <TextField
+                                className={classes.letItBeWideWithMargin}
+                                variant="outlined"
+                                label='Email'
+                                disabled={true}
+                                value={pj.Email}
+                                onChange={() => { }}
+                            />
+                            <TextField
+                                className={classes.letItBeWideWithMargin}
+                                variant="outlined"
+                                label='Telefone'
+                                disabled={true}
+                                value={pj.Telefone}
+                                onChange={() => { }}
+                            />
+                            <TextField
+                                className={classes.letItBeWide}
+                                variant="outlined"
+                                multiline
+                                label='Endereço'
+                                disabled={true}
+                                value={montaEndereco(pj)}
+                                onChange={() => { }}
+                            />
+                        </>
+                    ))}
+                </div>
+
 
                 <Divider
                     className={classes.divider}
@@ -147,14 +163,27 @@ export const Dados = ({ grpven }) => {
                     </Typography>
                 </li>
 
-                <Typography>Clientes cadastrados: {franquia.CAR.Clientes.reduce((acc, t) => {
-                    return acc + Number(t.Qtd)
-                }, 0)}[{franquia.CAR.Clientes.filter(t => t.Status === 'A')[0].Qtd} Ativos]</Typography>
+                <Typography>
+                    Clientes cadastrados: {franquia.CAR.Clientes.reduce((acc, t) => {
+                        return acc + Number(t.Qtd)
+                    }, 0)} [{franquia.CAR.Clientes.filter(t => t.Status === 'A')[0].Qtd} Ativos]
+                </Typography>
                 {franquia.CAR.AtivosDist.map(ad => (
-                    <Typography>{ad.PdvStatus === 'Max' ? 'Total' : ad.PdvStatus === 'A' ? 'Instaladas' : 'Não instaladas'}: {ad.Qtd}</Typography>
+                    <Typography>{ad.PdvStatus === 'Max' ? 'Máquinas na filial' : ad.PdvStatus === 'A' ? 'Máquinas instaladas' : 'Máquinas não instaladas'}: {ad.Qtd}</Typography>
                 ))}
 
-                <div>
+                <Divider
+                    className={classes.divider}
+                    component="li"
+                    variant="inset"
+                />
+
+                <div
+                    className='XAlign'
+                    style={{
+                        marginTop: '8px'
+                    }}
+                >
                     <Tooltip
                         classes={{ tooltip: classes.noMaxWidth }}
                         title={
@@ -164,13 +193,22 @@ export const Dados = ({ grpven }) => {
                                 ))}
                             </div>
                         }
-                        placement="bottom"
+                        placement="top"
                         arrow={true}
                     >
-                        <Typography>Telemetria OK: {franquia.CAR.AtivosStatus.filter(AS => AS.LeitOk.trim() === 'OK').length}</Typography>
+                        <div
+                            style={{
+                                padding: '8px',
+                                border: `2px solid ${GREEN_SECONDARY}`,
+                                borderRadius: '5px 0px 0px 5px',
+                                width: '50%',
+                                textAlign: 'center'
+                            }}
+                        >
+
+                            <Typography>Telemetria OK: {franquia.CAR.AtivosStatus.filter(AS => AS.LeitOk.trim() === 'OK').length}</Typography>
+                        </div>
                     </Tooltip>
-                </div>
-                <div>
                     <Tooltip
                         classes={{ tooltip: classes.noMaxWidth }}
                         title={
@@ -180,12 +218,23 @@ export const Dados = ({ grpven }) => {
                                 ))}
                             </div>
                         }
-                        placement="bottom"
+                        placement="top"
                         arrow={true}
                     >
-                        <Typography>Telemetria KO: {franquia.CAR.AtivosStatus.filter(AS => AS.LeitOk.trim() === 'KO').length}</Typography>
+                        <div
+                            style={{
+                                padding: '8px',
+                                border: `2px solid ${RED_SECONDARY}`,
+                                borderRadius: '0px 5px 5px 0px',
+                                width: '50%',
+                                textAlign: 'center'
+                            }}
+                        >
+                            <Typography>Telemetria KO: {franquia.CAR.AtivosStatus.filter(AS => AS.LeitOk.trim() === 'KO').length}</Typography>
+                        </div>
                     </Tooltip>
                 </div>
+
 
                 <Divider
                     className={classes.divider}
@@ -218,11 +267,14 @@ export const Dados = ({ grpven }) => {
                     Limite extra de: <strong>{new Intl.NumberFormat('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'
-                    }).format(franquia.FIN.LimiteExtra)}</strong> [válido em {moment(franquia.FIN.DtExtraConcedido).format('L')}]
+                    }).format(franquia.FIN.LimiteExtra)}</strong> {franquia.FIN.DtExtraConcedido !== null ? `[válido apenas em ${moment(franquia.FIN.DtExtraConcedido).format('L')}]` : null}
                 </Typography>
 
                 <Typography>
-                    Mínimo de compra: <strong>{franquia.FIN.MinCompra}</strong>
+                    Mínimo de compra: <strong>{new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    }).format(franquia.FIN.MinCompra)}</strong>
                 </Typography>
 
                 <Typography>
@@ -255,6 +307,25 @@ const useStyles = makeStyles((theme) => ({
     },
     noMaxWidth: {
         maxWidth: 'none',
+    },
+    dadosContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        width: '100%'
+    },
+    letItBeWide: {
+        width: '100%',
+        marginTop: '8px'
+    },
+    letItBeWideWithMargin: {
+        width: '100%',
+        marginTop: '8px',
+
+        '& div>input:nth-child(1)': {
+            margin: '0px 8px',
+        }
     }
 }));
 

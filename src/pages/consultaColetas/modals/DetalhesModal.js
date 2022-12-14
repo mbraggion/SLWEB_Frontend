@@ -58,7 +58,7 @@ export const DetalhesModal = (props) => {
     toastId = Toast("Apagando coleta...", "wait");
 
     try {
-      await api.delete(`/coletas/detalhes/apagar/${coleta.EquiCod}/${coleta.AnxId}/${coleta.PdvId}/${coleta.FfmSeq}`)
+      await api.delete(`/coletas/detalhes/apagar/${String(coleta.EquiCod).trim()}/${coleta.AnxId}/${coleta.PdvId}/${coleta.FfmSeq}`)
 
       Toast("Coleta de doses excluida com sucesso!", "update", toastId, "success");
       props.coletasHandler(oldState => {

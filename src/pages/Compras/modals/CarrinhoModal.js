@@ -155,7 +155,7 @@ const CarrinhoModal = ({ open, onClose, desconto, ...props }) => {
                   onChange={(e) => setAVista(e.target.checked)}
                 />
               }
-              label="Pagamento à Vista (-5%)"
+              label="Pagamento antecipado (-5%)"
             />
           </div>
 

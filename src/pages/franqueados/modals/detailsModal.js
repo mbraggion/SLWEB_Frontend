@@ -5,6 +5,7 @@ import { useTheme, withStyles } from '@material-ui/core/styles';
 import { Close as CloseIcon, Save as SaveIcon, Edit as EditIcon, KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
 
 import { Dados } from './_dados'
+import { Acoes } from './_acoes'
 
 export const DetailsModal = ({ open, onClose, FranquiaStatus, GrpVen }) => {
   const theme = useTheme();
@@ -74,11 +75,11 @@ export const DetailsModal = ({ open, onClose, FranquiaStatus, GrpVen }) => {
         )
       case 1:
         return (
-          <h6>Detalhes</h6>
+          <h6>CONTRATO</h6>
         )
       case 2:
         return (
-          <h6>Ações</h6>
+          <Acoes grpven={GrpVen} />
         )
       default:
         return null
@@ -95,8 +96,8 @@ export const DetailsModal = ({ open, onClose, FranquiaStatus, GrpVen }) => {
 
   const handleClose = () => {
     // if (!wait) {
-      onClose()
-      setAllowEditing(true)
+    onClose()
+    setAllowEditing(true)
     // }
   }
 
@@ -186,6 +187,7 @@ const styles = (theme) => ({
   root: {
     margin: 0,
     padding: theme.spacing(2),
+    width: 400
   },
   closeButton: {
     position: 'absolute',
@@ -217,7 +219,7 @@ const returnModalTitle = (step) => {
     case 0:
       return 'Franquia - DADOS'
     case 1:
-      return 'Franquia - DETALHES'
+      return 'Franquia - CONTRATO'
     case 2:
       return 'Franquia - AÇÕES'
     default:
