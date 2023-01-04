@@ -6,6 +6,7 @@ import { Close as CloseIcon, Save as SaveIcon, Edit as EditIcon, KeyboardArrowRi
 
 import { Dados } from './_dados'
 import { Acoes } from './_acoes'
+import { Contrato } from './_contrato'
 
 export const DetailsModal = ({ open, onClose, FranquiaStatus, GrpVen }) => {
   const theme = useTheme();
@@ -75,7 +76,7 @@ export const DetailsModal = ({ open, onClose, FranquiaStatus, GrpVen }) => {
         )
       case 1:
         return (
-          <h6>CONTRATO</h6>
+          <Contrato />
         )
       case 2:
         return (

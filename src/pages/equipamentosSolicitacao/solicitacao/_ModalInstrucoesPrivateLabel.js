@@ -21,7 +21,7 @@ import {
 
 import Loading from '../../../components/loading_screen'
 
-export const InstrucoesCartaoModal = ({ open, onClose, title }) => {
+export const InstrucoesPrivateLabel = ({ open, onClose, title }) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [wait, setWait] = useState(false)
@@ -33,15 +33,17 @@ export const InstrucoesCartaoModal = ({ open, onClose, title }) => {
 
   async function LoadData() {
     setWait(true)
+
     try {
-      const response = await api.get('/equip/payment/information/card')
+      const response = await api.get('/equip/payment/information/privatelabel')
 
       setContent(response.data.Instrucoes)
       setWait(false)
     } catch (err) {
       setWait(false)
-
     }
+
+    
   }
 
   const handleClose = () => {

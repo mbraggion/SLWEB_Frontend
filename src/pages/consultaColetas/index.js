@@ -1,105 +1,80 @@
-import { makeStyles } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types';
 
 import { Panel } from '../../components/commom_in'
-import Loading from '../../components/loading_screen'
-import { api } from '../../services/api'
-import { Consultas } from './consultas'
-import { DetalhesModal } from './modals/DetalhesModal'
-import { NovaColeta } from './novaColeta'
+
+import { makeStyles } from '@material-ui/core/styles';
+import { Paper, Tabs, Tab } from '@material-ui/core/';
+import { EmojiFoodBeverage as EmojiFoodBeverageIcon, AttachMoney as AttachMoneyIcon } from '@material-ui/icons'
+
+import { Leituras } from './leituras'
+import { SLRaspy } from './slraspy'
 
 const ConsultaColetas = ({ match }) => {
-  const [forceUpdate, setForceUpdate] = useState(0)
-  const [loaded, setLoaded] = useState(false)
-  const [coletas, setColetas] = useState([])
-  const [equipamentos, setEquipamentos] = useState([])
-  const [coletaDetalhesModalOpen, setColetaDetalhesModalOpen] = useState(false)
-  const [coletaDetalhes, setColetaDetalhes] = useState({})
-  const [novaColetaDetalhesModalOpen, setNovaColetaDetalhesModalOpen] = useState(false)
-
   const classes = useStyles();
+  const [value, setValue] = React.useState(0);
 
-  useEffect(() => {
-    async function LoadData() {
-      try {
-        const response = await api.get('/coletas')
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
-        setColetas(response.data.Coletas)
-        setEquipamentos(response.data.Equipamentos)
-        setLoaded(true)
-      } catch (err) {
-        setLoaded(false)
-      }
-    }
-    LoadData()
-  }, [forceUpdate])
-
-  const handleForceUpdate = () => {
-    setForceUpdate(value => value + 1)
-  }
-
-  const handleOpenColetaDetailsModal = async (anxid, pdvid, fseq, coleta) => {
-    setColetaDetalhesModalOpen(true)
-
-    try {
-      const response = await api.get(`/coletas/detalhes/${anxid}/${pdvid}/${fseq}`)
-
-      setColetaDetalhes({ ...coleta, Detalhes: response.data.Detalhes })
-    } catch (err) {
-    }
-  }
-
-  const handleCloseColetaDetailsModal = () => {
-    setColetaDetalhesModalOpen(false)
-    setColetaDetalhes({})
-  }
-
-  const handleOpenNovaColetaModal = () => {
-    setNovaColetaDetalhesModalOpen(true)
-  }
-
-  const handleCloseNovaColetaModal = () => {
-    setNovaColetaDetalhesModalOpen(false)
-  }
-
-  return !loaded ? (
-    <Loading />
-  ) : (
-    <Panel>
-      <div className={classes.root}>
-        <DetalhesModal
-          open={coletaDetalhesModalOpen}
-          onClose={handleCloseColetaDetailsModal}
-          title='Detalhes da Coleta'
-          detalhes={coletaDetalhes}
-          coletasHandler={setColetas}
-        />
-        <Consultas
-          Coletas={coletas}
-          onOpenColetaDetails={(a, p, f, c) => handleOpenColetaDetailsModal(a, p, f, c)}
-          selectedEquip={match.params.ativo}
-        />
-        <NovaColeta
-          Equipamentos={equipamentos}
-          open={novaColetaDetalhesModalOpen}
-          handleOpenModal={handleOpenNovaColetaModal}
-          handleCloseModal={handleCloseNovaColetaModal}
-          onUpdate={handleForceUpdate}
-          selectedEquip={match.params.ativo}
-        />
-      </div>
+  return (
+    <Panel
+      style={{
+        padding: "0px",
+      }}
+    >
+      {/* <Paper className={classes.root}>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          indicatorColor="primary"
+          textColor="primary"
+          centered
+        >
+          <Tab label="Coletas" {...a11yProps(0)} icon={<EmojiFoodBeverageIcon />} />
+          <Tab label="SLRaspy" {...a11yProps(1)} icon={<AttachMoneyIcon />} />
+        </Tabs>
+        <TabPanel value={value} index={0}> */}
+          <Leituras match={match} />
+        {/* </TabPanel>
+        <TabPanel value={value} index={1}>
+          <SLRaspy match={match} />
+        </TabPanel>
+      </Paper> */}
     </Panel>
   )
 }
 
 export default ConsultaColetas
 
-const useStyles = makeStyles((theme) => ({
+
+const useStyles = makeStyles({
   root: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'nowrap',
+    flexGrow: 1,
     width: '100%',
-    height: '100%'
+    height: '100%',
+    padding: '8px'
   },
-}));
+});
+
+function TabPanel(props) {
+  const { children, value, index } = props;
+
+  return value === index
+        ? children
+        : null
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}

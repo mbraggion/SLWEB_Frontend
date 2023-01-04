@@ -55,7 +55,7 @@ const Equipamentos = () => {
 
   const HandleOpenConfirmModal = async () => {
     if (alreadyReported) {
-      Toast('Localização das máquinas já foi reportada este mes', 'warn')
+      Toast('Localização das máquinas já foi reportada este mês', 'warn')
       return
     }
 

@@ -16,17 +16,19 @@ import { Toast } from "../../components/toasty";
 import { Panel } from "../../components/commom_in";
 import { dateCheck } from "../../misc/commom_functions";
 
-import EmAndamento from './EmAndamento'
-import Concluidos from './Concluidos'
-import Cancelados from './Cancelados'
+import SolList from './SolList'
+
+import { SolicitacoesOptions } from './options'
 
 const Management = () => {
   const [OSS, setOSS] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [expanded, setExpanded] = useState('panel1');
-  // const [switch, setSwitch] = useState(false);
+  const [filtro, setFiltro] = useState('');
+  const [mostrarPendencias, setMostrarPendencias] = useState(true);
 
   const classes = useStyles();
+  const status = ['Ativo', 'Cancelado', 'Concluido']
 
   useEffect(() => {
     async function LoadData() {
@@ -73,88 +75,52 @@ const Management = () => {
       style={{
         justifyContent: "flex-start",
         alignItems: "center",
-      }}>
+      }}
+    >
+
+      <SolicitacoesOptions
+        onChangeFiltro={setFiltro}
+        mostrarPendencias={mostrarPendencias}
+        switchPendencias={setMostrarPendencias}
+      />
+
       <div className={classes.root}>
-        <Accordion
-          expanded={expanded === 'panel1'}
-          onChange={handleChange('panel1')}
-          disabled={OSS.filter(OS => OS.OSCStatus === "Ativo").length === 0}
-        >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
+        {status.map(s => (
+          <Accordion
+            expanded={expanded === s}
+            onChange={handleChange(s)}
+            disabled={returnOSsFiltered(OSS.filter(OS => OS.OSCStatus === s), mostrarPendencias, filtro).length === 0}
           >
-            <Typography
-              variant="h6"
-              style={{
-                color: '#4f9eff'
-              }}
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls={`${s}-content`}
+              id={`${s}-header`}
             >
-              Solicitações em andamento({OSS.filter(OS => OS.OSCStatus === "Ativo").length})
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <EmAndamento
-              OS={OSS.filter(OS => OS.OSCStatus === "Ativo")}
-              onRequestPDF={(ID) => handleRetrivePDF(ID)}
-            />
-          </AccordionDetails>
-        </Accordion>
-        <Accordion
-          expanded={expanded === 'panel2'}
-          onChange={handleChange('panel2')}
-          disabled={OSS.filter(OS => OS.OSCStatus === "Cancelado").length === 0}
-        >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel2a-content"
-            id="panel2a-header"
-          >
-            <Typography
-              variant="h6"
-              style={{
-                color: '#f5814c'
-              }}
-            >
-              Solicitações canceladas({OSS.filter(OS => OS.OSCStatus === "Cancelado").length})
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Cancelados
-              OS={OSS.filter(OS => OS.OSCStatus === "Cancelado")}
-              onRequestPDF={(ID) => handleRetrivePDF(ID)}
-            />
-          </AccordionDetails>
-        </Accordion>
-        <Accordion
-          expanded={expanded === 'panel3'}
-          onChange={handleChange('panel3')}
-          disabled={OSS.filter(OS => OS.OSCStatus === "Concluido").length === 0}
-        >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel3a-content"
-            id="panel3a-header"
-          >
-            <Typography
-              variant="h6"
-              style={{
-                color: '#29ff8d'
-              }}
-            >
-              Solicitações concluídas({OSS.filter(OS => OS.OSCStatus === "Concluido").length})
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails
-            style={{ height: '100%' }}
-          >
-            <Concluidos
-              OS={OSS.filter(OS => OS.OSCStatus === "Concluido")}
-              onRequestPDF={(ID) => handleRetrivePDF(ID)}
-            />
-          </AccordionDetails>
-        </Accordion>
+              <Typography
+                variant="h6"
+                style={{
+                  color: returnCorrectBorderColor(s)
+                }}
+              >
+                {
+                  s === 'Ativo' ?
+                    'Solicitações em Andamento'
+                    : s === 'Cancelado' ?
+                      'Solicitações Canceladas'
+                      : s === 'Concluido' ?
+                        'Solicitações Concluídas'
+                        : '???'
+                }({OSS.filter(OS => OS.OSCStatus === s).length})
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <SolList
+                OS={returnOSsFiltered(OSS.filter(OS => OS.OSCStatus === s), mostrarPendencias, filtro)}
+                onRequestPDF={handleRetrivePDF}
+              />
+            </AccordionDetails>
+          </Accordion>
+        ))}
       </div>
     </Panel>
   );
@@ -165,9 +131,50 @@ export default Management
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
+    height: 'calc(100% - 100px)'
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
   },
 }));
+
+const returnOSsFiltered = (oss, shouldShowPending, filterString) => {
+  var re = new RegExp(filterString.trim().toLowerCase())
+
+  return oss.filter(os => {
+    if (!shouldShowPending) {
+      return true
+    } else if (shouldShowPending && os.Responsavel.includes(window.sessionStorage.getItem('role'))) {
+      return true
+    } else {
+      return false
+    }
+  }).filter(os => {
+    if (filterString.trim() === '') {
+      return true
+    } else if (filterString.trim() !== '' && (
+      String(os.OSCId).trim().toLowerCase().match(re) ||
+      String(os.M0_CODFIL).trim().toLowerCase().match(re)
+    )) {
+      return true
+    } else {
+      return false
+    }
+  })
+}
+
+const returnCorrectBorderColor = (status) => {
+  switch (status) {
+    case 'Cancelado':
+      return '#f5814c';
+
+    case 'Ativo':
+      return '#4f9eff';
+
+    case 'Concluido':
+      return '#29ff8d';
+    default:
+      return '#8403fc'
+  }
+}

@@ -51,7 +51,7 @@ export const InvListItem = ({ InvItem, isInventoryClosed, expandedId, updateInve
       <AccordionSummary expandIcon={<ExpandMoreIcon />} onClick={() => onExpandProd(InvItem.ProdId)}>
 
         <ListItemText
-          primary={InvItem.Produto}
+          primary={`[${InvItem.ProdId}] ${InvItem.Produto}`}
           secondary={<>Em estoque: <strong style={{ color: RED_SECONDARY }}>{InvItem.InvQtd}</strong></>}
         />
       </AccordionSummary>

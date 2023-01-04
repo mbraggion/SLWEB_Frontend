@@ -1,14 +1,14 @@
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { api } from '../../services/api'
+import { api } from '../../../services/api'
 
 import { Fab, Paper, Typography, useMediaQuery } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import { Add as AddIcon } from '@material-ui/icons'
 
-import { Toast } from '../../components/toasty'
+import { Toast } from '../../../components/toasty'
 
-import { NovaColetaModal } from './modals/NovaColeta'
+import { NovaColetaModal } from '../modals/NovaColeta'
 import { NovaColetaContent } from './novaColetaContent'
 
 export const NovaColeta = (props) => {
@@ -46,7 +46,6 @@ export const NovaColeta = (props) => {
         excluir: response.data.UltColeta[0] ? response.data.UltColeta[0].UltimaColeta : null
       })
 
-
       setDetalhes({
         EquiCod: eqdata.EquiCod,
         Cliente: String(eqdata.AnxDesc).trim(),
@@ -62,6 +61,7 @@ export const NovaColeta = (props) => {
       })
 
     } catch (err) {
+      console.log(err)
     }
   }
 

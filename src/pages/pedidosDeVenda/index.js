@@ -23,7 +23,6 @@ function PedidosDeVenda() {
       setLoaded(true);
       setPedidos(response.data.Pedidos)
     } catch (err) {
-      console.log(err)
     }
   }
 

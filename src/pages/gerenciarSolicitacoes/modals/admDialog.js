@@ -14,7 +14,7 @@ import { REACT_APP_BACKOFFICE_ROLE_LEVEL, REACT_APP_EXPEDICAO_ROLE_LEVEL, REACT_
 
 function DraggableDialog(props) {
   const { Req } = props;
-  const { SLRaspyNum, EquipCod, TelemetriaNum } = props.Req;
+  const { SLRaspyNum, EquipCod, TelemetriaNum } = props.Req.InfoEq;
 
   const [open, setOpen] = useState(false);
   const [stage, setStage] = useState(null);
@@ -179,37 +179,37 @@ const CheckStage = (requisicao) => {
     //pedido cancelado pelo usuário
     return 4;
   } else if (
-    requisicao.OSCComDtValidação === null &&
+    requisicao.Assinaturas.OSCComDtValidação === null &&
     requisicao.OSCStatus === "Ativo"
   ) {
     //aguardando aprovação comercial
     return 1;
   } else if (
-    requisicao.OSCComDtValidação !== null &&
-    requisicao.OSCComAceite === false
+    requisicao.Assinaturas.OSCComDtValidação !== null &&
+    requisicao.Assinaturas.OSCComAceite === false
   ) {
     //negado pelo comercial
     return -1;
   } else if (
-    requisicao.OSCTecDtValidação === null &&
+    requisicao.Assinaturas.OSCTecDtValidação === null &&
     requisicao.OSCStatus === "Ativo"
   ) {
     //aguardando aprovação técnica
     return 2;
   } else if (
-    requisicao.OSCTecDtValidação !== null &&
-    requisicao.OSCTecAceite === false
+    requisicao.Assinaturas.OSCTecDtValidação !== null &&
+    requisicao.Assinaturas.OSCTecAceite === false
   ) {
     //negado pela técnica
     return -2;
   } else if (
-    requisicao.OSCExpDtPrevisao === null &&
+    requisicao.Assinaturas.OSCExpDtPrevisao === null &&
     requisicao.OSCStatus === "Ativo"
   ) {
     //aguardando previsão de entrega da expedição
     return 3;
   } else if (
-    requisicao.OSCExpDtPrevisao !== null &&
+    requisicao.Assinaturas.OSCExpDtPrevisao !== null &&
     requisicao.OSCStatus === "Ativo"
   ) {
     //aguardando previsão de entrega da expedição
@@ -501,7 +501,7 @@ const ShowControlls = (
           </div>
 
           <label style={{ all: "unset" }}>
-            Data esperada: {convertData(Req.OSCDtPretendida)}
+            Data esperada: {convertData(Req.Datas.OSCDtPretendida)}
           </label>
         </div>
 

@@ -4,7 +4,7 @@ import React from 'react';
 import { Accordion, AccordionDetails, Divider, ListItemText, Paper, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { capitalizeMonthFirstLetter } from '../../misc/commom_functions';
+import { capitalizeMonthFirstLetter } from '../../../misc/commom_functions';
 
 
 export const Consultas = ({ Coletas, onOpenColetaDetails, selectedEquip }) => {
@@ -34,7 +34,6 @@ export const Consultas = ({ Coletas, onOpenColetaDetails, selectedEquip }) => {
               </div>
               :
               Coletas.filter(coleta => {
-                console.log(selectedEquip)
                 if (typeof selectedEquip != 'undefined') {
                   if (String(coleta.EquiCod).trim() === String(selectedEquip).trim()) {
                     return true

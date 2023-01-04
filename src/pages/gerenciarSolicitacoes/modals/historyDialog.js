@@ -27,10 +27,8 @@ function PaperComponent(props) {
     </Draggable>
   );
 }
-function DraggableDialog(props) {
+function DraggableDialog({ Req }) {
   const [open, setOpen] = useState(false);
-
-  const { Req } = props;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -73,100 +71,100 @@ function DraggableDialog(props) {
           <>
             <Campo>
               <Typography variant="subtitle1" gutterBottom>
-                <strong>{convertData(Req.OSCDtSolicita)}: </strong>
+                <strong>{convertData(Req.Datas.OSCDtSolicita)}: </strong>
                 Solicitação feita pelo franqueado
               </Typography>
 
-              {Req.OSCComDtValidação !== null ? (
+              {Req.Assinaturas.OSCComDtValidação !== null ? (
                 <>
                   <Divider />
                   <Typography variant="subtitle1" gutterBottom>
-                    <strong>{convertData(Req.OSCComDtValidação)}: </strong>
+                    <strong>{convertData(Req.Assinaturas.OSCComDtValidação)}: </strong>
                     Validação pelo departamento comercial
                   </Typography>
                 </>
               ) : null}
 
-              {Req.OSCComAceite === true ? (
+              {Req.Assinaturas.OSCComAceite === true ? (
                 <Typography style={{ color: RED_PRIMARY }} variant="subtitle1" gutterBottom>
                   <strong>Aprovado</strong>
                 </Typography>
               ) : null}
 
-              {Req.OSCComAceite === false ? (
+              {Req.Assinaturas.OSCComAceite === false ? (
                 <Typography style={{ color: RED_PRIMARY }} variant="subtitle1" gutterBottom>
                   <strong>Rejeitado</strong>
                 </Typography>
               ) : null}
 
-              {Req.OSCComMotivo !== null ? (
+              {Req.Assinaturas.OSCComMotivo !== null ? (
                 <Typography variant="subtitle1" gutterBottom>
                   <strong>Mensagem(Comercial): </strong>
-                  {Req.OSCComMotivo}
+                  {Req.Assinaturas.OSCComMotivo}
                 </Typography>
               ) : null}
 
-              {Req.OSCTecDtValidação !== null ? (
+              {Req.Assinaturas.OSCTecDtValidação !== null ? (
                 <>
                   <Divider />
                   <Typography variant="subtitle1" gutterBottom>
-                    <strong>{convertData(Req.OSCTecDtValidação)}: </strong>
+                    <strong>{convertData(Req.Assinaturas.OSCTecDtValidação)}: </strong>
                     Validação pela Técnica
                   </Typography>
                 </>
               ) : null}
 
 
-              {Req.OSCTecAceite === true ? (
+              {Req.Assinaturas.OSCTecAceite === true ? (
                 <Typography style={{ color: RED_PRIMARY }} variant="subtitle1" gutterBottom>
                   <strong>Aprovado</strong>
                 </Typography>
               ) : null}
 
-              {Req.OSCTecAceite === false ? (
+              {Req.Assinaturas.OSCTecAceite === false ? (
                 <Typography style={{ color: RED_PRIMARY }} variant="subtitle1" gutterBottom>
                   <strong>Rejeitado</strong>
                 </Typography>
               ) : null}
 
-              {Req.OSCTecMotivo !== null ? (
+              {Req.Assinaturas.OSCTecMotivo !== null ? (
                 <Typography variant="subtitle1" gutterBottom>
                   <strong>Mensagem(Técnica): </strong>
                   {Req.OSCTecMotivo}
                 </Typography>
               ) : null}
 
-              {Req.OSCTecDtPrevisao !== null ? (
+              {Req.Assinaturas.OSCTecDtPrevisao !== null ? (
                 <Typography variant="subtitle1" gutterBottom>
                   <strong>Data estimada para finalizar montagem: </strong>
-                  {convertData(Req.OSCTecDtPrevisao, "LL")}
+                  {convertData(Req.Assinaturas.OSCTecDtPrevisao, "LL")}
                 </Typography>
               ) : null}
 
-              {Req.OSCExpDtPrevisao !== null ? (
+              {Req.Assinaturas.OSCExpDtPrevisao !== null ? (
                 <>
                   <Divider />
                   <Typography variant="subtitle1" gutterBottom>
                     <strong>Data de entrega foi prevista para: </strong>
-                    {convertData(Req.OSCExpDtPrevisao, "LL")}
+                    {convertData(Req.Assinaturas.OSCExpDtPrevisao, "LL")}
                   </Typography>
                 </>
               ) : null}
 
-              {Req.OSCDtFechamento !== null && Req.OSCStatus === "Concluido" ? (
+              {Req.Datas.OSCDtFechamento !== null && Req.OSCStatus === "Concluido" ? (
                 <>
                   <Divider />
                   <Typography variant="subtitle1" gutterBottom>
-                    <strong>{convertData(Req.OSCDtFechamento)}: </strong>
+                    <strong>{convertData(Req.Datas.OSCDtFechamento)}: </strong>
                     Franqueado confirmou ter recebido a máquina
                   </Typography>
                 </>
               ) : null}
-              {Req.OSCDtFechamento !== null && Req.OSCStatus === "Cancelado" ? (
+              {Req.Datas.OSCDtFechamento !== null && Req.OSCStatus === "Cancelado" ? (
                 <>
                   <Divider />
                   <Typography variant="subtitle1" gutterBottom>
-                    <strong>{convertData(Req.OSCDtFechamento)}: </strong>
+                    <strong>{convertData(Req.Datas.OSCDtFechamento)}: </strong>
                     Solicitação cancelada
                   </Typography>
                 </>

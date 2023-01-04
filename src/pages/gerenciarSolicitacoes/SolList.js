@@ -10,7 +10,7 @@ import { RED_SECONDARY } from "../../misc/colors";
 import AdmDialog from "./modals/admDialog";
 import HistDialog from "./modals/historyDialog";
 
-const emAndamento = (props) => {
+const emAndamento = ({ OS, onRequestPDF, }) => {
   return (
     <Table
       width={100}
@@ -35,20 +35,20 @@ const emAndamento = (props) => {
         </tr>
       </thead>
       <tbody>
-        {props.OS.map(
+        {OS.map(
           (OS) => (
-            <tr style={{ borderLeft: `10px solid ${borderColor(OS.OSCStatus)}` }}>
+            <tr>
               <td align="center">{OS.OSCId}</td>
               <td align="center">{OS.M0_CODFIL}</td>
               <td align="center">{OS.OSCStatus}</td>
-              <td align="center"><strong>{showStatus(OS)}</strong></td>
+              <td align="center"><strong>{OS.Stage}</strong></td>
               <td align="center">{convertData(OS.OSCDtSolicita)}</td>
               <td align="center">{convertData(OS.OSCDtPretendida)}</td>
               <td align="center"> {OS.OSCTecDtPrevisao !== "" ? convertData(OS.OSCTecDtPrevisao) : "NA"} </td>
               <td align="center"> {OS.OSCExpDtPrevisao !== "" ? convertData(OS.OSCExpDtPrevisao) : "NA"} </td>
               <td align="center"> <AdmDialog Req={OS} /> </td>
               <td> <HistDialog Req={OS} /> </td>
-              <td> <Button style={{ color: "#FFFFFF", backgroundColor: RED_SECONDARY, }} onClick={() => props.onRequestPDF(OS.OSCId)} > <FindInPage /> </Button> </td>
+              <td> <Button style={{ color: "#FFFFFF", backgroundColor: RED_SECONDARY, }} onClick={() => onRequestPDF(OS.OSCId)} > <FindInPage /> </Button> </td>
             </tr>
           )
         )}
@@ -58,40 +58,3 @@ const emAndamento = (props) => {
 }
 
 export default emAndamento;
-
-const borderColor = (status) => {
-  switch (status) {
-    case 'Cancelado':
-      return '#f5814c';
-
-    case 'Ativo':
-      return '#4f9eff';
-
-    case 'Concluido':
-      return '#29ff8d';
-    default:
-      return '#8403fc'
-  }
-}
-
-const showStatus = (OS) => {
-  if (OS === null) return;
-
-  if (OS.OSCComAceite === false || OS.OSCTecAceite === false) {
-    return "Supervisão";
-  } else if (OS.OSCComAceite === null && OS.OSCStatus === "Ativo") {
-    return "Comercial";
-  } else if (OS.OSCTecAceite === null && OS.OSCStatus === "Ativo") {
-    return "Técnica";
-  } else if (OS.OSCExpDtPrevisao === null && OS.OSCStatus === "Ativo") {
-    return "Transporte";
-  } else if (OS.OSCExpDtPrevisao !== null && OS.OSCStatus === "Ativo") {
-    return "Entrega";
-  } else if (OS.OSCStatus === "Cancelado") {
-    return "Nenhuma";
-  } else if (OS.OSCStatus === "Concluido") {
-    return "Nenhuma";
-  } else {
-    return "Desconhecido";
-  }
-}

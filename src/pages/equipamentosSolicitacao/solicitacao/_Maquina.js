@@ -31,9 +31,11 @@ import {
 } from "../../../global/actions/SolicitacaoAction";
 
 import { InstrucoesCartaoModal } from './_ModalInstrucoesCartao'
+import { InstrucoesPrivateLabel } from './_ModalInstrucoesPrivateLabel'
 
 const Requisicao = (props) => {
   const [modalInstrucaoCartao, setModalInstrucaoCartao] = useState(false)
+  const [modalInstrucaoPrivateLabel, setModalInstrucaoPrivateLabel] = useState(false)
 
   const {
     Pagamento,
@@ -75,8 +77,12 @@ const Requisicao = (props) => {
   };
 
   const handleChangeSistemaDePagamento = (value) => {
-    if (value === 'Cartão' || value === 'Cartão e Validador') {
+    if (value === 'Cartão' || value === 'Cartão e Validador' || value === 'Cartão e Private Label') {
       setModalInstrucaoCartao(true)
+    }
+
+    if (value === 'Private Label' || value === 'Cartão e Private Label') {
+      setModalInstrucaoPrivateLabel(true)
     }
 
     ChangePagamento(value)
@@ -84,10 +90,15 @@ const Requisicao = (props) => {
 
   return (
     <div className="YAlign">
-      <InstrucoesCartaoModal 
+      <InstrucoesCartaoModal
         open={modalInstrucaoCartao}
         onClose={() => setModalInstrucaoCartao(false)}
         title='Sistema de Pagamento C/ Cartão'
+      />
+      <InstrucoesPrivateLabel 
+        open={modalInstrucaoPrivateLabel}
+        onClose={() => setModalInstrucaoPrivateLabel(false)}
+        title='Sistema de Pagamento Private Label'
       />
       <div
         style={{ justifyContent: "flex-start", alignItems: "flex-start" }}
@@ -120,8 +131,10 @@ const Requisicao = (props) => {
         >
           <MenuItem value="Sem Pagamento">Sem Pagamento</MenuItem>
           <MenuItem value="Cartão">Cartão</MenuItem>
+          <MenuItem value="Private Label">Private Label</MenuItem>
           <MenuItem value="Validador">Validador</MenuItem>
           <MenuItem value="Cartão e Validador">Cartão e Validador</MenuItem>
+          <MenuItem value="Cartão e Private Label">Cartão e Private Label</MenuItem>
         </Selecao>
 
         <div>

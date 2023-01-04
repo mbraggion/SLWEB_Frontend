@@ -184,7 +184,7 @@ const whichActions = (status, zerados, wait, onCreateNewInventory, onCloseOpenIn
           <Tooltip
             title={
               <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
-                Lançar inventário do mes selecionado
+                Lançar inventário do mês selecionado
               </div>
             }
             placement="top"
@@ -203,7 +203,7 @@ const whichActions = (status, zerados, wait, onCreateNewInventory, onCloseOpenIn
           <Tooltip
             title={
               <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
-                Descarta do inventário todos os produtos que tenham saldo 0 e que não tenham sido movimentados no mes
+                Descarta do inventário todos os produtos que tenham saldo 0 e que não tenham sido movimentados no mês
               </div>
             }
             placement="top"
@@ -234,7 +234,7 @@ const whichActions = (status, zerados, wait, onCreateNewInventory, onCloseOpenIn
           <Tooltip
             title={
               <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
-                Fechar inventário do mes
+                Fechar inventário do mês
               </div>
             }
             placement="top"
@@ -251,7 +251,7 @@ const whichActions = (status, zerados, wait, onCreateNewInventory, onCloseOpenIn
           <Tooltip
             title={
               <div style={{ fontSize: "14px", color: "#FFF", lineHeight: "20px" }}>
-                Descarta do inventário todos os produtos que tenham saldo 0 e que não tenham sido movimentados no mes
+                Descarta do inventário todos os produtos que tenham saldo 0 e que não tenham sido movimentados no mês
               </div>
             }
             placement="top"

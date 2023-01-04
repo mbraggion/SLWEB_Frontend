@@ -4,9 +4,9 @@ import React, { useEffect } from 'react';
 import { Button, Divider, MenuItem, Typography, CircularProgress } from '@material-ui/core';
 import { FilterList } from '@material-ui/icons';
 
-import Select from '../../components/materialComponents/Select';
-import { RED_PRIMARY } from '../../misc/colors';
-import { capitalizeMonthFirstLetter } from '../../misc/commom_functions';
+import Select from '../../../components/materialComponents/Select';
+import { RED_PRIMARY } from '../../../misc/colors';
+import { capitalizeMonthFirstLetter } from '../../../misc/commom_functions';
 
 export const NovaColetaContent = (props) => {
   const {
@@ -46,7 +46,9 @@ export const NovaColetaContent = (props) => {
           label="Equipamento"
           disabled={false}
           value={detalhes.EquiCod}
-          onChange={(e) => handleLookForPastData(equipamentos.filter(eq => eq.EquiCod === e.target.value)[0])}
+          onChange={(e) => {
+            handleLookForPastData(equipamentos.filter(eq => eq.EquiCod === e.target.value)[0])
+          }}
         >
           {equipamentos.map((eq) => (
             <MenuItem

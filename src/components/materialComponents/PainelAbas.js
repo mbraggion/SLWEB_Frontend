@@ -33,6 +33,7 @@ export default function PainelAbas(props) {
           {props.titles.map((title, i) => (
             <Tab
               label={title}
+              style={{ fontWeight: 'bold' }}
               {...a11yProps(i)}
               key={i}
             />

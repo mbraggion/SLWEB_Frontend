@@ -388,12 +388,12 @@ const DetailsModal = ({ pedidoDet, open, actualPedidoInfo, setActualPedidoInfo, 
         Toast('Não é possível editar pedidos com mais de 10 dias', 'error')
         return
       }
-
-      EditPedido(actualPedidoInfo.Pvc_ID)
     }
-
+    
     ResetarDetalhes()
     ClearCarrinho()
+
+    EditPedido(actualPedidoInfo.Pvc_ID)
 
     //escolhe o cliente correto
     Clientes.forEach((cliente) =>

@@ -158,6 +158,7 @@ function Entrega(props) {
         <TextField
           id="outlined-basic"
           value={Contato}
+          className={classes.TextInput}
           onChange={(e) => DefineContato(e.target.value)}
           label="Contato"
           variant="outlined"
@@ -175,6 +176,7 @@ function Entrega(props) {
       <form className={classes.root} noValidate autoComplete="off">
         <TextField
           id="outlined-basic"
+          className={classes.TextInput}
           value={Telefone_Contato}
           onChange={(e) => ChooseTelefone(e.target.value)}
           label="Telefone de Contato"
@@ -187,7 +189,7 @@ function Entrega(props) {
             id="outlined-multiline-flexible"
             label="Observações"
             multiline
-            rowsMax={4}
+            maxRows={4}
             value={Observacao}
             onChange={(e) => DefineOBS(e.target.value)}
             variant="outlined"
@@ -250,6 +252,11 @@ const useStyles = makeStyles((theme) => ({
       width: "25ch",
     },
   },
+  TextInput: {
+    '& div>input:nth-child(1)': {
+      margin: '0px 8px',
+    },
+  }
 }));
 
 const datepickerconfig = {

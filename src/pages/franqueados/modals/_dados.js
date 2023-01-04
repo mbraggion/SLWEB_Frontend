@@ -14,6 +14,8 @@ export const Dados = ({ grpven }) => {
 
     useEffect(() => {
         LoadData(grpven)
+
+        // eslint-disable-next-line
     }, [])
 
     const LoadData = async (grpven) => {
