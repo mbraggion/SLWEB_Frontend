@@ -4,7 +4,7 @@ import { api } from "../../services/api";
 
 import { Typography } from "@material-ui/core";
 import { Input as InputIcon, TagFaces } from "@material-ui/icons";
-import Image from "../../assets/logo_sl.png";
+import Image from "../../assets/Logo/logo_sl.png";
 import { Box, Container, Logo } from "../../components/commom_out";
 import Button from "../../components/materialComponents/Button";
 import Input from "../../components/materialComponents/InputUnderline";

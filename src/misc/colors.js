@@ -1,4 +1,5 @@
-export const PRIMARY_ORANGE = '#FAC090'
+export const ORANGE_PRIMARY = '#FAC090'
+export const ORANGE_SECONDARY = '#f5814c'
 
 export const PRIMARY_YELLOW = '#f5e942'
 

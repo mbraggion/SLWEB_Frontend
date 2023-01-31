@@ -39,6 +39,12 @@ export const Helpers = () => {
     loadMainData()
   }, [path])
 
+  useEffect(() => {
+    if(blocks.Deliver && blocks.Deliver.length > 0) {
+      alert(`Por favor, confirme o recebimento da(s) solicitação(ões) N ${blocks.Deliver.map(os => os.OSCId)}, caso ainda não tenha recebido a(s) solicitação(ões) entre em contato com o SAF.`)
+    }
+  }, [blocks])
+
   return (
     <div
       style={{
@@ -108,7 +114,7 @@ const fixedContentToShow = (blocks) => {
     )
   }
 
-  if (blocks.Deliver) {
+  if (blocks.Deliver && blocks.Deliver.length > 0) {
     returnableIcons.push(
       <>
         <Tooltip

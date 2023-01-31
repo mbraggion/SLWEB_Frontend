@@ -24,6 +24,8 @@ export const RaspyContainer = ({ selectedAnx, onSelectAnx, selectedAnxName }) =>
   useEffect(() => {
     if (selectedMargem.de !== null && selectedMargem.ate !== null) {
       fetchRaspy()
+    } else {
+      setRaspy([])
     }
     // eslint-disable-next-line
   }, [selectedMargem])
@@ -118,9 +120,7 @@ export const RaspyContainer = ({ selectedAnx, onSelectAnx, selectedAnxName }) =>
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
+    overflowY: 'auto',
     width: '100%',
     margin: '0px 0px 0px 8px',
     boxShadow: "0 2px 2px 0 rgb(0 0 0 / 14%), 0 3px 1px -2px rgb(0 0 0 / 12%), 0 1px 5px 0 rgb(0 0 0 / 20%)",

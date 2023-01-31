@@ -5,7 +5,7 @@ import { Button } from '@material-ui/core';
 
 import { BoxTitle } from '../../components/commom_in';
 
-function News({ onOpenModal, News, onOpenNewVPNModal }) {
+function News({ onOpenModal, News }) {
 
   return (
     <Slider

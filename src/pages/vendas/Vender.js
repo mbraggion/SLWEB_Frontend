@@ -31,8 +31,6 @@ function Vender(props) {
 
   const { SetCheckedProd, ChangeCliente, ChangeTipoVenda, SetObs, SetCondPag, SetDepOrigem, SetDepDestino, EditPedido, SwitchTab } = props;
 
-  console.log(FixPedido)
-
   useEffect(() => {
     SwitchTab(0)
   }, [SwitchTab])

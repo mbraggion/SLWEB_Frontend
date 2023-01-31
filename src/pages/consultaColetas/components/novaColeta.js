@@ -61,7 +61,6 @@ export const NovaColeta = (props) => {
       })
 
     } catch (err) {
-      console.log(err)
     }
   }
 

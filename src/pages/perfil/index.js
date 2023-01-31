@@ -14,7 +14,7 @@ import InputUnderline from "../../components/materialComponents/InputUnderline";
 import Button from "../../components/materialComponents/Button";
 import { Create as CreateIcon } from '@material-ui/icons';
 
-import AnnonProfileIcon from '../../assets/annon_profile_icon.png'
+import AnnonProfileIcon from '../../assets/Logo/annon_profile_icon.png'
 import { Settings, VpnKey, Check } from "@material-ui/icons/";
 import {
   MenuItem,

@@ -18,11 +18,13 @@ import QRcodeModal from './modals/QRcodeModal'
 
 const Equipamentos = () => {
   const [loaded, setLoaded] = useState(false);
+
   const [linkModalState, setLinkModalState] = useState(false);
   const [MiFixModalState, setMiFixModalState] = useState(false);
   const [reportModalState, setReportModalState] = useState(false);
   const [confirmModalState, setConfirmModalState] = useState(false);
   const [QRModalState, setQRModalState] = useState(false);
+
   const [cooldownSync, setCooldownSync] = useState(false);
   const [alreadyReported, setAlreadyReported] = useState(true);
 
@@ -80,26 +82,7 @@ const Equipamentos = () => {
 
   const HandleOpenQRModal = async (ativo) => {
     setQRModalState(true)
-
-    try {
-      const response = await api.get(`/ativo/qrcode/${ativo}`, {
-        responseType: 'arraybuffer'
-      })
-
-      const png2b64 = _imageEncode(response.data)
-      const imageOutput = document.getElementById('QRCODE')
-
-      imageOutput.src = png2b64
-
-    } catch (err) {
-    }
-  }
-
-  const _imageEncode = (arrayBuffer) => {
-    // let u8 = new Uint8Array(arrayBuffer)
-    let b64encoded = btoa([].reduce.call(new Uint8Array(arrayBuffer), function (p, c) { return p + String.fromCharCode(c) }, ''))
-    let mimetype = "image/png"
-    return "data:" + mimetype + ";base64," + b64encoded
+    setTargetAtivo(ativo)
   }
 
   const HandleCloseLinkModal = () => {
@@ -122,10 +105,7 @@ const Equipamentos = () => {
 
   const HandleCloseQRModal = () => {
     setQRModalState(false)
-
-    const imageOutput = document.getElementById('QRCODE')
-
-    imageOutput.src = null
+    setTargetAtivo('')
   }
 
   const HandleSyncTMT = async (ativo) => {
@@ -194,7 +174,7 @@ const Equipamentos = () => {
   }
 
   const handleConfirmAddresses = async () => {
-    if(enderecos.length < equipamentos.length){
+    if (enderecos.length < equipamentos.length) {
       Toast('Uma ou mais máquinas não estão vinculadas a nenhum endereço', 'warn')
       return
     }
@@ -277,16 +257,9 @@ const Equipamentos = () => {
         open={QRModalState}
         onClose={HandleCloseQRModal}
         title='QR Code'
-      >
-        <img
-          alt='QR CODE'
-          id='QRCODE'
-          style={{
-            width: '200px',
-            height: '200px',
-          }}
-        />
-      </QRcodeModal>
+        ativo={targetAtivo}
+      />
+        
     </Panel>
 }
 

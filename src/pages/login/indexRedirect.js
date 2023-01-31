@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { Typography } from "@material-ui/core";
-import Image from "../../assets/logo_sl.png";
+import Image from "../../assets/Logo/logo_sl.png";
 import { Box, Container, Logo } from "../../components/commom_out";
 import { Toast } from '../../components/toasty';
 import { RED_PRIMARY } from '../../misc/colors';

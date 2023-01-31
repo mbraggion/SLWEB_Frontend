@@ -24,7 +24,7 @@ const ConsultaColetas = ({ match }) => {
         padding: "0px",
       }}
     >
-      {/* <Paper className={classes.root}>
+      <Paper className={classes.root}>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -35,13 +35,13 @@ const ConsultaColetas = ({ match }) => {
           <Tab label="Coletas" {...a11yProps(0)} icon={<EmojiFoodBeverageIcon />} />
           <Tab label="SLRaspy" {...a11yProps(1)} icon={<AttachMoneyIcon />} />
         </Tabs>
-        <TabPanel value={value} index={0}> */}
+        <TabPanel value={value} index={0}>
           <Leituras match={match} />
-        {/* </TabPanel>
+        </TabPanel>
         <TabPanel value={value} index={1}>
           <SLRaspy match={match} />
         </TabPanel>
-      </Paper> */}
+      </Paper>
     </Panel>
   )
 }

@@ -22,6 +22,15 @@ export const Acoes = ({ grpven }) => {
         // eslint-disable-next-line
     }, [])
 
+    useEffect(() => {
+        if(parametros !== null && parametros.ValidadeLimiteExtra === null){
+            setParametros({
+                ...parametros,
+                ValidadeLimiteExtra: moment().subtract(3, 'hours').toDate()
+            })
+        }
+    }, [parametros])
+
     const LoadData = async (grpven) => {
         setLoading(true)
 
@@ -114,9 +123,7 @@ export const Acoes = ({ grpven }) => {
                         }))}
                         disabled={fetching}
                         label='Validade'
-                        style={{
-                            marginLeft: '8px'
-                        }}
+                        style={{ marginLeft: '8px' }}
                         focus={false}
                         defaultValue={parametros.ValidadeLimiteExtra !== null ? moment(parametros.ValidadeLimiteExtra).toDate() : moment().toDate()}
                     />

@@ -10,7 +10,7 @@ import { RED_SECONDARY } from "../../misc/colors";
 import AdmDialog from "./modals/admDialog";
 import HistDialog from "./modals/historyDialog";
 
-const emAndamento = ({ OS, onRequestPDF, }) => {
+const emAndamento = ({ OS, onRequestPDF, onRefresh }) => {
   return (
     <Table
       width={100}
@@ -42,11 +42,11 @@ const emAndamento = ({ OS, onRequestPDF, }) => {
               <td align="center">{OS.M0_CODFIL}</td>
               <td align="center">{OS.OSCStatus}</td>
               <td align="center"><strong>{OS.Stage}</strong></td>
-              <td align="center">{convertData(OS.OSCDtSolicita)}</td>
-              <td align="center">{convertData(OS.OSCDtPretendida)}</td>
-              <td align="center"> {OS.OSCTecDtPrevisao !== "" ? convertData(OS.OSCTecDtPrevisao) : "NA"} </td>
-              <td align="center"> {OS.OSCExpDtPrevisao !== "" ? convertData(OS.OSCExpDtPrevisao) : "NA"} </td>
-              <td align="center"> <AdmDialog Req={OS} /> </td>
+              <td align="center">{convertData(OS.Datas.OSCDtSolicita)}</td>
+              <td align="center">{convertData(OS.Datas.OSCDtPretendida)}</td>
+              <td align="center"> {OS.Assinaturas.OSCTecDtPrevisao !== "" ? convertData(OS.Assinaturas.OSCTecDtPrevisao) : "NA"} </td>
+              <td align="center"> {OS.Assinaturas.OSCExpDtPrevisao !== "" ? convertData(OS.Assinaturas.OSCExpDtPrevisao) : "NA"} </td>
+              <td align="center"> <AdmDialog Req={OS} onRefresh={onRefresh} /> </td>
               <td> <HistDialog Req={OS} /> </td>
               <td> <Button style={{ color: "#FFFFFF", backgroundColor: RED_SECONDARY, }} onClick={() => onRequestPDF(OS.OSCId)} > <FindInPage /> </Button> </td>
             </tr>

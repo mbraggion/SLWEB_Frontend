@@ -2,7 +2,7 @@ import React from 'react';
 // import moment from 'moment'
 import { Link } from "react-router-dom";
 
-import { ErrorOutline, Room, PlaylistAddCheck, Add } from '@material-ui/icons'
+import { ErrorOutline, PlaylistAddCheck, Add } from '@material-ui/icons'
 import { Typography, Button } from '@material-ui/core';
 
 import { GREY_SECONDARY } from '../../misc/colors'
@@ -34,7 +34,7 @@ const Header = (props) => {
         >
           Reportar problema
         </Button>
-        <Button
+        {/* <Button
           style={{ marginBottom: '8px', width: '230px' }}
           color="primary"
           variant="contained"
@@ -43,7 +43,7 @@ const Header = (props) => {
           startIcon={<Room />}
         >
           Chamados MiFix
-        </Button>
+        </Button> */}
         <Button
           style={{ marginBottom: '8px', width: '230px' }}
           color="primary"

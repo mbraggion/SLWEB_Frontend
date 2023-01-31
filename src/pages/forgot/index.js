@@ -4,7 +4,7 @@ import { Toast } from "../../components/toasty";
 import { Link } from "react-router-dom";
 
 import { Container, Box, Logo } from "../../components/commom_out";
-import Image from "../../assets/logo_sl.png";
+import Image from "../../assets/Logo/logo_sl.png";
 import Button from "../../components/materialComponents/Button";
 import InputUnderline from "../../components/materialComponents/InputUnderline";
 import { LockOutlined, ArrowBack, Work } from "@material-ui/icons";

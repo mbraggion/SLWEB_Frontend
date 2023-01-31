@@ -108,9 +108,8 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    height: '100%',
+    height: 'auto',
     width: '100%',
-    overflowY: 'auto',
     background: 'rgba(0,0,0,0.08)',
     margin: '0px 0px 8px 0px'
   }

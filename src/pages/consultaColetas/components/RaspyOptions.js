@@ -108,7 +108,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'row',
-    height: '63px',
+    height: '70px',
     width: '100%',
     borderBottom: '1px solid #ccc',
     alignItems: 'center',

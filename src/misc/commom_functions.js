@@ -103,7 +103,7 @@ export const roleLevel = () => {
       return REACT_APP_SISTEMA_ROLE_LEVEL;
 
     default:
-      return 0;
+      return '0';
   }
 };
 

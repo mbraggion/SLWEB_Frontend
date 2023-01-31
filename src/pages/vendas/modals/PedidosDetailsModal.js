@@ -112,7 +112,7 @@ const DetailsModal = ({ pedidoDet, open, actualPedidoInfo, setActualPedidoInfo, 
               arrow
 
             >
-              <IconButton disabled={wait} onClick={() => handleEditVenda()} color="secondary">
+              <IconButton disabled={wait} onClick={() => handleCopyVenda()} color="secondary">
                 <FileCopy />
               </IconButton>
             </Tooltip>
@@ -375,6 +375,54 @@ const DetailsModal = ({ pedidoDet, open, actualPedidoInfo, setActualPedidoInfo, 
       setWait(false);
     }
 
+  }
+
+  const handleCopyVenda = () => {
+    ResetarDetalhes()
+    ClearCarrinho()
+
+    //escolhe o cliente correto
+    Clientes.forEach((cliente) =>
+      String(cliente.CNPJ) === String(actualPedidoInfo.CNPJ) ? ChangeCliente(cliente) : null
+    );
+
+    //define detalhes do pedido
+    ChangeTipoVenda(String(actualPedidoInfo.Tipo).trim())
+    if (String(actualPedidoInfo.Tipo).trim() === 'R') {
+      SetDepOrigem(String(actualPedidoInfo.DepOrigemId).trim())
+      SetDepDestino(String(actualPedidoInfo.DepDestId).trim())
+    } else if (String(actualPedidoInfo.Tipo).trim() === 'V') {
+      SetCondPag(String(actualPedidoInfo.CpgId).trim())
+    }
+
+    SetObs(actualPedidoInfo.MsgNF !== null ? String(actualPedidoInfo.MsgNF).trim() : '')
+
+    //adiciono os produtos no carrinho
+    pedidoDet.forEach(produto => SetCheckedProd(produto.ProdId))
+    UpdateCarrinho()
+
+    //corrijo o preco padrao dos itens com o preco do pedido
+    pedidoDet.forEach(produto => {
+      SetBuyQtt({
+        id: produto.ProdId,
+        value: produto.FatConversao !== null ? produto.PvdQtd / produto.FatConversao : produto.PvdQtd,
+        field: 'Quantidade'
+      })
+
+      SetBuyQtt({
+        id: produto.ProdId,
+        value: produto.PvdVlrUnit,
+        field: 'Vlr'
+      })
+
+      SetBuyQtt({
+        id: produto.ProdId,
+        value: produto.PdvVlrDesc !== null ? produto.PdvVlrDesc : 0,
+        field: 'Desconto'
+      })
+    })
+
+    SwitchTab(0)
   }
 
   const handleEditVenda = () => {

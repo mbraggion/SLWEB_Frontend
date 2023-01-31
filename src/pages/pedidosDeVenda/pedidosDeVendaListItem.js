@@ -5,7 +5,7 @@ import { api } from '../../services/api'
 
 import { Accordion, ButtonGroup, AccordionDetails, AccordionSummary, Button, Divider, makeStyles, Typography } from '@material-ui/core'
 import { ExpandMore as ExpandMoreIcon, RecordVoiceOver as RecordVoiceOverIcon, NaturePeople as NaturePeopleIcon, Close as CloseIcon, Delete as DeleteIcon, Replay as ReplayIcon, Sync as SyncIcon, PhotoFilter as PhotoFilterIcon } from '@material-ui/icons'
-import { BLUE_SECONDARY, PRIMARY_ORANGE, GREY_SECONDARY, RED_PRIMARY, PRIMARY_YELLOW, GREEN_PRIMARY, RED_SECONDARY } from '../../misc/colors'
+import { BLUE_SECONDARY, ORANGE_PRIMARY, GREY_SECONDARY, RED_PRIMARY, PRIMARY_YELLOW, GREEN_PRIMARY, RED_SECONDARY } from '../../misc/colors'
 import { Toast } from '../../components/toasty'
 
 export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpandedAccordion, refresh }) => {
@@ -204,7 +204,7 @@ export const PedidosDeVendaListItem = ({ pedido, ExpandedID, handleChangeExpande
           <Button
             className={classes.button}
             disabled={true}
-            startIcon={<PhotoFilterIcon style={{ color: PRIMARY_ORANGE }} />}
+            startIcon={<PhotoFilterIcon style={{ color: ORANGE_PRIMARY }} />}
             variant='outlined'
           >
             Converter para devolução
@@ -349,7 +349,7 @@ const returnBorderColor = (pedido) => {
       case 2:
         return RED_PRIMARY
       case 3:
-        return PRIMARY_ORANGE
+        return ORANGE_PRIMARY
       default:
         return '#FFF'
     }
