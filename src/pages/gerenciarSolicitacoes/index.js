@@ -15,35 +15,35 @@ import Loading from '../../components/loading_screen';
 import { Toast } from '../../components/toasty';
 import { Panel } from '../../components/commom_in';
 import { dateCheck } from '../../misc/commom_functions';
-// import {
-//   RED_PRIMARY,
-//   GREEN_SECONDARY,
-//   BLUE_SECONDARY,
-//   ORANGE_SECONDARY,
-// } from "../../misc/colors";
+import {
+	GREEN_PRIMARY,
+	BLUE_SECONDARY,
+	ORANGE_SECONDARY,
+} from '../../misc/colors';
 
 import SolList from './SolList';
-
+import { StatsModal } from './modals/statsModal';
 import { SolicitacoesOptions } from './options';
 
 const Management = () => {
 	const [OSS, setOSS] = useState([]);
-	// const [stages, setStages] = useState({
-	// 	Total: 0,
-	// 	Ativas: 0,
-	// 	Concluidas: 0,
-	// 	Canceladas: 0,
-	// 	Supervisao: 0,
-	// 	Comercial: 0,
-	// 	Tecnica: 0,
-	// 	Montagem: 0,
-	// 	Expedicao: 0,
-	// 	Entregando: 0,
-	// });
+	const [stages, setStages] = useState({
+		Total: 0,
+		Ativas: 0,
+		Concluidas: 0,
+		Canceladas: 0,
+		Supervisao: 0,
+		Comercial: 0,
+		Tecnica: 0,
+		Montagem: 0,
+		Expedicao: 0,
+		Entregando: 0,
+	});
 	const [loaded, setLoaded] = useState(false);
 	const [expanded, setExpanded] = useState('panel1');
 	const [filtro, setFiltro] = useState('');
 	const [mostrarPendencias, setMostrarPendencias] = useState(true);
+	const [statsModalOpen, setStatsModalOpen] = useState(false);
 
 	const classes = useStyles();
 	const status = ['Ativo', 'Cancelado', 'Concluido'];
@@ -58,7 +58,7 @@ const Management = () => {
 			const response = await api.get('/equip/requests/all');
 
 			setOSS(response.data.oss);
-			// setStages(response.data.status);
+			setStages(response.data.status);
 			setLoaded(true);
 		} catch (err) {}
 	}
@@ -88,21 +88,45 @@ const Management = () => {
 		}
 	};
 
+	const handleOpenStatsModal = () => {
+		setStatsModalOpen(true);
+	};
+
+	const handleCloseStatsModal = () => {
+		setStatsModalOpen(false);
+	};
+
+	const fixedStats = Object.entries(stages).map(([key, value]) => [
+		`${key} (${value})`,
+		value,
+	]);
+
+	const geral = fixedStats.slice(1, 4);
+	const responsavel = fixedStats.slice(4, 10);
+
 	return !loaded ? (
 		<Loading />
 	) : (
-		<Panel
-			style={{
-				justifyContent: 'flex-start',
-				alignItems: 'center',
-			}}
-		>
-			<SolicitacoesOptions
-				onChangeFiltro={setFiltro}
-				mostrarPendencias={mostrarPendencias}
-				switchPendencias={setMostrarPendencias}
+		<>
+			<StatsModal
+				open={statsModalOpen}
+				onClose={handleCloseStatsModal}
+				statsGeral={[['OS', 'Geral'], ...geral]}
+				statsResponsavel={[['OS', 'Responsável'], ...responsavel]}
 			/>
-			{/* <div className={classes.outerContainer}>
+			<Panel
+				style={{
+					justifyContent: 'flex-start',
+					alignItems: 'center',
+				}}
+			>
+				<SolicitacoesOptions
+					onChangeFiltro={setFiltro}
+					mostrarPendencias={mostrarPendencias}
+					switchPendencias={setMostrarPendencias}
+					onOpenStatsModal={handleOpenStatsModal}
+				/>
+				{/* <div className={classes.outerContainer}>
         <div className={classes.firstContainer}>
           <label style={{ backgroundColor: RED_PRIMARY }} className={classes.label}>TOTAL: {stages.Total}</label>
         </div>
@@ -121,55 +145,56 @@ const Management = () => {
         </div>
       </div> */}
 
-			<div className={classes.root}>
-				{status.map((s) => (
-					<Accordion
-						expanded={expanded === s}
-						onChange={handleChange(s)}
-						disabled={
-							returnOSsFiltered(
-								OSS.filter((OS) => OS.OSCStatus === s),
-								mostrarPendencias,
-								filtro
-							).length === 0
-						}
-					>
-						<AccordionSummary
-							expandIcon={<ExpandMoreIcon />}
-							aria-controls={`${s}-content`}
-							id={`${s}-header`}
-						>
-							<Typography
-								variant='h6'
-								style={{
-									color: returnCorrectBorderColor(s),
-								}}
-							>
-								{s === 'Ativo'
-									? 'Solicitações em Andamento'
-									: s === 'Cancelado'
-									? 'Solicitações Canceladas'
-									: s === 'Concluido'
-									? 'Solicitações Concluídas'
-									: '???'}
-								({OSS.filter((OS) => OS.OSCStatus === s).length})
-							</Typography>
-						</AccordionSummary>
-						<AccordionDetails>
-							<SolList
-								OS={returnOSsFiltered(
+				<div className={classes.root}>
+					{status.map((s) => (
+						<Accordion
+							expanded={expanded === s}
+							onChange={handleChange(s)}
+							disabled={
+								returnOSsFiltered(
 									OSS.filter((OS) => OS.OSCStatus === s),
 									mostrarPendencias,
 									filtro
-								)}
-								onRequestPDF={handleRetrivePDF}
-								onRefresh={LoadData}
-							/>
-						</AccordionDetails>
-					</Accordion>
-				))}
-			</div>
-		</Panel>
+								).length === 0
+							}
+						>
+							<AccordionSummary
+								expandIcon={<ExpandMoreIcon />}
+								aria-controls={`${s}-content`}
+								id={`${s}-header`}
+							>
+								<Typography
+									variant='h6'
+									style={{
+										color: returnCorrectBorderColor(s),
+									}}
+								>
+									{s === 'Ativo'
+										? 'Solicitações em Andamento'
+										: s === 'Cancelado'
+										? 'Solicitações Canceladas'
+										: s === 'Concluido'
+										? 'Solicitações Concluídas'
+										: '???'}
+									({OSS.filter((OS) => OS.OSCStatus === s).length})
+								</Typography>
+							</AccordionSummary>
+							<AccordionDetails>
+								<SolList
+									OS={returnOSsFiltered(
+										OSS.filter((OS) => OS.OSCStatus === s),
+										mostrarPendencias,
+										filtro
+									)}
+									onRequestPDF={handleRetrivePDF}
+									onRefresh={LoadData}
+								/>
+							</AccordionDetails>
+						</Accordion>
+					))}
+				</div>
+			</Panel>
+		</>
 	);
 };
 
@@ -257,13 +282,13 @@ const returnOSsFiltered = (oss, shouldShowPending, filterString) => {
 const returnCorrectBorderColor = (status) => {
 	switch (status) {
 		case 'Cancelado':
-			return '#f5814c';
+			return ORANGE_SECONDARY;
 
 		case 'Ativo':
-			return '#4f9eff';
+			return BLUE_SECONDARY;
 
 		case 'Concluido':
-			return '#29ff8d';
+			return GREEN_PRIMARY;
 		default:
 			return '#8403fc';
 	}

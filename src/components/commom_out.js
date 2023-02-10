@@ -1,6 +1,6 @@
-import Styled from 'styled-components'
+import Styled from 'styled-components';
 
-import background from '../assets/background/login_fig.png'
+import background from '../assets/background/login_fig.png';
 
 export const Container = Styled.div`
     display: flex;
@@ -15,7 +15,7 @@ export const Container = Styled.div`
     background-size: 100vh; 
     background-position: left;
     object-fit: cover;
-`
+`;
 
 export const Box = Styled.form`
     display: flex;
@@ -47,8 +47,8 @@ export const Box = Styled.form`
             opacity: 1;
         }
     }    
-`
+`;
 export const Logo = Styled.img`
     height: 30%;
     width: unset;
-`
+`;

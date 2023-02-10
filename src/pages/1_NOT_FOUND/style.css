@@ -1,82 +1,73 @@
+.not_found {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 
-.not_found{
-  display:flex;
-  justify-content:space-between;
-  align-items: center;
+	width: 80%;
+	margin: 0 auto;
 
-  width: 80%;
-  margin: 0 auto;
-
-  font-family: Roboto, sans-serif;
- 
+	font-family: Roboto, sans-serif;
 }
-.not_found img{
-  width: 50%;
-  height: 50%;
-  
+.not_found img {
+	width: 50%;
+	height: 50%;
 }
 .not_found_lost {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 
-  align-items: center;
-  text-align: center;
+	align-items: center;
+	text-align: center;
 
-  width: 50vw;
-
+	width: 50vw;
 }
 
-.button{
-  width: 20rem;
-  height: 4rem;
-  background-color: #f90f15;
-  border-radius: 2rem;
-  color: #fff;
-  text-align: center;
+.button {
+	width: 20rem;
+	height: 4rem;
+	background-color: #f90f15;
+	border-radius: 2rem;
+	color: #fff;
+	text-align: center;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
-.button:active{
-  background-color: #f90f15
+.button:active {
+	background-color: #f90f15;
 }
 
 @media only screen and (max-width: 768px) {
-  .not_found{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    
-    height: 80vh;
-    text-align: center;
+	.not_found {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 
-    width: 50vw;
-    
+		height: 80vh;
+		text-align: center;
 
-  }
+		width: 50vw;
+	}
 
-  .not_found img{
-    width: 100%;
-    margin-bottom: 0;
+	.not_found img {
+		width: 100%;
+		margin-bottom: 0;
 
-    width: 50vw;
-  }
+		width: 50vw;
+	}
 
+	.not_found_lost h1 {
+		font-size: 3rem;
+		margin-bottom: 0;
 
-  .not_found_lost h1{
-    font-size: 3rem;
-    margin-bottom: 0;
-    
-    width: 100%;
-  }
-  .not_found_lost h3{
-    font-size: 1.2rem;
-    width: 100%;
-  }
-  
+		width: 100%;
+	}
+	.not_found_lost h3 {
+		font-size: 1.2rem;
+		width: 100%;
+	}
 }

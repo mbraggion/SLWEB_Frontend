@@ -1,12 +1,9 @@
-import styled from "styled-components"; 
-
+import styled from 'styled-components';
 
 export const Container = styled.div`
-    display: flex;
-    `
+	display: flex;
+`;
 
-export const ButtonClose = styled.button`
-`
+export const ButtonClose = styled.button``;
 
-export const Content = styled.div`
-`
+export const Content = styled.div``;

@@ -1,267 +1,270 @@
-import React, { useEffect, useState } from 'react'
-import { api } from '../../services/api'
-import moment from 'moment'
+import React, { useEffect, useState } from 'react';
+import { api } from '../../services/api';
+import moment from 'moment';
 
 import { Button } from '@material-ui/core';
 
-import { Panel } from '../../components/commom_in'
-import Loading from '../../components/loading_screen'
-import { Toast } from '../../components/toasty'
+import { Panel } from '../../components/commom_in';
+import Loading from '../../components/loading_screen';
+import { Toast } from '../../components/toasty';
 
-import Header from './Header'
-import MainSection from './Main'
-import MiFixModal from './modals/MiFixModal'
-import ReportModal from './modals/ReportModal'
-import LinkModal from './modals/LinkModal'
-import ConfirmModal from './modals/ConfirmModal'
-import QRcodeModal from './modals/QRcodeModal'
+import Header from './Header';
+import MainSection from './Main';
+import MiFixModal from './modals/MiFixModal';
+import ReportModal from './modals/ReportModal';
+import LinkModal from './modals/LinkModal';
+import ConfirmModal from './modals/ConfirmModal';
+import QRcodeModal from './modals/QRcodeModal';
 
 const Equipamentos = () => {
-  const [loaded, setLoaded] = useState(false);
+	const [loaded, setLoaded] = useState(false);
 
-  const [linkModalState, setLinkModalState] = useState(false);
-  const [MiFixModalState, setMiFixModalState] = useState(false);
-  const [reportModalState, setReportModalState] = useState(false);
-  const [confirmModalState, setConfirmModalState] = useState(false);
-  const [QRModalState, setQRModalState] = useState(false);
+	const [linkModalState, setLinkModalState] = useState(false);
+	const [MiFixModalState, setMiFixModalState] = useState(false);
+	const [reportModalState, setReportModalState] = useState(false);
+	const [confirmModalState, setConfirmModalState] = useState(false);
+	const [QRModalState, setQRModalState] = useState(false);
 
-  const [cooldownSync, setCooldownSync] = useState(false);
-  const [alreadyReported, setAlreadyReported] = useState(true);
+	const [cooldownSync, setCooldownSync] = useState(false);
+	const [alreadyReported, setAlreadyReported] = useState(true);
 
-  const [equipamentos, setEquipamentos] = useState([]);
-  const [clientes, setClientes] = useState([]);
-  const [enderecos, setEnderecos] = useState([]);
-  const [targetAtivo, setTargetAtivo] = useState('');
+	const [equipamentos, setEquipamentos] = useState([]);
+	const [clientes, setClientes] = useState([]);
+	const [enderecos, setEnderecos] = useState([]);
+	const [targetAtivo, setTargetAtivo] = useState('');
 
-  useEffect(() => {
-    async function LoadData() {
-      try {
-        const response = await api.get('/equip')
+	useEffect(() => {
+		async function LoadData() {
+			try {
+				const response = await api.get('/equip');
 
-        setEquipamentos(response.data.Ativos)
-        setClientes(response.data.Clientes)
-        setAlreadyReported(response.data.JaReportou)
+				setEquipamentos(response.data.Ativos);
+				setClientes(response.data.Clientes);
+				setAlreadyReported(response.data.JaReportou);
 
-        setLoaded(true)
-      } catch (error) {
-      }
-    }
+				setLoaded(true);
+			} catch (error) {}
+		}
 
-    LoadData();
-  }, [])
+		LoadData();
+	}, []);
 
-  const HandleOpenLinkModal = (ativo) => {
-    setLinkModalState(true)
-    setTargetAtivo(ativo)
-  }
+	const HandleOpenLinkModal = (ativo) => {
+		setLinkModalState(true);
+		setTargetAtivo(ativo);
+	};
 
-  const HandleOpenConfirmModal = async () => {
-    if (alreadyReported) {
-      Toast('Localização das máquinas já foi reportada este mês', 'warn')
-      return
-    }
+	const HandleOpenConfirmModal = async () => {
+		if (alreadyReported) {
+			Toast('Localização das máquinas já foi reportada este mês', 'warn');
+			return;
+		}
 
-    setConfirmModalState(true)
+		setConfirmModalState(true);
 
-    try {
-      const response = await api.get('/equip/confirm')
+		try {
+			const response = await api.get('/equip/confirm');
 
-      setEnderecos(response.data.Enderecos)
-    } catch (error) {
+			setEnderecos(response.data.Enderecos);
+		} catch (error) {}
+	};
 
-    }
-  }
+	const HandleOpenMiFixModal = () => {
+		setMiFixModalState(true);
+	};
 
-  const HandleOpenMiFixModal = () => {
-    setMiFixModalState(true)
-  }
+	const HandleOpenReportModal = () => {
+		setReportModalState(true);
+	};
 
-  const HandleOpenReportModal = () => {
-    setReportModalState(true)
-  }
+	const HandleOpenQRModal = async (ativo) => {
+		setQRModalState(true);
+		setTargetAtivo(ativo);
+	};
 
-  const HandleOpenQRModal = async (ativo) => {
-    setQRModalState(true)
-    setTargetAtivo(ativo)
-  }
+	const HandleCloseLinkModal = () => {
+		setLinkModalState(false);
+		setTargetAtivo('');
+	};
 
-  const HandleCloseLinkModal = () => {
-    setLinkModalState(false)
-    setTargetAtivo('')
-  }
+	const HandleCloseMiFixModal = () => {
+		setMiFixModalState(false);
+	};
 
-  const HandleCloseMiFixModal = () => {
-    setMiFixModalState(false)
-  }
+	const HandleCloseReportModal = () => {
+		setReportModalState(false);
+	};
 
-  const HandleCloseReportModal = () => {
-    setReportModalState(false)
-  }
+	const HandleCloseConfirmModal = () => {
+		setConfirmModalState(false);
+		setEnderecos([]);
+	};
 
-  const HandleCloseConfirmModal = () => {
-    setConfirmModalState(false)
-    setEnderecos([])
-  }
+	const HandleCloseQRModal = () => {
+		setQRModalState(false);
+		setTargetAtivo('');
+	};
 
-  const HandleCloseQRModal = () => {
-    setQRModalState(false)
-    setTargetAtivo('')
-  }
+	const HandleSyncTMT = async (ativo) => {
+		//horário inicial e limite em MS(60 segundos de diferença)
+		const eventTime = 1366547460;
+		const currentTime = 1366547400;
+		const diffTime = eventTime - currentTime;
+		let duration = moment.duration(diffTime * 1000, 'milliseconds');
+		const interval = 1000;
 
-  const HandleSyncTMT = async (ativo) => {
-    //horário inicial e limite em MS(60 segundos de diferença)
-    const eventTime = 1366547460;
-    const currentTime = 1366547400;
-    const diffTime = eventTime - currentTime;
-    let duration = moment.duration(diffTime * 1000, 'milliseconds');
-    const interval = 1000;
+		let IntervalId;
+		IntervalId = setInterval(() => {
+			duration = moment.duration(duration - interval, 'milliseconds');
+			if (duration.asSeconds() <= 0) {
+				setCooldownSync(false);
+				clearInterval(IntervalId);
+			} else {
+				setCooldownSync(duration.minutes() + ':' + duration.seconds());
+			}
+		}, interval);
 
-    let IntervalId
-    IntervalId = setInterval(() => {
-      duration = moment.duration(duration - interval, 'milliseconds');
-      if (duration.asSeconds() <= 0) {
-        setCooldownSync(false)
-        clearInterval(IntervalId)
-      } else {
-        setCooldownSync(duration.minutes() + ":" + duration.seconds())
-      }
-    }, interval);
+		try {
+			Toast('Atualização enviada ao TMT', 'info');
+			await api.get(`/tel/update/WYSI/${ativo}`);
+		} catch (err) {}
+	};
 
-    try {
-      Toast('Atualização enviada ao TMT', 'info')
-      await api.get(`/tel/update/WYSI/${ativo}`)
+	const HandleSwitchCliente = async (cliente) => {
+		let toastId = null;
+		let oldPdv = equipamentos.filter(
+			(element) => String(element.EquiCod) === String(targetAtivo)
+		)[0];
 
-    } catch (err) {
-    }
-  }
+		if (oldPdv.CNPJss === cliente.CNPJss) {
+			Toast('Ativo já está vinculado ao cliente', 'warn');
+			return;
+		}
 
-  const HandleSwitchCliente = async (cliente) => {
-    let toastId = null
-    let oldPdv = equipamentos.filter(element => String(element.EquiCod) === String(targetAtivo))[0]
+		try {
+			toastId = Toast('Aguarde...', 'wait');
+			const response = await api.put('/equip', {
+				oldPdv: oldPdv,
+				newCliente: cliente,
+			});
 
-    if (oldPdv.CNPJss === cliente.CNPJss) {
-      Toast('Ativo já está vinculado ao cliente', 'warn')
-      return
-    }
+			Toast('Ativo vinculado com sucesso!', 'update', toastId, 'success');
+			setEquipamentos((equipamentos) => {
+				let aux = [...equipamentos];
 
-    try {
-      toastId = Toast('Aguarde...', 'wait')
-      const response = await api.put('/equip', {
-        oldPdv: oldPdv,
-        newCliente: cliente
-      })
+				aux.forEach((element) => {
+					if (String(element.EquiCod) === String(oldPdv.EquiCod)) {
+						element.CNPJss = cliente.CNPJss;
+						element.Nome_Fantasia = cliente.Nome_Fantasia;
+						element.AnxId = response.data.NewAnxId;
+						element.PdvId = response.data.NewPdvId;
+					}
+				});
 
-      Toast('Ativo vinculado com sucesso!', 'update', toastId, 'success')
-      setEquipamentos((equipamentos) => {
-        let aux = [...equipamentos];
+				return aux;
+			});
+			setLinkModalState(false);
+			setTargetAtivo('');
+		} catch (err) {
+			Toast('Falha ao vincular ativo', 'update', toastId, 'error');
+		}
+	};
 
-        aux.forEach(element => {
-          if (String(element.EquiCod) === String(oldPdv.EquiCod)) {
-            element.CNPJss = cliente.CNPJss
-            element.Nome_Fantasia = cliente.Nome_Fantasia
-            element.AnxId = response.data.NewAnxId
-            element.PdvId = response.data.NewPdvId
-          }
-        })
+	const handleConfirmAddresses = async () => {
+		if (enderecos.length < equipamentos.length) {
+			Toast(
+				'Uma ou mais máquinas não estão vinculadas a nenhum endereço',
+				'warn'
+			);
+			return;
+		}
 
-        return aux
-      })
-      setLinkModalState(false)
-      setTargetAtivo('')
-    } catch (err) {
-      Toast('Falha ao vincular ativo', 'update', toastId, 'error')
-    }
-  }
+		let toastId = null;
 
-  const handleConfirmAddresses = async () => {
-    if (enderecos.length < equipamentos.length) {
-      Toast('Uma ou mais máquinas não estão vinculadas a nenhum endereço', 'warn')
-      return
-    }
+		try {
+			toastId = Toast('Aguarde...', 'wait');
 
-    let toastId = null
+			await api.post('/equip/confirm', {
+				Addresses: enderecos,
+			});
 
-    try {
-      toastId = Toast('Aguarde...', 'wait')
+			setConfirmModalState(false);
+			setAlreadyReported(true);
+			Toast(
+				'Confirmação registrada com sucesso!',
+				'update',
+				toastId,
+				'success'
+			);
+		} catch (err) {
+			Toast('Falha ao confirmar localizações', 'update', toastId, 'error');
+		}
+	};
 
-      await api.post('/equip/confirm', {
-        Addresses: enderecos,
-      })
+	return !loaded ? (
+		<Loading />
+	) : (
+		<Panel style={{ justifyContent: 'space-between' }}>
+			<Header
+				EquipamentosTotal={equipamentos.length}
+				EquipamentosStandyBy={
+					equipamentos.filter((ativo) => ativo.Nome_Fantasia === null).length
+				}
+				onOpenMiFixModal={HandleOpenMiFixModal}
+				onOpenReportModal={HandleOpenReportModal}
+				onOpenConfirmModal={HandleOpenConfirmModal}
+			/>
 
-      setConfirmModalState(false)
-      setAlreadyReported(true)
-      Toast('Confirmação registrada com sucesso!', 'update', toastId, 'success')
-    } catch (err) {
-      Toast('Falha ao confirmar localizações', 'update', toastId, 'error')
-    }
-  }
+			<MainSection
+				Ativos={equipamentos}
+				onOpenLinkModal={(ativo) => HandleOpenLinkModal(ativo)}
+				onOpenQRModal={(ativo) => HandleOpenQRModal(ativo)}
+				isInCooldown={cooldownSync}
+				onSync={HandleSyncTMT}
+			/>
 
-  return !loaded ?
-    <Loading />
-    :
-    <Panel style={{ justifyContent: 'space-between' }}>
-      <Header
-        EquipamentosTotal={equipamentos.length}
-        EquipamentosStandyBy={equipamentos.filter(ativo => ativo.Nome_Fantasia === null).length}
-        onOpenMiFixModal={HandleOpenMiFixModal}
-        onOpenReportModal={HandleOpenReportModal}
-        onOpenConfirmModal={HandleOpenConfirmModal}
-      />
+			<LinkModal
+				open={linkModalState}
+				onClose={() => HandleCloseLinkModal()}
+				onConfirm={(cliente) => HandleSwitchCliente(cliente)}
+				title={`Vincular ${targetAtivo} ao Cliente`}
+				Clientes={clientes}
+			/>
 
-      <MainSection
-        Ativos={equipamentos}
-        onOpenLinkModal={(ativo) => HandleOpenLinkModal(ativo)}
-        onOpenQRModal={(ativo) => HandleOpenQRModal(ativo)}
-        isInCooldown={cooldownSync}
-        onSync={HandleSyncTMT}
-      />
+			<MiFixModal open={MiFixModalState} onClose={HandleCloseMiFixModal} />
 
-      <LinkModal
-        open={linkModalState}
-        onClose={() => HandleCloseLinkModal()}
-        onConfirm={(cliente) => HandleSwitchCliente(cliente)}
-        title={`Vincular ${targetAtivo} ao Cliente`}
-        Clientes={clientes}
-      />
+			<ReportModal
+				open={reportModalState}
+				onClose={HandleCloseReportModal}
+				Ativos={equipamentos}
+				title='Reportar erro de cadastro'
+			/>
 
-      <MiFixModal
-        open={MiFixModalState}
-        onClose={HandleCloseMiFixModal}
-      />
+			<ConfirmModal
+				open={confirmModalState}
+				onClose={HandleCloseConfirmModal}
+				title='Confirmar localização das máquinas'
+				enderecos={enderecos}
+				action={
+					<Button
+						color='primary'
+						variant='contained'
+						disabled={false}
+						onClick={() => handleConfirmAddresses()}
+					>
+						Confirmar
+					</Button>
+				}
+			/>
 
-      <ReportModal
-        open={reportModalState}
-        onClose={HandleCloseReportModal}
-        Ativos={equipamentos}
-        title='Reportar erro de cadastro'
-      />
+			<QRcodeModal
+				open={QRModalState}
+				onClose={HandleCloseQRModal}
+				title='QR Code'
+				ativo={targetAtivo}
+			/>
+		</Panel>
+	);
+};
 
-      <ConfirmModal
-        open={confirmModalState}
-        onClose={HandleCloseConfirmModal}
-        title='Confirmar localização das máquinas'
-        enderecos={enderecos}
-        action={
-          <Button
-            color="primary"
-            variant="contained"
-            disabled={false}
-            onClick={() => handleConfirmAddresses()}
-          >
-            Confirmar
-          </Button>
-        }
-      />
-
-      <QRcodeModal
-        open={QRModalState}
-        onClose={HandleCloseQRModal}
-        title='QR Code'
-        ativo={targetAtivo}
-      />
-        
-    </Panel>
-}
-
-export default Equipamentos
-
+export default Equipamentos;

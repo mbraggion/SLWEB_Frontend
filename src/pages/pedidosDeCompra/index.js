@@ -9,85 +9,86 @@ import { PedidosListOptions } from './options';
 import { PedidoList } from './pedidoList';
 
 const PedidosDeCompra = () => {
-  const timeFilter = 'week'
+	const timeFilter = 'week';
 
-  const [pedidos, setPedidos] = useState([])
-  const [transportadoras, setTrasportadoras] = useState([])
-  const [loaded, setLoaded] = useState(false)
-  // const [timeFilter, setTimeFilter] = useState('week')
-  const [filtro, setFiltro] = useState('');
-  const [mostrarProcessados, setMostrarProcessados] = useState(false);
+	const [pedidos, setPedidos] = useState([]);
+	const [transportadoras, setTrasportadoras] = useState([]);
+	const [loaded, setLoaded] = useState(false);
+	// const [timeFilter, setTimeFilter] = useState('week')
+	const [filtro, setFiltro] = useState('');
+	const [mostrarProcessados, setMostrarProcessados] = useState(false);
 
-  async function LoadData() {
-    try {
-      const response = await api.get(`/pedidos/compra/${timeFilter}`)
+	async function LoadData() {
+		try {
+			const response = await api.get(`/pedidos/compra/${timeFilter}`);
 
-      setTrasportadoras(response.data.Transportadoras)
-      setPedidos(response.data.Pedidos)
-      setLoaded(true)
-    } catch (err) {
+			setTrasportadoras(response.data.Transportadoras);
+			setPedidos(response.data.Pedidos);
+			setLoaded(true);
+		} catch (err) {}
+	}
 
-    }
-  }
+	useEffect(() => {
+		LoadData();
+	}, []);
 
-  useEffect(() => {
-    LoadData()
-  }, [])
+	const handleIntegrarPedidos = async () => {
+		// alert('Em breve 😊')
 
-  const handleIntegrarPedidos = async () => {
-    // alert('Em breve 😊')
+		try {
+			await api.get('/pedidos/compra/integracao');
 
-    try{
-      await api.get('/pedidos/compra/integracao')
+			Toast('Integração em andamento!', 'info');
+		} catch (err) {
+			Toast('Falha ao solicitar integração', 'error');
+		}
+	};
 
-      Toast('Integração em andamento!', 'info')
-    }catch(err){
-      Toast('Falha ao solicitar integração', 'error')
-    }
-  }
+	return !loaded ? (
+		<Loading />
+	) : (
+		<Panel>
+			<PedidosListOptions
+				onChangeFiltro={setFiltro}
+				mostrarProcessados={mostrarProcessados}
+				switchProcessados={setMostrarProcessados}
+				onRequestIntegration={handleIntegrarPedidos}
+			/>
+			<PedidoList
+				Pedidos={returnPedidosFiltrados(pedidos, mostrarProcessados, filtro)}
+				Transportadoras={transportadoras}
+				onUpdatePedido={setPedidos}
+			/>
+		</Panel>
+	);
+};
 
-  return !loaded ?
-    <Loading />
-    :
-    (
-      <Panel>
-        <PedidosListOptions
-          onChangeFiltro={setFiltro}
-          mostrarProcessados={mostrarProcessados}
-          switchProcessados={setMostrarProcessados}
-          onRequestIntegration={handleIntegrarPedidos}
-          />
-        <PedidoList
-          Pedidos={returnPedidosFiltrados(pedidos, mostrarProcessados, filtro)}
-          Transportadoras={transportadoras}
-          onUpdatePedido={setPedidos}
-        />
-      </Panel>
-    )
-}
-
-export default PedidosDeCompra
+export default PedidosDeCompra;
 
 const returnPedidosFiltrados = (pedidos, shouldShowBilled, filterString) => {
-  var re = new RegExp(filterString.trim().toLowerCase())
+	var re = new RegExp(filterString.trim().toLowerCase());
 
-  return pedidos.filter(ped => {
-    if (shouldShowBilled) {
-      return true
-    } else if (!shouldShowBilled && ped.Status === 'Aguardando') {
-      return true
-    } else {
-      return false
-    }
-  }).filter(ped => {
-    if (filterString.trim() === '') {
-      return true
-    } else if (filterString.trim() !== '' && (
-      String(ped.PedidoID).trim().toLowerCase().match(re) || String(ped.CodigoCliente).trim().toLowerCase().match(re)
-    )) {
-      return true
-    } else {
-      return false
-    }
-  })
-}
+	return pedidos
+		.filter((ped) => {
+			if (shouldShowBilled) {
+				return true;
+			} else if (!shouldShowBilled && ped.Status === 'Aguardando') {
+				return true;
+			} else {
+				return false;
+			}
+		})
+		.filter((ped) => {
+			if (filterString.trim() === '') {
+				return true;
+			} else if (
+				filterString.trim() !== '' &&
+				(String(ped.PedidoID).trim().toLowerCase().match(re) ||
+					String(ped.CodigoCliente).trim().toLowerCase().match(re))
+			) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+};
