@@ -1,173 +1,295 @@
-import React, { useState, useEffect } from "react";
-import { saveAs } from "file-saver";
-import { api } from "../../services/api";
+import React, { useState, useEffect } from 'react';
+import { saveAs } from 'file-saver';
+import { api } from '../../services/api';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {
-  makeStyles,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography
+	makeStyles,
+	Accordion,
+	AccordionSummary,
+	AccordionDetails,
+	Typography,
 } from '@material-ui/core';
 
-import Loading from "../../components/loading_screen";
-import { Toast } from "../../components/toasty";
-import { Panel } from "../../components/commom_in";
-import { dateCheck } from "../../misc/commom_functions";
+import Loading from '../../components/loading_screen';
+import { Toast } from '../../components/toasty';
+import { Panel } from '../../components/commom_in';
+import { dateCheck } from '../../misc/commom_functions';
+import {
+	GREEN_PRIMARY,
+	BLUE_SECONDARY,
+	ORANGE_SECONDARY,
+} from '../../misc/colors';
 
-import EmAndamento from './EmAndamento'
-import Concluidos from './Concluidos'
-import Cancelados from './Cancelados'
+import SolList from './SolList';
+import { StatsModal } from './modals/statsModal';
+import { SolicitacoesOptions } from './options';
 
 const Management = () => {
-  const [OSS, setOSS] = useState([]);
-  const [loaded, setLoaded] = useState(false);
-  const [expanded, setExpanded] = useState('panel1');
-  // const [switch, setSwitch] = useState(false);
+	const [OSS, setOSS] = useState([]);
+	const [stages, setStages] = useState({
+		Total: 0,
+		Ativas: 0,
+		Concluidas: 0,
+		Canceladas: 0,
+		Supervisao: 0,
+		Comercial: 0,
+		Tecnica: 0,
+		Montagem: 0,
+		Expedicao: 0,
+		Entregando: 0,
+	});
+	const [loaded, setLoaded] = useState(false);
+	const [expanded, setExpanded] = useState('panel1');
+	const [filtro, setFiltro] = useState('');
+	const [mostrarPendencias, setMostrarPendencias] = useState(true);
+	const [statsModalOpen, setStatsModalOpen] = useState(false);
 
-  const classes = useStyles();
+	const classes = useStyles();
+	const status = ['Ativo', 'Cancelado', 'Concluido'];
 
-  useEffect(() => {
-    async function LoadData() {
-      try {
-        const response = await api.get("/equip/requests/all");
+	useEffect(() => {
+		LoadData();
+	}, []);
 
-        setOSS(response.data);
-        setLoaded(true);
-      } catch (err) {
-      }
-    }
-    LoadData();
-  }, [])
+	async function LoadData() {
+		setLoaded(false);
+		try {
+			const response = await api.get('/equip/requests/all');
 
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
+			setOSS(response.data.oss);
+			setStages(response.data.status);
+			setLoaded(true);
+		} catch (err) {}
+	}
 
-  const handleRetrivePDF = async (OSID) => {
-    let toastId = null
+	const handleChange = (panel) => (event, isExpanded) => {
+		setExpanded(isExpanded ? panel : false);
+	};
 
-    try {
-      toastId = Toast('Buscando...', 'wait')
+	const handleRetrivePDF = async (OSID) => {
+		let toastId = null;
 
-      const response = await api.get(`/equip/requests/retrive/${OSID}`, {
-        responseType: "arraybuffer",
-      });
+		try {
+			toastId = Toast('Buscando...', 'wait');
 
-      Toast('Encontrado!', 'update', toastId, 'success')
-      //Converto a String do PDF para BLOB (Necessario pra salvar em pdf)
-      const blob = new Blob([response.data], { type: "application/pdf" });
+			const response = await api.get(`/equip/requests/retrive/${OSID}`, {
+				responseType: 'arraybuffer',
+			});
 
-      //Salvo em PDF junto com a data atual, só pra não sobreescrever nada
-      saveAs(blob, `OS_${dateCheck()}.pdf`);
-    } catch (err) {
-      Toast('Falha ao recuperar PDF do servidor', 'update', toastId, 'error')
-    }
-  }
+			Toast('Encontrado!', 'update', toastId, 'success');
+			//Converto a String do PDF para BLOB (Necessario pra salvar em pdf)
+			const blob = new Blob([response.data], { type: 'application/pdf' });
 
-  return !loaded ? (
-    <Loading />
-  ) : (
-    <Panel
-      style={{
-        justifyContent: "flex-start",
-        alignItems: "center",
-      }}>
-      <div className={classes.root}>
-        <Accordion
-          expanded={expanded === 'panel1'}
-          onChange={handleChange('panel1')}
-          disabled={OSS.filter(OS => OS.OSCStatus === "Ativo").length === 0}
-        >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-          >
-            <Typography
-              variant="h6"
-              style={{
-                color: '#4f9eff'
-              }}
-            >
-              Solicitações em andamento({OSS.filter(OS => OS.OSCStatus === "Ativo").length})
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <EmAndamento
-              OS={OSS.filter(OS => OS.OSCStatus === "Ativo")}
-              onRequestPDF={(ID) => handleRetrivePDF(ID)}
-            />
-          </AccordionDetails>
-        </Accordion>
-        <Accordion
-          expanded={expanded === 'panel2'}
-          onChange={handleChange('panel2')}
-          disabled={OSS.filter(OS => OS.OSCStatus === "Cancelado").length === 0}
-        >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel2a-content"
-            id="panel2a-header"
-          >
-            <Typography
-              variant="h6"
-              style={{
-                color: '#f5814c'
-              }}
-            >
-              Solicitações canceladas({OSS.filter(OS => OS.OSCStatus === "Cancelado").length})
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Cancelados
-              OS={OSS.filter(OS => OS.OSCStatus === "Cancelado")}
-              onRequestPDF={(ID) => handleRetrivePDF(ID)}
-            />
-          </AccordionDetails>
-        </Accordion>
-        <Accordion
-          expanded={expanded === 'panel3'}
-          onChange={handleChange('panel3')}
-          disabled={OSS.filter(OS => OS.OSCStatus === "Concluido").length === 0}
-        >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel3a-content"
-            id="panel3a-header"
-          >
-            <Typography
-              variant="h6"
-              style={{
-                color: '#29ff8d'
-              }}
-            >
-              Solicitações concluídas({OSS.filter(OS => OS.OSCStatus === "Concluido").length})
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails
-            style={{ height: '100%' }}
-          >
-            <Concluidos
-              OS={OSS.filter(OS => OS.OSCStatus === "Concluido")}
-              onRequestPDF={(ID) => handleRetrivePDF(ID)}
-            />
-          </AccordionDetails>
-        </Accordion>
-      </div>
-    </Panel>
-  );
-}
+			//Salvo em PDF junto com a data atual, só pra não sobreescrever nada
+			saveAs(blob, `OS_${dateCheck()}.pdf`);
+		} catch (err) {
+			Toast('Falha ao recuperar PDF do servidor', 'update', toastId, 'error');
+		}
+	};
 
-export default Management
+	const handleOpenStatsModal = () => {
+		setStatsModalOpen(true);
+	};
+
+	const handleCloseStatsModal = () => {
+		setStatsModalOpen(false);
+	};
+
+	const fixedStats = Object.entries(stages).map(([key, value]) => [
+		`${key} (${value})`,
+		value,
+	]);
+
+	const geral = fixedStats.slice(1, 4);
+	const responsavel = fixedStats.slice(4, 10);
+
+	return !loaded ? (
+		<Loading />
+	) : (
+		<>
+			<StatsModal
+				open={statsModalOpen}
+				onClose={handleCloseStatsModal}
+				statsGeral={[['OS', 'Geral'], ...geral]}
+				statsResponsavel={[['OS', 'Responsável'], ...responsavel]}
+			/>
+			<Panel
+				style={{
+					justifyContent: 'flex-start',
+					alignItems: 'center',
+				}}
+			>
+				<SolicitacoesOptions
+					onChangeFiltro={setFiltro}
+					mostrarPendencias={mostrarPendencias}
+					switchPendencias={setMostrarPendencias}
+					onOpenStatsModal={handleOpenStatsModal}
+				/>
+				{/* <div className={classes.outerContainer}>
+        <div className={classes.firstContainer}>
+          <label style={{ backgroundColor: RED_PRIMARY }} className={classes.label}>TOTAL: {stages.Total}</label>
+        </div>
+        <div className={classes.secondContainer}>
+          <label style={{ backgroundColor: BLUE_SECONDARY }} className={classes.label}>ATIVAS: {stages.Ativas}</label>
+          <label style={{ backgroundColor: GREEN_SECONDARY }} className={classes.label}>CONCLUÍDAS: {stages.Concluidas}</label>
+          <label style={{ backgroundColor: ORANGE_SECONDARY }} className={classes.label}>CANCELADAS: {stages.Canceladas}</label>
+        </div>
+        <div className={classes.thirtyContainer}>
+          <label style={{ backgroundColor: '#c9868c' }} className={classes.label}>SUPERVISÃO: {stages.Supervisao}</label>
+          <label style={{ backgroundColor: '#be6e74' }} className={classes.label}>COMERCIAL: {stages.Comercial}</label>
+          <label style={{ backgroundColor: '#b3565d' }} className={classes.label}>TÉCNICA: {stages.Tecnica}</label>
+          <label style={{ backgroundColor: '#a93d46' }} className={classes.label}>MONTAGEM: {stages.Montagem}</label>
+          <label style={{ backgroundColor: '#9e252f' }} className={classes.label}>EXPEDIÇÃO: {stages.Expedicao}</label>
+          <label style={{ backgroundColor: '#930d18' }} className={classes.label}>ENTREGA: {stages.Entregando}</label>
+        </div>
+      </div> */}
+
+				<div className={classes.root}>
+					{status.map((s) => (
+						<Accordion
+							expanded={expanded === s}
+							onChange={handleChange(s)}
+							disabled={
+								returnOSsFiltered(
+									OSS.filter((OS) => OS.OSCStatus === s),
+									mostrarPendencias,
+									filtro
+								).length === 0
+							}
+						>
+							<AccordionSummary
+								expandIcon={<ExpandMoreIcon />}
+								aria-controls={`${s}-content`}
+								id={`${s}-header`}
+							>
+								<Typography
+									variant='h6'
+									style={{
+										color: returnCorrectBorderColor(s),
+									}}
+								>
+									{s === 'Ativo'
+										? 'Solicitações em Andamento'
+										: s === 'Cancelado'
+										? 'Solicitações Canceladas'
+										: s === 'Concluido'
+										? 'Solicitações Concluídas'
+										: '???'}
+									({OSS.filter((OS) => OS.OSCStatus === s).length})
+								</Typography>
+							</AccordionSummary>
+							<AccordionDetails>
+								<SolList
+									OS={returnOSsFiltered(
+										OSS.filter((OS) => OS.OSCStatus === s),
+										mostrarPendencias,
+										filtro
+									)}
+									onRequestPDF={handleRetrivePDF}
+									onRefresh={LoadData}
+								/>
+							</AccordionDetails>
+						</Accordion>
+					))}
+				</div>
+			</Panel>
+		</>
+	);
+};
+
+export default Management;
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
-  },
+	root: {
+		width: '100%',
+		height: 'calc(100% - 100px)',
+	},
+	heading: {
+		fontSize: theme.typography.pxToRem(15),
+		fontWeight: theme.typography.fontWeightRegular,
+	},
+
+	outerContainer: {
+		display: 'flex',
+		width: '100%',
+		flexDirection: 'column',
+		height: 'auto',
+	},
+	firstContainer: {
+		display: 'flex',
+		width: '100%',
+		height: 'auto',
+		justifyContent: 'center',
+	},
+	secondContainer: {
+		display: 'flex',
+		width: '100%',
+		height: 'auto',
+		justifyContent: 'space-evenly',
+	},
+	thirtyContainer: {
+		display: 'flex',
+		width: '100%',
+		height: 'auto',
+		justifyContent: 'space-evenly',
+		margin: '1rem 0 0 0',
+		// flexWrap: 'wrap'
+	},
+	label: {
+		fontSize: '1rem',
+		padding: '1rem 0px',
+		width: '100%',
+		textAlign: 'center',
+		color: '#FFF',
+		fontWeight: 'bolder',
+
+		cursor: 'pointer',
+	},
 }));
+
+const returnOSsFiltered = (oss, shouldShowPending, filterString) => {
+	var re = new RegExp(filterString.trim().toLowerCase());
+
+	return oss
+		.filter((os) => {
+			if (!shouldShowPending) {
+				return true;
+			} else if (
+				shouldShowPending &&
+				os.Responsavel.includes(window.sessionStorage.getItem('role'))
+			) {
+				return true;
+			} else {
+				return false;
+			}
+		})
+		.filter((os) => {
+			if (filterString.trim() === '') {
+				return true;
+			} else if (
+				filterString.trim() !== '' &&
+				(String(os.OSCId).trim().toLowerCase().match(re) ||
+					String(os.M0_CODFIL).trim().toLowerCase().match(re))
+			) {
+				return true;
+			} else {
+				return false;
+			}
+		});
+};
+
+const returnCorrectBorderColor = (status) => {
+	switch (status) {
+		case 'Cancelado':
+			return ORANGE_SECONDARY;
+
+		case 'Ativo':
+			return BLUE_SECONDARY;
+
+		case 'Concluido':
+			return GREEN_PRIMARY;
+		default:
+			return '#8403fc';
+	}
+};

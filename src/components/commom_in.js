@@ -1,4 +1,4 @@
-import Styled from "styled-components";
+import Styled from 'styled-components';
 
 export const Container = Styled.div`
     display: flex;
@@ -78,12 +78,13 @@ export const Panel = Styled.div`
     margin-left: 73px; //novo sidebar
     display: flex;
     flex-direction: ${(props) => props.flexDirection || 'column'};
-    justify-content:  ${(props) =>props.jContent || 'flex-start'};
+    justify-content:  ${(props) => props.jContent || 'flex-start'};
     align-items: center;
     flex-wrap: wrap;
     background-color: none;
-    border: ${(props) => props.border||'1px solid #ccc' } ;
-    box-shadow: ${(props) => props.boxShadow|| '0px -0px 5px 3px rgba(0, 0, 0, 0.2)'};
+    border: ${(props) => props.border || '1px solid #ccc'} ;
+    box-shadow: ${(props) =>
+			props.boxShadow || '0px -0px 5px 3px rgba(0, 0, 0, 0.2)'};
     padding: 20px 20px 30px 20px;
     
     height:  calc(100% - 64px);
@@ -221,7 +222,7 @@ export const Valor = Styled.input`
 `;
 
 export const Data = Styled.input`
-`
+`;
 
 export const buttonFooter = Styled.div`
 height: 300px;
@@ -291,7 +292,6 @@ grid-template-rows: 1fr 100px 100px 100px 100px;
 border-bottom: 1px solid #cecece;
 margin-bottom: 10px;
 `;
-
 
 export const BoxTitle = Styled.div`
     background-color: rgba(0, 0, 0, 0.8);
