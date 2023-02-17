@@ -1,4 +1,5 @@
 {
+
 	"name": "frontend",
 	"version": "11.0.0",
 	"private": true,
@@ -40,7 +41,7 @@
 		"xlsx": "0.17.1"
 	},
 	"scripts": {
-		"dev": "react-scripts start",
+		"dev": "react-scripts --openssl-legacy-provider start",
 		"build": "react-scripts build",
 		"lint": "npx prettier --write src"
 	},
@@ -64,4 +65,5 @@
 		"react-redux": "7.2.4",
 		"redux": "4.1.0"
 	}
+
 }
