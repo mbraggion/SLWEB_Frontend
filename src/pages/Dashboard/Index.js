@@ -15,6 +15,8 @@ import { NewsDetailsDialog } from './dialogs/NewsDialog';
 
 import { News } from './News';
 import { Calendar } from './Calendar';
+import { Desempenho } from './Desempenho';
+import { Titulos } from './Titulos';
 
 const Dashboard = () => {
 	const [newsModalOpen, setNewsModalOpen] = useState(false);
@@ -23,17 +25,29 @@ const Dashboard = () => {
 	const [moreOptions, setMoreOptions] = useState(false);
 	const [displayedNews, setDisplayedNews] = useState(null);
 	const [news, setNews] = useState([]);
+	const [performance, setPerformance] = useState([]);
+	const [titulos, setTitulos] = useState([]);
+	const [datas, setDatas] = useState([]);
 
 	useEffect(() => {
-		async function LoadNews() {
-			try {
-				const response = await api.get('/dashboard/news');
-
-				setNews(response.data.News);
-			} catch (err) {}
-		}
 		LoadNews();
 	}, []);
+
+	async function LoadNews() {
+		try {
+			const response = await api.get('/dashboard/news');
+
+			setNews(response.data.News);
+			setPerformance(response.data.Performance);
+			setTitulos(response.data.Titulos);
+			setDatas(response.data.Datas);
+		} catch (err) {
+			setNews([]);
+			setPerformance([]);
+			setTitulos([]);
+			setDatas([]);
+		}
+	}
 
 	useEffect(() => {
 		for (let i = 0; i < news.length; i++) {
@@ -118,8 +132,28 @@ const Dashboard = () => {
 				onHandleNews={setNews}
 			/>
 			<Panel>
-				<News onOpenModal={handleOpenNewsModal} News={news} />
-				{/* <Calendar dates={[]} /> */}
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						width: '100%',
+					}}
+				>
+					<News onOpenModal={handleOpenNewsModal} News={news} />
+
+					{/* <div
+						style={{
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							width: '100%',
+						}}
+					>
+						<Calendar dates={datas} />
+						<Titulos duplicatas={titulos} />
+					</div> */}
+					{/* <Desempenho performances={performance} /> */}
+				</div>
 
 				{roleLevel() <= REACT_APP_FRANQUEADO_ROLE_LEVEL ? null : (
 					<div

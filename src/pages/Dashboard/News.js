@@ -15,8 +15,6 @@ export const News = ({ onOpenModal, News }) => {
 				interval: 6000,
 			}}
 		>
-			
-
 			{News.map((n) => (
 				<Slide
 					key={n.NewsId}
@@ -49,4 +47,4 @@ export const News = ({ onOpenModal, News }) => {
 			))}
 		</Slider>
 	);
-}
+};
