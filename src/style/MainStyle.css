@@ -8,514 +8,508 @@
 } */
 
 :root {
-  --primary-red: #C8102E;
+	--primary-red: #c8102e;
 }
 
 /* Estilo do scroll */
 ::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #f5f5f5;
-  border-radius: 50px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+	background-color: #f5f5f5;
+	border-radius: 50px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #000000;
-  border-radius: 50px;
+	background-color: #000000;
+	border-radius: 50px;
 }
 
 ::-webkit-scrollbar {
-  width: 7px;
-  background-color: #f5f5f5;
+	width: 7px;
+	background-color: #f5f5f5;
 }
 
 body {
-  /* font-family: "Roboto"; */
-  height: 100vh;
-  overflow-x: hidden;
+	/* font-family: "Roboto"; */
+	height: 100vh;
+	overflow-x: hidden;
 }
 
 /* Estilo Sidebar */
 html,
 body {
-  margin: 0;
+	margin: 0;
 }
 
 .DefaultSelect {
-  display: block;
-  font-size: 1em;
-  border: 1px dashed #333;
-  width: 100%;
-  height: 36px;
+	display: block;
+	font-size: 1em;
+	border: 1px dashed #333;
+	width: 100%;
+	height: 36px;
 }
 
 .datepicker-table-wrapper {
-  color: #000;
+	color: #000;
 }
 
 /*CSS para tabelas no geral*/
 .Item:hover {
-  animation-name: GreyBIn;
-  animation-duration: 400ms;
-  animation-fill-mode: forwards;
-  cursor: pointer;
+	animation-name: GreyBIn;
+	animation-duration: 400ms;
+	animation-fill-mode: forwards;
+	cursor: pointer;
 }
 
 .Item:not(:hover) {
-  animation-name: GreyBOut;
-  animation-duration: 400ms;
-  animation-fill-mode: forwards;
-  cursor: auto;
+	animation-name: GreyBOut;
+	animation-duration: 400ms;
+	animation-fill-mode: forwards;
+	cursor: auto;
 }
 
 .Selected {
-  animation-name: Bright;
-  animation-duration: 1s;
-  animation-fill-mode: forwards;
+	animation-name: Bright;
+	animation-duration: 1s;
+	animation-fill-mode: forwards;
 }
 
 .tableFixHead {
-  overflow-y: auto;
-  color: #000;
-  border-radius: 4px;
+	overflow-y: auto;
+	color: #000;
+	border-radius: 4px;
 }
 
 .tableFixHead table {
-  border-collapse: unset !important;
+	border-collapse: unset !important;
 }
 
 .tableFixHead thead th {
-  background-color: #c8102e;
-  z-index: 1;
-  position: sticky;
-  top: 0;
-  font-weight: bolder;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  line-height: 14px;
+	background-color: #c8102e;
+	z-index: 1;
+	position: sticky;
+	top: 0;
+	font-weight: bolder;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	line-height: 14px;
 }
 
 .tableFixHead tbody {
-  line-height: 14px;
+	line-height: 14px;
 }
 
 .tableFixHead th,
 td {
-  border-bottom: 2px solid black;
-  /* border-right: 1px solid black;
+	border-bottom: 2px solid black;
+	/* border-right: 1px solid black;
   border-left: 1px solid black; */
-  border-radius: 0px;
-  line-height: 14px;
-  text-overflow: ellipsis;
+	border-radius: 0px;
+	line-height: 14px;
+	text-overflow: ellipsis;
 }
 
 .tableFixHead tr {
-  overflow: hidden;
-  height: 10px;
-  white-space: nowrap;
+	overflow: hidden;
+	height: 10px;
+	white-space: nowrap;
 }
 
 .tableFixHead th {
-  border-radius: 0px;
-  background-color: #333;
-  color: #f5f5f5;
+	border-radius: 0px;
+	background-color: #333;
+	color: #f5f5f5;
 }
 
 .tableFixHead th:first-child {
-  border-radius: 4px 0px 0px 0px;
+	border-radius: 4px 0px 0px 0px;
 }
 
 .tableFixHead th:last-child {
-  border-radius: 0px 4px 0px 0px;
+	border-radius: 0px 4px 0px 0px;
 }
 
-.tableFixHead tbody>tr:last-child {
-  border-radius: 0px 0px 4px 4px;
+.tableFixHead tbody > tr:last-child {
+	border-radius: 0px 0px 4px 4px;
 }
 
-.tableFixHead tbody>tr:last-child>td:first-child {
-  border-radius: 0px 0px 0px 4px;
+.tableFixHead tbody > tr:last-child > td:first-child {
+	border-radius: 0px 0px 0px 4px;
 }
 
-.tableFixHead tbody>tr:last-child>td:last-child {
-  border-radius: 0px 0px 4px 0px;
+.tableFixHead tbody > tr:last-child > td:last-child {
+	border-radius: 0px 0px 4px 0px;
 }
 
-.tableFixHead tbody>tr:last-child>td {
-  border-bottom: 1px solid #000;
+.tableFixHead tbody > tr:last-child > td {
+	border-bottom: 1px solid #000;
 }
 
-.tableFixHead tbody>tr>td:first-child {
-  border-radius: 0px;
-  border-left: 1px solid #000;
+.tableFixHead tbody > tr > td:first-child {
+	border-radius: 0px;
+	border-left: 1px solid #000;
 }
 
-.tableFixHead tbody>tr>td:last-child {
-  border-radius: 0px;
-  border-right: 1px solid #000;
+.tableFixHead tbody > tr > td:last-child {
+	border-radius: 0px;
+	border-right: 1px solid #000;
 }
 
 /* padding das celulas do material ui */
 .TableFirstItemCheckbox {
-  padding: 10px 0px 10px 8px;
+	padding: 10px 0px 10px 8px;
 }
 
 .TableFirstItemCheckbox:first-child {
-  padding: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
 }
 
 .Toastify__toast {
-  border-radius: 4px;
+	border-radius: 4px;
 }
 
 @media only screen and (max-width: 480px) {
-  .Toastify__toast {
-    border-radius: 0px;
-  }
+	.Toastify__toast {
+		border-radius: 0px;
+	}
 }
 
 .modal-trigger:hover {
-  animation-name: GreyBIn;
-  animation-duration: 500ms;
-  animation-fill-mode: forwards;
-  cursor: pointer;
-  margin: 8px;
-  background-color: rgb(255, 253, 132);
+	animation-name: GreyBIn;
+	animation-duration: 500ms;
+	animation-fill-mode: forwards;
+	cursor: pointer;
+	margin: 8px;
+	background-color: rgb(255, 253, 132);
 }
 
 .modal-trigger:not(:hover) {
-  animation-name: GreyBOut;
-  animation-duration: 500ms;
-  animation-fill-mode: forwards;
-  cursor: auto;
-  margin: 8px;
-  background-color: rgb(255, 253, 132);
+	animation-name: GreyBOut;
+	animation-duration: 500ms;
+	animation-fill-mode: forwards;
+	cursor: auto;
+	margin: 8px;
+	background-color: rgb(255, 253, 132);
 }
 
 .modal-trigger:hover td:nth-child(2) {
-  width: 40%;
-  min-width: 400px;
-  animation-name: GrowFont;
-  animation-duration: 400ms;
-  animation-fill-mode: forwards;
-  cursor: pointer;
+	width: 40%;
+	min-width: 400px;
+	animation-name: GrowFont;
+	animation-duration: 400ms;
+	animation-fill-mode: forwards;
+	cursor: pointer;
 }
 
 .modal-trigger:not(:hover) td:nth-child(2) {
-  width: 40%;
-  min-width: 400px;
-  animation-name: ShrinkFont;
-  animation-duration: 400ms;
-  animation-fill-mode: forwards;
-  cursor: auto;
+	width: 40%;
+	min-width: 400px;
+	animation-name: ShrinkFont;
+	animation-duration: 400ms;
+	animation-fill-mode: forwards;
+	cursor: auto;
 }
 
 /* Rust Aligns */
 
 .floatRight {
-  float: right;
+	float: right;
 }
 
 .floatLeft {
-  float: left;
+	float: left;
 }
 
 .XAlign {
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
+	display: flex;
+	width: 100%;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
 }
 
 .YAlign {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  flex-wrap: wrap;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	flex-wrap: wrap;
 }
-
 
 /* FONT SIZE */
 
 .f-12 {
-  font-size: 12px;
+	font-size: 12px;
 }
 
 /* MARGIN*/
 .mb8 {
-  margin-bottom: .5rem;
-
+	margin-bottom: 0.5rem;
 }
 
 /*BORDER*/
 .bl-3red {
-  border-left: 3px solid #C8102E;
+	border-left: 3px solid #c8102e;
 }
 
 .bt-3red {
-  border-top: 3px solid #C8102E;
+	border-top: 3px solid #c8102e;
 }
 
 /*DISPLAY*/
 .df {
-  display: flex;
-  justify-content: space-between;
-
+	display: flex;
+	justify-content: space-between;
 }
 
 .df-aling-end {
-  align-items: flex-end;
+	align-items: flex-end;
 }
 
 /*width*/
 .w90 {
-  width: 90vw;
+	width: 90vw;
 }
 
 .w45 {
-  width: 45vw;
+	width: 45vw;
 }
 
 /*HEIGHT*/
 .h30 {
-  height: 30vh;
+	height: 30vh;
 }
 
 .h40 {
-  height: 40vh;
+	height: 40vh;
 }
 
 .h45 {
-  height: 45vh;
+	height: 45vh;
 }
-
 
 /*Aling*/
 .al-start {
-  text-align: left;
+	text-align: left;
 }
-
-
 
 /* outline do select Material UI */
 .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-  border-color: #930d18;
-  border-width: 2px;
+	border-color: #930d18;
+	border-width: 2px;
 }
 
 /* Titulo em cima do select */
 .MuiFormLabel-root.Mui-focused {
-  color: #930d18;
+	color: #930d18;
 }
 
 /* Underline input underline*/
 .MuiInput-underline::after {
-  border-bottom: 2px solid #930d18;
+	border-bottom: 2px solid #930d18;
 }
 
 /* Dialog close button*/
 .MuiButton-textPrimary {
-  color: #930d18;
+	color: #930d18;
 }
 
 /* Button bg when focus(after click) */
 button:focus {
-  outline: none;
-  /* background-color: #CCC; */
+	outline: none;
+	/* background-color: #CCC; */
 }
 
 .TextBold {
-  all: "unset";
-  font-weight: bold;
+	all: 'unset';
+	font-weight: bold;
 }
 
 .txt {
-  color: antiquewhite;
-  font-size: 20px;
-  font-weight: bold;
+	color: antiquewhite;
+	font-size: 20px;
+	font-weight: bold;
 }
 
 /* Estilo aplicado na sidebar */
 .Menu i {
-  margin-left: 5%;
-  color: #ffffff;
+	margin-left: 5%;
+	color: #ffffff;
 }
 
 .Menu a {
-  display: flex;
-  align-items: center;
-  min-width: 200px;
-  color: #ffffff;
+	display: flex;
+	align-items: center;
+	min-width: 200px;
+	color: #ffffff;
 }
 
 .Menu:hover {
-  background-color: #fff;
-  transition-duration: 0.5s;
+	background-color: #fff;
+	transition-duration: 0.5s;
 }
 
 .Menu a:hover {
-  color: #c8102e;
-  box-shadow: 0px 3px 1px -1px rgba(0, 0, 0, 0.2),
-    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+	color: #c8102e;
+	box-shadow: 0px 3px 1px -1px rgba(0, 0, 0, 0.2),
+		0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
 }
 
 .Menu a:hover i {
-  color: #c8102e;
+	color: #c8102e;
 }
 
-.dropdown-content li>a {
-  color: #333333;
+.dropdown-content li > a {
+	color: #333333;
 }
 
-.dropdown-content li>a>i {
-  margin-left: 10%;
-  color: #8a8a8a;
+.dropdown-content li > a > i {
+	margin-left: 10%;
+	color: #8a8a8a;
 }
 
-.dropdown-content li>a:hover {
-  color: #c8102e;
-  background-color: #fff;
-  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
-    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+.dropdown-content li > a:hover {
+	color: #c8102e;
+	background-color: #fff;
+	box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+		0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
 }
 
-.dropdown-content li>a:hover>i {
-  color: #c8102e;
+.dropdown-content li > a:hover > i {
+	color: #c8102e;
 }
 
 .Menu:not(:hover) {
-  background-color: rgb(0, 0, 0, 0);
-  transition-duration: 0.5s;
+	background-color: rgb(0, 0, 0, 0);
+	transition-duration: 0.5s;
 }
 
 /* Outros... */
 
 #App {
-  font-family: sans-serif;
+	font-family: sans-serif;
 
-  /* Give app full page to work with */
-  height: 100vh;
+	/* Give app full page to work with */
+	height: 100vh;
 }
 
 #page-wrap {
-  text-align: center;
+	text-align: center;
 
-  /* Prevent sidebar from showing a scrollbar on page */
-  overflow: hidden;
+	/* Prevent sidebar from showing a scrollbar on page */
+	overflow: hidden;
 }
 
 #outer {
-  height: 100vh;
-  overflow: auto;
+	height: 100vh;
+	overflow: auto;
 }
 
 /* Change color on hover */
 .bm-item:hover {
-  color: white;
+	color: white;
 }
 
 .exit {
-  position: fixed;
-  z-index: 1000;
+	position: fixed;
+	z-index: 1000;
 }
 
 .Nav {
-  position: fixed;
-  z-index: 1000;
+	position: fixed;
+	z-index: 1000;
 }
 
 .btnModal {
-  margin-right: 10px;
+	margin-right: 10px;
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
 }
 
 .paginadesenvolvimento {
-  padding: auto;
-  align-self: auto;
-  text-align: center;
-  align-content: center;
-  vertical-align: auto;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 50px;
+	padding: auto;
+	align-self: auto;
+	text-align: center;
+	align-content: center;
+	vertical-align: auto;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 50px;
 }
 
 .paginadesenvolvimentob {
-  padding: auto;
-  align-self: auto;
-  text-align: center;
-  align-content: center;
-  vertical-align: auto;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 50px;
-  background-color: darkblue;
+	padding: auto;
+	align-self: auto;
+	text-align: center;
+	align-content: center;
+	vertical-align: auto;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 50px;
+	background-color: darkblue;
 }
 
 /* Animações */
 
 @keyframes GreyBIn {
-  0% {
-    background-color: #fff;
-    color: #000;
-  }
+	0% {
+		background-color: #fff;
+		color: #000;
+	}
 
-  100% {
-    background-color: #ddd;
-    color: #000000;
-  }
+	100% {
+		background-color: #ddd;
+		color: #000000;
+	}
 }
 
 @keyframes GreyBOut {
-  0% {
-    background-color: #ddd;
-    color: #000;
-  }
+	0% {
+		background-color: #ddd;
+		color: #000;
+	}
 
-  100% {
-    color: #000;
-    background-color: #fff;
-  }
+	100% {
+		color: #000;
+		background-color: #fff;
+	}
 }
 
 @keyframes Bright {
-  0% {
-    background-color: #38b5a0;
-  }
+	0% {
+		background-color: #38b5a0;
+	}
 
-  100% {
-    background-color: none;
-  }
+	100% {
+		background-color: none;
+	}
 }
 
 @keyframes GrowFont {
-  0% {
-    font-size: 1em;
-    font-weight: normal;
-  }
+	0% {
+		font-size: 1em;
+		font-weight: normal;
+	}
 
-  100% {
-    font-size: 1.2em;
-    font-weight: normal;
-  }
+	100% {
+		font-size: 1.2em;
+		font-weight: normal;
+	}
 }
 
 @keyframes ShrinkFont {
-  0% {
-    font-size: 1.2em;
-    font-weight: normal;
-  }
+	0% {
+		font-size: 1.2em;
+		font-weight: normal;
+	}
 
-  100% {
-    font-size: 1em;
-    font-weight: normal;
-  }
+	100% {
+		font-size: 1em;
+		font-weight: normal;
+	}
 }
 
 /* input[type="text"]:not(.browser-default) {
@@ -532,28 +526,26 @@ input[type="text"]:not(.browser-default):focus:not([readonly]) {
 } */
 /* diminuir o tamanho do checkbox*/
 .PrivateSwitchBase-input-51 {
-  transform: scale(0.5);
+	transform: scale(0.5);
 }
 
 @media only screen and (max-width: 1200px) {
-  .w100m {
-    width: 100%;
-  }
+	.w100m {
+		width: 100%;
+	}
 
-  .h-auto {
-    height: auto;
-  }
-
+	.h-auto {
+		height: auto;
+	}
 }
 
 @media only screen and (max-width: 600px) {
-  .df-mobile {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    height: auto;
-    width: 100%;
-  }
-
+	.df-mobile {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		flex-wrap: wrap;
+		height: auto;
+		width: 100%;
+	}
 }
