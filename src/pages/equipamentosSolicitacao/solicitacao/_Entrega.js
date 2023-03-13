@@ -61,10 +61,6 @@ function Entrega(props) {
 		new Date().getDate() + MinDDLEnvio
 	);
 
-	//useEffect(() => {
-//		setClientes(ClientesEnderecos);
-	//}, [ClientesEnderecos]);
-
 	useEffect(() => {
 		let isRunning = true;
 		async function loadClientData() {
@@ -77,20 +73,14 @@ function Entrega(props) {
 						setOpen(false);
 					}
 				}
-			} catch (err) {console.log('deu erro 957421')}
+			} catch (err) {console.log('Err. N.: 957421')}
 		}
 
 		loadClientData();
 		return () => isRunning = false;
 
 	}, [ClientesSearchParam], [open], [Clientes]); 	
-	/*
-	React.useEffect(() => {
-		if (!open) {
-			setClientes([]);
-		}
-	  }, [open]);
-	*/
+
 	const defineCliente = (cliente) => {
 		if (cliente === null || cliente === '' || Clientes.length === 0 ) {
 			ChooseCliente({
@@ -104,7 +94,6 @@ function Entrega(props) {
 				if (client.CNPJss === cliente.CNPJss && client.Nome_Fantasia === cliente.Nome_Fantasia ) {
 					
 					ChooseCliente(client);
-					console.log('ondex: :' + index);
 					if (index === 0) {
 						ChangeEndereco(enderecoEntrega(client))
 					}
@@ -121,12 +110,6 @@ function Entrega(props) {
 
 	return (
 		<>
-			
-			<div>{`Cliente_Destino: ${Cliente_Destino !== null ? `'${Cliente_Destino}'` : 'null'}`}</div>
-      		<div>{`CNPJ_Destino: ${CNPJ_Destino !== null ? `'${CNPJ_Destino}'` : 'null'}`}</div>
-			<div>{`Endereço_Entrega: ${Endereço_Entrega !== null ? `'${Endereço_Entrega}'` : 'null'}`}</div>
-
-			<br />
 			<form className={classes.root} noValidate autoComplete='off'>
 				<div>
 					<Autocomplete
@@ -136,10 +119,6 @@ function Entrega(props) {
 						className={classes.inputRoot}
 						value={Cliente_Destino !== '' ? Cliente_Destino + ", CNPJ: " + CNPJ_Destino : ''}
 						onChange={(e, newValue) => {defineCliente(newValue);}}
-						//groupBy={(option) => option.Nome_Fantasia}
-						//inputValue={inputValue}
-						//onInputChange={(event, newInputValue) => {
-						//setInputValue(newInputValue);
 						filterOptions={(x) => x} //Disable filter
 						sx={{ width: '500px'}}
 						open={open}
@@ -151,14 +130,7 @@ function Entrega(props) {
 						}}
 
 						onKeyUp={(e) => { setClientesSearchParam(e.target.value ); } }
-						//isOptionEqualToValue={(option, value) => option.title === value.title}
 						isOptionEqualToValue={(option, value) => option.CNPJss === value.CNPJss && option.Nome_Fantasia === value.Nome_Fantasia}
-						//isOptionEqualToValue={(option, value) => value === "" || option.CNPJss === value.CNPJss && option.Nome_Fantasia === value.Nome_Fantasia}
-						//isOptionEqualToValue={(option, value) => option.Nome_Fantasia + ', CNPJ: ' + option.CNPJss === value}
-						
-						
-						//getOptionSelected={(option, value) => (option.CNPJss === value.CNPJss) }
-						//getOptionLabel={(option) => option.Nome_Fantasia !== undefined ? option.Nome_Fantasia + ', CNPJ: ' + option.CNPJss : ''}
 						options={Clientes}
 						loading={loading}
 						renderOption={(props, option) => (
@@ -170,7 +142,6 @@ function Entrega(props) {
 							<TextField
 							{...params}
 							label='Cliente'
-							//condicao='*Nenhum cliente encontrado' 
 							style={{ width: '500px'}}
 							className={classes.inputRoot}
 							variant="outlined"
@@ -188,42 +159,6 @@ function Entrega(props) {
 					/>
 				</div>
 			</form>
-		{/*
-			<form className={classes.root} noValidate autoComplete='off'>
-				<div>
-					<TextField
-						style={{ width: '400px' }}
-						id='outlined-multiline-flexible'
-						label='Endereço de entrega'
-						helperText={Cliente_Destino === '' ? '*Selecione um cliente' : null}
-						multiline
-						rowsMax={4}
-						disabled={Cliente_Destino === '' ? true : false}
-						value={Endereço_Entrega}
-						onChange={(e) => mudarEndereco(e.target.value)}
-						variant='outlined'
-					/>
-				</div>
-			</form>
-		*/}
-
-		{/*}
-			<Selecao
-				width='500px'
-				MLeft='8px'
-				MBottom='8px'
-				label='Endereço de entrega'
-				value={Endereço_Entrega}
-				disabled={Cliente_Destino === '' || shouldShowClientes(Clientes.filter((option)=>(option.Nome_Fantasia === Cliente_Destino && option.CNPJss === CNPJ_Destino))) ? true : false }
-				onChange={(e) => mudarEndereco(e.target.value)}
-			>
-				{Clientes.filter((option)=>(option.Nome_Fantasia === Cliente_Destino && option.CNPJss === CNPJ_Destino)).map((cliente) => (
-					<MenuItem value={enderecoEntrega(cliente)} key={cliente.CNPJss + cliente.Nome_Fantasia}>
-						{enderecoEntrega(cliente)}
-					</MenuItem>
-				))}
-			</Selecao>
-		*/}
 
 			<form className={classes.root} noValidate autoComplete='off'>
 				<div>
@@ -233,15 +168,8 @@ function Entrega(props) {
 						MBottom='8px'
 						className={classes.inputRoot}
 						value={Endereço_Entrega}
-						//onChange={(e, newValue) => {defineCliente(newValue);}}
-						//onChange={(e) => mudarEndereco(e.target.value)}
-						//groupBy={(option) => option.Nome_Fantasia}
-						//inputValue={Endereço_Entrega}
-						//onInputChange={(event, newInputValue) => { 
 						onInputChange={(event, newInputValue) => mudarEndereco(enderecoEntrega(newInputValue))}
 						freeSolo={true}
-							
-						//setInputValue(newInputValue);
 						filterOptions={(x) => x} //Disable filter
 						sx={{ width: '500px'}}
 						open={openEndereco}
@@ -251,20 +179,10 @@ function Entrega(props) {
 						onClose={() => {
 							setOpenEndereco(false);
 						}}
-						//onChange={(e) => {alert('change: ' + e.target.value); defineCliente(e.target.value); } }
-						//onKeyDown={(e) => { if ( e.key.length === 1 || e.key === "Delete" || e.key === "Backspace" ) { setClientesSearchParam(e.key.length === 1 ? e.target.value  + e.key: e.key === "Backspace" || e.key === "Delete"? e.target.value.substring(1, e.target.value.length ): e.target.value ); } else { if ( !(e.key === "ArrowLeft" || e.key === "ArrowRight" ||  e.key === "Enter") ) {e.preventDefault() } } ; console.log(e.target.value  + '-' + e.key ) } }
-						//onKeyUp={(e) => { setClientesSearchParam(e.target.value ); } }
-						//isOptionEqualToValue={(option, value) => option.title === value.title}
 						isOptionEqualToValue={(option, value) => {
-								console.log('isOptionEqualToValue');
-								console.dir(option);
-								console.dir(value);
-								//return enderecoEntrega(option) === enderecoEntrega(value);
 								return enderecoEntrega(option) === enderecoEntrega(value);
 							}	
 						}
-						
-						//getOptionSelected={(option, value) => (option.CNPJss === value.CNPJss) }
 						getOptionLabel={(option) => enderecoEntrega(option)}
 						options={Clientes.filter((option)=>(option.Nome_Fantasia === Cliente_Destino && option.CNPJss === CNPJ_Destino))}
 						loading={loadingEndereco}
@@ -277,7 +195,6 @@ function Entrega(props) {
 							<TextField
 							{...params}
 							label='Endereço de entrega'
-							//condicao='*Nenhum endereço encontrado' 
 							style={{ width: '500px'}}
 							className={classes.inputRoot}
 							variant="outlined"
@@ -443,12 +360,7 @@ const useStyles = makeStyles((theme) => ({
 		},
 	},
 	inputRoot: {
-		// color: "purple",
-		// This matches the specificity of the default styles at https://github.com/mui-org/material-ui/blob/v4.11.3/packages/material-ui-lab/src/Autocomplete/Autocomplete.js#L90
-		
-		//'&[class*="MuiOutlinedInput-root"] .MuiAutocomplete-input:first-child': {
 		'& .MuiOutlinedInput-root .MuiAutocomplete-input:first-child': {
-		  // Default left padding is 6px
 		  paddingLeft: 0,
 		  paddingRight: 0,
 		  paddingTop: 0,
@@ -516,8 +428,7 @@ const dataMinima = (DDL = 0) => {
 
 const enderecoEntrega = (cliente) => {
 	let enderecoCompleto = '';
-	console.log('enderecoEntrega: ' + typeof (cliente));
-	console.dir(cliente);
+
 	if (cliente === null || cliente === undefined  ) return '';
 
 	if  (typeof cliente != 'object' && typeof cliente == 'string') {
