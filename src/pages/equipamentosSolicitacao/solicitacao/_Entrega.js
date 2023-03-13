@@ -8,6 +8,12 @@ import Selecao from '../../../components/materialComponents/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import { Rotulo, Campo } from '../../../components/commom_in';
+
+import Autocomplete from '@mui/material/Autocomplete';
+import Box from "@mui/material/Box";
+import CircularProgress from '@mui/material/CircularProgress';
+import { api } from '../../../services/api';
+
 import {
 	ChooseCliente,
 	ChangeEndereco,
@@ -21,7 +27,13 @@ import {
 function Entrega(props) {
 	const classes = useStyles();
 	const [Clientes, setClientes] = useState([]);
+	const [ClientesSearchParam, setClientesSearchParam] = useState("");
+	const [open, setOpen] = React.useState(false);
+	const loading = open && Clientes.length === 0;
 
+	const [openEndereco, setOpenEndereco] = React.useState(false);
+	const loadingEndereco = openEndereco && Clientes.length === 0;	
+	
 	const {
 		ChooseCliente,
 		ChangeEndereco,
@@ -40,7 +52,7 @@ function Entrega(props) {
 		Data_Entrega_Desejada,
 		Contato,
 		MinDDLEnvio,
-		ClientesEnderecos,
+		//ClientesEnderecos,
 	} = props.State;
 
 	const dataMinimaSolicitacao = new Date(
@@ -49,22 +61,54 @@ function Entrega(props) {
 		new Date().getDate() + MinDDLEnvio
 	);
 
-	useEffect(() => {
-		setClientes(ClientesEnderecos);
-	}, [ClientesEnderecos]);
+	//useEffect(() => {
+//		setClientes(ClientesEnderecos);
+	//}, [ClientesEnderecos]);
 
+	useEffect(() => {
+		let isRunning = true;
+		async function loadClientData() {
+			try {
+				const response = await api.get(`/equip/requests/getclientaddresses/s${ClientesSearchParam}`); //O "s" sozinho está correto, serve para não dar erro de rota sem digitação no parâmetro.
+
+				if (isRunning) {
+					setClientes(response.data.endereços);
+					if (response.data.endereços.length === 0){
+						setOpen(false);
+					}
+				}
+			} catch (err) {console.log('deu erro 957421')}
+		}
+
+		loadClientData();
+		return () => isRunning = false;
+
+	}, [ClientesSearchParam], [open], [Clientes]); 	
+	/*
+	React.useEffect(() => {
+		if (!open) {
+			setClientes([]);
+		}
+	  }, [open]);
+	*/
 	const defineCliente = (cliente) => {
-		if (cliente === '') {
+		if (cliente === null || cliente === '' || Clientes.length === 0 ) {
 			ChooseCliente({
 				Nome_Fantasia: '',
 				CNPJss: '',
 			});
 			ChangeEndereco('');
 		} else {
-			Clientes.map((client) => {
-				if (client.CNPJss === cliente) {
+			Clientes.filter((client) => (client.CNPJss === cliente.CNPJss && client.Nome_Fantasia === cliente.Nome_Fantasia)).map((client, index) => {
+
+				if (client.CNPJss === cliente.CNPJss && client.Nome_Fantasia === cliente.Nome_Fantasia ) {
+					
 					ChooseCliente(client);
-					ChangeEndereco(enderecoEntrega(client));
+					console.log('ondex: :' + index);
+					if (index === 0) {
+						ChangeEndereco(enderecoEntrega(client))
+					}
+
 				}
 				return null;
 			});
@@ -77,23 +121,74 @@ function Entrega(props) {
 
 	return (
 		<>
-			<Selecao
-				width='200px'
-				MLeft='8px'
-				MBottom='8px'
-				condicao='*Nenhum cliente encontrado'
-				label='Cliente'
-				value={CNPJ_Destino}
-				disabled={shouldShowClientes(Clientes)}
-				onChange={(e) => defineCliente(e.target.value)}
-			>
-				{Clientes.map((cliente) => (
-					<MenuItem value={cliente.CNPJss}>
-						{cliente.Nome_Fantasia}, CNPJ: {cliente.CNPJss}
-					</MenuItem>
-				))}
-			</Selecao>
+			
+			<div>{`Cliente_Destino: ${Cliente_Destino !== null ? `'${Cliente_Destino}'` : 'null'}`}</div>
+      		<div>{`CNPJ_Destino: ${CNPJ_Destino !== null ? `'${CNPJ_Destino}'` : 'null'}`}</div>
+			<div>{`Endereço_Entrega: ${Endereço_Entrega !== null ? `'${Endereço_Entrega}'` : 'null'}`}</div>
 
+			<br />
+			<form className={classes.root} noValidate autoComplete='off'>
+				<div>
+					<Autocomplete
+						id="clientaddressid"
+						MLeft='8px'
+						MBottom='8px'
+						className={classes.inputRoot}
+						value={Cliente_Destino !== '' ? Cliente_Destino + ", CNPJ: " + CNPJ_Destino : ''}
+						onChange={(e, newValue) => {defineCliente(newValue);}}
+						//groupBy={(option) => option.Nome_Fantasia}
+						//inputValue={inputValue}
+						//onInputChange={(event, newInputValue) => {
+						//setInputValue(newInputValue);
+						filterOptions={(x) => x} //Disable filter
+						sx={{ width: '500px'}}
+						open={open}
+						onOpen={(e) => {
+							setOpen(true);
+						}}
+						onClose={() => {
+							setOpen(false);
+						}}
+
+						onKeyUp={(e) => { setClientesSearchParam(e.target.value ); } }
+						//isOptionEqualToValue={(option, value) => option.title === value.title}
+						isOptionEqualToValue={(option, value) => option.CNPJss === value.CNPJss && option.Nome_Fantasia === value.Nome_Fantasia}
+						//isOptionEqualToValue={(option, value) => value === "" || option.CNPJss === value.CNPJss && option.Nome_Fantasia === value.Nome_Fantasia}
+						//isOptionEqualToValue={(option, value) => option.Nome_Fantasia + ', CNPJ: ' + option.CNPJss === value}
+						
+						
+						//getOptionSelected={(option, value) => (option.CNPJss === value.CNPJss) }
+						//getOptionLabel={(option) => option.Nome_Fantasia !== undefined ? option.Nome_Fantasia + ', CNPJ: ' + option.CNPJss : ''}
+						options={Clientes}
+						loading={loading}
+						renderOption={(props, option) => (
+							<Box component="li" {...props} key={option.CNPJss + option.Nome_Fantasia} >
+							{option.Nome_Fantasia}, CNPJ: {option.CNPJss}
+						</Box>
+						)}
+						renderInput={(params) => (
+							<TextField
+							{...params}
+							label='Cliente'
+							//condicao='*Nenhum cliente encontrado' 
+							style={{ width: '500px'}}
+							className={classes.inputRoot}
+							variant="outlined"
+							InputProps={{
+								...params.InputProps,
+								endAdornment: (
+								<React.Fragment>
+									{loading ? <CircularProgress color="inherit" size={20} /> : null}
+									{params.InputProps.endAdornment}
+								</React.Fragment>
+								),
+							}}
+							/>
+						)}
+					/>
+				</div>
+			</form>
+		{/*
 			<form className={classes.root} noValidate autoComplete='off'>
 				<div>
 					<TextField
@@ -107,6 +202,96 @@ function Entrega(props) {
 						value={Endereço_Entrega}
 						onChange={(e) => mudarEndereco(e.target.value)}
 						variant='outlined'
+					/>
+				</div>
+			</form>
+		*/}
+
+		{/*}
+			<Selecao
+				width='500px'
+				MLeft='8px'
+				MBottom='8px'
+				label='Endereço de entrega'
+				value={Endereço_Entrega}
+				disabled={Cliente_Destino === '' || shouldShowClientes(Clientes.filter((option)=>(option.Nome_Fantasia === Cliente_Destino && option.CNPJss === CNPJ_Destino))) ? true : false }
+				onChange={(e) => mudarEndereco(e.target.value)}
+			>
+				{Clientes.filter((option)=>(option.Nome_Fantasia === Cliente_Destino && option.CNPJss === CNPJ_Destino)).map((cliente) => (
+					<MenuItem value={enderecoEntrega(cliente)} key={cliente.CNPJss + cliente.Nome_Fantasia}>
+						{enderecoEntrega(cliente)}
+					</MenuItem>
+				))}
+			</Selecao>
+		*/}
+
+			<form className={classes.root} noValidate autoComplete='off'>
+				<div>
+					<Autocomplete
+						id="addressid"
+						MLeft='8px'
+						MBottom='8px'
+						className={classes.inputRoot}
+						value={Endereço_Entrega}
+						//onChange={(e, newValue) => {defineCliente(newValue);}}
+						//onChange={(e) => mudarEndereco(e.target.value)}
+						//groupBy={(option) => option.Nome_Fantasia}
+						//inputValue={Endereço_Entrega}
+						//onInputChange={(event, newInputValue) => { 
+						onInputChange={(event, newInputValue) => mudarEndereco(enderecoEntrega(newInputValue))}
+						freeSolo={true}
+							
+						//setInputValue(newInputValue);
+						filterOptions={(x) => x} //Disable filter
+						sx={{ width: '500px'}}
+						open={openEndereco}
+						onOpen={(e) => {
+							setOpenEndereco(true);
+						}}
+						onClose={() => {
+							setOpenEndereco(false);
+						}}
+						//onChange={(e) => {alert('change: ' + e.target.value); defineCliente(e.target.value); } }
+						//onKeyDown={(e) => { if ( e.key.length === 1 || e.key === "Delete" || e.key === "Backspace" ) { setClientesSearchParam(e.key.length === 1 ? e.target.value  + e.key: e.key === "Backspace" || e.key === "Delete"? e.target.value.substring(1, e.target.value.length ): e.target.value ); } else { if ( !(e.key === "ArrowLeft" || e.key === "ArrowRight" ||  e.key === "Enter") ) {e.preventDefault() } } ; console.log(e.target.value  + '-' + e.key ) } }
+						//onKeyUp={(e) => { setClientesSearchParam(e.target.value ); } }
+						//isOptionEqualToValue={(option, value) => option.title === value.title}
+						isOptionEqualToValue={(option, value) => {
+								console.log('isOptionEqualToValue');
+								console.dir(option);
+								console.dir(value);
+								//return enderecoEntrega(option) === enderecoEntrega(value);
+								return enderecoEntrega(option) === enderecoEntrega(value);
+							}	
+						}
+						
+						//getOptionSelected={(option, value) => (option.CNPJss === value.CNPJss) }
+						getOptionLabel={(option) => enderecoEntrega(option)}
+						options={Clientes.filter((option)=>(option.Nome_Fantasia === Cliente_Destino && option.CNPJss === CNPJ_Destino))}
+						loading={loadingEndereco}
+						renderOption={(props, option) => (
+							<Box component="li" {...props} value={enderecoEntrega(option)} key={option.CNPJss + enderecoEntrega(option)} >
+							{enderecoEntrega(option)}
+						</Box>
+						)}
+						renderInput={(params) => (
+							<TextField
+							{...params}
+							label='Endereço de entrega'
+							//condicao='*Nenhum endereço encontrado' 
+							style={{ width: '500px'}}
+							className={classes.inputRoot}
+							variant="outlined"
+							InputProps={{
+								...params.InputProps,
+								endAdornment: (
+								<React.Fragment>
+									{loading ? <CircularProgress color="inherit" size={20} /> : null}
+									{params.InputProps.endAdornment}
+								</React.Fragment>
+								),
+							}}
+							/>
+						)}
 					/>
 				</div>
 			</form>
@@ -257,6 +442,19 @@ const useStyles = makeStyles((theme) => ({
 			margin: '0px 8px',
 		},
 	},
+	inputRoot: {
+		// color: "purple",
+		// This matches the specificity of the default styles at https://github.com/mui-org/material-ui/blob/v4.11.3/packages/material-ui-lab/src/Autocomplete/Autocomplete.js#L90
+		
+		//'&[class*="MuiOutlinedInput-root"] .MuiAutocomplete-input:first-child': {
+		'& .MuiOutlinedInput-root .MuiAutocomplete-input:first-child': {
+		  // Default left padding is 6px
+		  paddingLeft: 0,
+		  paddingRight: 0,
+		  paddingTop: 0,
+		  paddingBottom: 0,
+		},
+	},
 }));
 
 const datepickerconfig = {
@@ -318,6 +516,13 @@ const dataMinima = (DDL = 0) => {
 
 const enderecoEntrega = (cliente) => {
 	let enderecoCompleto = '';
+	console.log('enderecoEntrega: ' + typeof (cliente));
+	console.dir(cliente);
+	if (cliente === null || cliente === undefined  ) return '';
+
+	if  (typeof cliente != 'object' && typeof cliente == 'string') {
+		return cliente;
+	}
 
 	if (cliente.Logradouro !== null) {
 		enderecoCompleto = enderecoCompleto.concat(cliente.Logradouro.trim());

@@ -30,7 +30,7 @@ import Loading from '../../components/loading_screen';
 import {
 	LoadAtivos,
 	LoadBebidas,
-	LoadClientesEnderecos,
+//	LoadClientesEnderecos,
 	LoadMinDDL,
 	LoadHelper,
 	ResetRequest,
@@ -49,7 +49,7 @@ function VerticalLinearStepper(props) {
 	const {
 		LoadAtivos,
 		LoadBebidas,
-		LoadClientesEnderecos,
+//		LoadClientesEnderecos,
 		LoadMinDDL,
 		LoadHelper,
 		ResetRequest,
@@ -58,18 +58,19 @@ function VerticalLinearStepper(props) {
 	useEffect(() => {
 		async function loadData() {
 			try {
-				const response = await api.get('/equip/requests/adresses');
+				const response = await api.get('/equip/requests/getequipconfig');
 
 				LoadAtivos(response.data.MaquinasDisponiveis);
 				LoadBebidas(response.data.BebidasNovo);
-				LoadClientesEnderecos(response.data.endereços);
+				//LoadClientesEnderecos(response.data.endereços);
 				LoadMinDDL(response.data.MinDDL);
 				LoadHelper(response.data.newAjudas);
 				setLoaded(true);
 			} catch (err) {}
 		}
 		loadData();
-	}, [LoadAtivos, LoadBebidas, LoadClientesEnderecos, LoadHelper, LoadMinDDL]);
+	}, [LoadAtivos, LoadBebidas, LoadHelper, LoadMinDDL]); 
+	//}, [LoadAtivos, LoadBebidas, LoadClientesEnderecos, LoadHelper, LoadMinDDL]);
 
 	useEffect(() => {
 		return () => {
@@ -221,7 +222,7 @@ const mapDispatchToProps = (dispatch) =>
 		{
 			LoadAtivos,
 			LoadBebidas,
-			LoadClientesEnderecos,
+			//LoadClientesEnderecos,
 			LoadMinDDL,
 			LoadHelper,
 			ResetRequest,
