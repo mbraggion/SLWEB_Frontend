@@ -470,11 +470,11 @@ const initialState = {
 	Ajudas: [],
 	MinDDLEnvio: 0,
 
-	MaquinaId: '',
-	Maquina: '',
-	PermiteGab: false,
-	Capacidade: 0,
-	MaxContenedores: 0,
+	MaquinaId: '1',
+	Maquina: 'LEI SA',
+	PermiteGab: true,
+	Capacidade: 12,
+	MaxContenedores: 4,
 
 	Contenedor: [],
 	Configuracao: [],
